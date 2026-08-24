@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import type { Extraction, SuggestedCategory } from './types';
+import type { Extraction, StatementLineItem, SuggestedCategory } from './types';
 
 const categories: SuggestedCategory[] = [
   'Travel',
@@ -140,6 +140,87 @@ export async function extractDocument(
     extractionConfidence: 'low',
     notes: `Parse failure. Raw model output: ${rawText}`,
   };
+}
+
+const statementPrompt = `You extract every transaction line from a bank statement.
+Return valid JSON only, with no markdown and no prose: an array of objects with keys date, description, amount.
+Rules:
+- date: YYYY-MM-DD
+- amount: numeric, positive for money in, negative for money out
+- description: the raw statement line text, unmodified
+- Include every transaction line on the statement, in the order they appear.
+`;
+
+function parseStatementLines(raw: string): StatementLineItem[] {
+  const parsed = JSON.parse(stripFence(raw));
+  if (!Array.isArray(parsed)) {
+    throw new Error('Expected an array of statement lines');
+  }
+  return parsed.map((entry) => ({
+    date: entry.date ?? '',
+    description: entry.description ?? '',
+    amount: Number(entry.amount ?? 0),
+  }));
+}
+
+export async function extractStatementLines(
+  fileBuffer: Buffer,
+  mimeType: string,
+  filename = 'statement',
+): Promise<StatementLineItem[]> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return [];
+  }
+
+  const anthropic = new Anthropic({ apiKey });
+  const isPdf = mimeType.includes('pdf');
+  const base64 = fileBuffer.toString('base64');
+  const imageMediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp' =
+    mimeType === 'image/jpeg' || mimeType === 'image/png' || mimeType === 'image/gif' || mimeType === 'image/webp'
+      ? mimeType
+      : 'image/png';
+
+  const contentBlock = isPdf
+    ? [{
+        type: 'document' as const,
+        source: { type: 'base64' as const, media_type: 'application/pdf' as const, data: base64 },
+      }]
+    : [{ type: 'image' as const, source: { type: 'base64' as const, media_type: imageMediaType, data: base64 } }];
+
+  let rawText = '';
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4000,
+      system: statementPrompt,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            ...contentBlock,
+            {
+              type: 'text',
+              text: `Filename: ${filename}. Extract every transaction line as a strict JSON array.`,
+            },
+          ],
+        },
+      ],
+    });
+
+    rawText = response.content
+      .filter((entry) => entry.type === 'text')
+      .map((entry) => entry.text)
+      .join('\n');
+
+    try {
+      return parseStatementLines(rawText);
+    } catch {
+      // retry once
+    }
+  }
+
+  return [];
 }
 
 export { categories as CATEGORY_LIST };

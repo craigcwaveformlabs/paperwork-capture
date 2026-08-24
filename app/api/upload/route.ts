@@ -170,5 +170,5 @@ export async function POST(request: Request) {
     db.prepare('UPDATE paperwork_requests SET status = ? WHERE id = ?').run(nextStatus, req.id);
   }
 
-  return NextResponse.redirect(new URL(`/p/${token}`, request.url));
+  return NextResponse.redirect(new URL(`/p/${token}`, request.url), 303);
 }

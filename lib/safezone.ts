@@ -28,11 +28,32 @@ export function createExplanationFromDocument(
   };
 }
 
+/**
+ * Rule-categorised MTD statement/CSV lines post as already-explained, unlike
+ * `createExplanationFromDocument` (Smart Capture matches always land in for_approval).
+ * This is a deliberate, narrow exception — see assertOnlyApproveCanExplain.
+ */
+export function applyMtdImportRule(
+  transaction: SafeTransaction,
+  params: {
+    category: string;
+    description: string;
+  },
+): SafeTransaction {
+  return {
+    ...transaction,
+    status: 'explained',
+    category: params.category,
+    description: params.description,
+    attachmentNote: 'Posted from MTD statement/CSV import',
+  };
+}
+
 export function assertOnlyApproveCanExplain(
   nextStatus: TransactionStatus,
-  source: 'approve_route' | 'other',
+  source: 'approve_route' | 'mtd_import_rule' | 'other',
 ) {
-  if (nextStatus === 'explained' && source !== 'approve_route') {
+  if (nextStatus === 'explained' && source !== 'approve_route' && source !== 'mtd_import_rule') {
     throw new Error("Only /api/approve may set status to 'explained'");
   }
 }

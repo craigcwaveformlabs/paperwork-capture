@@ -28,6 +28,7 @@ export default async function RequestsPage({
               (SELECT COUNT(*) FROM request_items i WHERE i.requestId = r.id AND i.status = 'fulfilled') AS received
        FROM paperwork_requests r
        JOIN clients c ON c.id = r.clientId
+       WHERE r.kind = 'transaction'
        ORDER BY r.createdAt DESC`,
     )
     .all() as Array<{
@@ -47,7 +48,7 @@ export default async function RequestsPage({
       acc[req.status] += 1;
       return acc;
     },
-    { all: 0, sent: 0, viewed: 0, partial: 0, complete: 0, overdue: 0, blocked_quota: 0 },
+    { all: 0, sent: 0, viewed: 0, partial: 0, complete: 0, overdue: 0, blocked_quota: 0, data_received: 0, loaded: 0 },
   );
 
   const filtered = tab === 'all' ? requests : requests.filter((req) => req.status === tab);

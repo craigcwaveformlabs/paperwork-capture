@@ -1,4 +1,6 @@
+import crypto from 'node:crypto';
 import { getDb, resetDatabase } from './db';
+import { mapToFreeAgentCategory, nextMtdPeriod } from './mtdCategories';
 
 type SeedTxn = {
   date: string;
@@ -82,6 +84,155 @@ export function seedDatabase({ reset = false }: { reset?: boolean } = {}) {
       txn.category ?? null,
       txn.description ?? null,
       txn.status === 'explained' ? now : null,
+    );
+  }
+
+  seedMtdDemoData(db, client.lastInsertRowid as number, now);
+}
+
+function seedMtdDemoData(db: ReturnType<typeof getDb>, samSmithId: number, now: string) {
+  db.prepare('UPDATE clients SET portalToken = ? WHERE id = ?').run(
+    crypto.randomBytes(12).toString('hex'),
+    samSmithId,
+  );
+
+  const insertClient = db.prepare(`
+    INSERT INTO clients (name, businessType, email, contactName, smartCaptureAllowance, smartCaptureUsed, allowanceResetsOn, portalToken)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  const insertAccount = db.prepare("INSERT INTO bank_accounts (clientId, name, balance, kind) VALUES (?, ?, ?, 'client')");
+
+  const priya = insertClient.run(
+    'Priya Patel',
+    'limited company',
+    'priya@example.com',
+    'Priya Patel',
+    10,
+    2,
+    '2026-08-01',
+    crypto.randomBytes(12).toString('hex'),
+  );
+  insertAccount.run(priya.lastInsertRowid, 'Starling Business', 12480.3);
+
+  const jordan = insertClient.run(
+    'Jordan Lee',
+    'sole trader',
+    'jordan@example.com',
+    'Jordan Lee',
+    10,
+    3,
+    '2026-08-01',
+    crypto.randomBytes(12).toString('hex'),
+  );
+  insertAccount.run(jordan.lastInsertRowid, 'Tide', 3021.6);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const period = nextMtdPeriod(today, null);
+
+  const insertMtdRequest = db.prepare(`
+    INSERT INTO paperwork_requests (
+      clientId, token, createdAt, dueDate, message, channels, privacy, status, kind, periodStart, periodEnd, quarterLabel, dataReceivedAt, loadedAt
+    ) VALUES (?, ?, ?, ?, ?, ?, 'shared', ?, 'mtd_quarterly', ?, ?, ?, ?, ?)
+  `);
+
+  const requestMessage = `Please upload your bank statement (or MTD CSV) for ${period.quarterLabel}, plus any receipts.`;
+
+  insertMtdRequest.run(
+    samSmithId,
+    crypto.randomBytes(24).toString('hex'),
+    now,
+    period.dueDate,
+    requestMessage,
+    JSON.stringify(['email']),
+    'sent',
+    period.periodStart,
+    period.periodEnd,
+    period.quarterLabel,
+    null,
+    null,
+  );
+
+  const demoLines = [
+    { date: period.periodStart, description: 'CLIENT INVOICE PAYMENT', amount: 1250 },
+    { date: period.periodStart, description: 'OFFICE SUPPLIES LTD', amount: -42.5 },
+    { date: period.periodEnd, description: 'TRAIN TICKET - SCOTRAIL', amount: -38.2 },
+  ];
+  const extractionJson = JSON.stringify({ lines: demoLines });
+
+  const insertDocument = db.prepare(`
+    INSERT INTO documents (
+      filename, mimeType, path, sizeBytes, requestId, uploadedBy, uploadedAt, privacy, quotaConsumed, extractionJson, mtdSourceKind
+    ) VALUES (?, 'text/csv', ?, ?, ?, 'client', ?, 'shared', 0, ?, 'mtd_csv')
+  `);
+
+  const dataReceivedRequest = insertMtdRequest.run(
+    priya.lastInsertRowid,
+    crypto.randomBytes(24).toString('hex'),
+    now,
+    period.dueDate,
+    requestMessage,
+    JSON.stringify(['email']),
+    'data_received',
+    period.periodStart,
+    period.periodEnd,
+    period.quarterLabel,
+    now,
+    null,
+  );
+  insertDocument.run(
+    'mtd-upload.csv',
+    `uploads/seed-mtd-upload-${dataReceivedRequest.lastInsertRowid}.csv`,
+    512,
+    dataReceivedRequest.lastInsertRowid,
+    now,
+    extractionJson,
+  );
+
+  const loadedRequest = insertMtdRequest.run(
+    jordan.lastInsertRowid,
+    crypto.randomBytes(24).toString('hex'),
+    now,
+    period.dueDate,
+    requestMessage,
+    JSON.stringify(['email']),
+    'loaded',
+    period.periodStart,
+    period.periodEnd,
+    period.quarterLabel,
+    now,
+    now,
+  );
+  insertDocument.run(
+    'mtd-upload.csv',
+    `uploads/seed-mtd-upload-${loadedRequest.lastInsertRowid}.csv`,
+    512,
+    loadedRequest.lastInsertRowid,
+    now,
+    extractionJson,
+  );
+
+  const jordanMtdAccount = db
+    .prepare("INSERT INTO bank_accounts (clientId, name, balance, kind) VALUES (?, 'MTD Import', 0, 'mtd_import')")
+    .run(jordan.lastInsertRowid);
+
+  const insertMtdTxn = db.prepare(`
+    INSERT INTO transactions (
+      accountId, date, merchant, rawDescription, amountIn, amountOut, status, category, description, approvedAt, mtdRequestId
+    ) VALUES (?, ?, ?, ?, ?, ?, 'explained', ?, ?, ?, ?)
+  `);
+
+  for (const line of demoLines) {
+    insertMtdTxn.run(
+      jordanMtdAccount.lastInsertRowid,
+      line.date,
+      line.description,
+      line.description,
+      line.amount > 0 ? line.amount : 0,
+      line.amount < 0 ? -line.amount : 0,
+      mapToFreeAgentCategory(line.description),
+      line.description,
+      now,
+      loadedRequest.lastInsertRowid,
     );
   }
 }

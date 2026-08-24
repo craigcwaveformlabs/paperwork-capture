@@ -118,7 +118,7 @@ function runMigrations(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS outbox_messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      requestId INTEGER NOT NULL,
+      requestId INTEGER,
       recipientEmail TEXT NOT NULL,
       subject TEXT NOT NULL,
       body TEXT NOT NULL,
@@ -126,7 +126,57 @@ function runMigrations(db: Database.Database) {
       createdAt TEXT NOT NULL,
       FOREIGN KEY(requestId) REFERENCES paperwork_requests(id)
     );
+
+    CREATE TABLE IF NOT EXISTS client_accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      clientId INTEGER NOT NULL UNIQUE,
+      passcodeHash TEXT,
+      passcodeExpiresAt TEXT,
+      createdAt TEXT NOT NULL,
+      lastLoginAt TEXT,
+      FOREIGN KEY(clientId) REFERENCES clients(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS client_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      clientAccountId INTEGER NOT NULL,
+      token TEXT NOT NULL UNIQUE,
+      createdAt TEXT NOT NULL,
+      expiresAt TEXT NOT NULL,
+      FOREIGN KEY(clientAccountId) REFERENCES client_accounts(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS mtd_figures (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      requestId INTEGER NOT NULL,
+      categoryKey TEXT NOT NULL,
+      amount REAL NOT NULL,
+      FOREIGN KEY(requestId) REFERENCES paperwork_requests(id)
+    );
   `);
+
+  ensureColumn(db, 'paperwork_requests', 'kind', "TEXT NOT NULL DEFAULT 'transaction'");
+  ensureColumn(db, 'paperwork_requests', 'periodStart', 'TEXT');
+  ensureColumn(db, 'paperwork_requests', 'periodEnd', 'TEXT');
+  ensureColumn(db, 'paperwork_requests', 'quarterLabel', 'TEXT');
+  ensureColumn(db, 'paperwork_requests', 'dataReceivedAt', 'TEXT');
+  ensureColumn(db, 'paperwork_requests', 'loadedAt', 'TEXT');
+
+  ensureColumn(db, 'clients', 'portalToken', 'TEXT');
+
+  ensureColumn(db, 'bank_accounts', 'kind', "TEXT NOT NULL DEFAULT 'client'");
+
+  ensureColumn(db, 'transactions', 'mtdRequestId', 'INTEGER');
+
+  ensureColumn(db, 'documents', 'mtdSourceKind', 'TEXT');
+}
+
+function ensureColumn(db: Database.Database, table: string, column: string, definition?: string) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+  if (columns.some((entry) => entry.name === column)) {
+    return;
+  }
+  db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition ?? 'TEXT'}`);
 }
 
 export function resetDatabase() {

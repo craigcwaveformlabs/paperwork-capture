@@ -64,5 +64,5 @@ export async function POST(request: Request) {
   if (contentType.includes('application/json')) {
     return NextResponse.json({ ok: true, approved: ids.length });
   }
-  return NextResponse.redirect(new URL('/banking/1?tab=for_approval', request.url));
+  return NextResponse.redirect(new URL('/banking/1?tab=for_approval', request.url), 303);
 }

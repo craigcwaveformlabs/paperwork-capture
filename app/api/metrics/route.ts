@@ -28,8 +28,34 @@ export function GET() {
 
   const firstTimeRight = metrics.reviewed > 0 ? metrics.cleanAccepts / metrics.reviewed : 0;
 
+  const mtd = db
+    .prepare(
+      `SELECT
+        (SELECT COUNT(*) FROM paperwork_requests WHERE kind = 'mtd_quarterly') AS totalMtdRequests,
+        (SELECT COUNT(*) FROM paperwork_requests WHERE kind = 'mtd_quarterly' AND loadedAt IS NOT NULL) AS mtdRequestsLoaded,
+        (SELECT COUNT(DISTINCT r.id) FROM paperwork_requests r
+          JOIN documents d ON d.requestId = r.id AND d.mtdSourceKind IN ('mtd_statement', 'mtd_csv')
+          WHERE r.kind = 'mtd_quarterly') AS mtdRequestsWithSourceDocument,
+        (SELECT COUNT(*) FROM transactions WHERE mtdRequestId IS NOT NULL) AS mtdTransactionsPosted,
+        (SELECT COUNT(*) FROM mtd_figures) AS mtdManualFigureEntries`,
+    )
+    .get() as {
+    totalMtdRequests: number;
+    mtdRequestsLoaded: number;
+    mtdRequestsWithSourceDocument: number;
+    mtdTransactionsPosted: number;
+    mtdManualFigureEntries: number;
+  };
+
+  const mtdSourceDocumentComplianceRate =
+    mtd.totalMtdRequests > 0 ? mtd.mtdRequestsWithSourceDocument / mtd.totalMtdRequests : 0;
+
   return NextResponse.json({
     ...metrics,
     firstTimeRight,
+    mtd: {
+      ...mtd,
+      sourceDocumentComplianceRate: mtdSourceDocumentComplianceRate,
+    },
   });
 }

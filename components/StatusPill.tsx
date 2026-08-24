@@ -11,6 +11,8 @@ const classes: Record<TransactionStatus | RequestStatus, string> = {
   complete: 'bg-tick/10 text-tick border border-tick/30',
   overdue: 'bg-red/10 text-red border border-red/30',
   blocked_quota: 'bg-red/10 text-red border border-red/30',
+  data_received: 'bg-blue/10 text-blue border border-blue/20',
+  loaded: 'bg-tick/10 text-tick border border-tick/30',
 };
 
 export function StatusPill({ value }: { value: TransactionStatus | RequestStatus }) {

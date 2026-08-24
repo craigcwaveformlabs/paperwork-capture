@@ -1,5 +1,8 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { ensureSeeded, requestStatusFromItems } from '@/lib/repo';
 import { dateFmt, money } from '@/lib/format';
+import { getSessionClientId, SESSION_COOKIE_NAME } from '@/lib/clientAuth';
 
 export default async function ClientUploadPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -8,7 +11,7 @@ export default async function ClientUploadPage({ params }: { params: Promise<{ t
   const req = db
     .prepare(
       `SELECT r.id, r.clientId, r.createdAt, r.dueDate, r.message, r.privacy, r.status, r.viewedAt,
-              c.name as clientName, c.smartCaptureAllowance, c.smartCaptureUsed
+              c.name as clientName, c.smartCaptureAllowance, c.smartCaptureUsed, c.portalToken
        FROM paperwork_requests r
        JOIN clients c ON c.id = r.clientId
        WHERE r.token = ?`,
@@ -25,10 +28,19 @@ export default async function ClientUploadPage({ params }: { params: Promise<{ t
     clientName: string;
     smartCaptureAllowance: number;
     smartCaptureUsed: number;
+    portalToken: string | null;
   } | undefined;
 
   if (!req) {
     return <p>Upload link not found.</p>;
+  }
+
+  if (req.portalToken) {
+    const cookieStore = await cookies();
+    const sessionClientId = getSessionClientId(db, cookieStore.get(SESSION_COOKIE_NAME)?.value);
+    if (sessionClientId !== req.clientId) {
+      redirect(`/portal/${req.portalToken}`);
+    }
   }
 
   if (!req.viewedAt) {

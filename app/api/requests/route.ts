@@ -51,5 +51,5 @@ export async function POST(request: Request) {
     createdAt,
   );
 
-  return NextResponse.redirect(new URL('/outbox', request.url));
+  return NextResponse.redirect(new URL('/outbox', request.url), 303);
 }

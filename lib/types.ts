@@ -6,7 +6,18 @@ export type RequestStatus =
   | 'partial'
   | 'complete'
   | 'overdue'
-  | 'blocked_quota';
+  | 'blocked_quota'
+  | 'data_received'
+  | 'loaded';
+
+export type RequestKind = 'transaction' | 'mtd_quarterly';
+
+export type StatementLineItem = {
+  date: string;
+  description: string;
+  amount: number;
+  rawCategory?: string;
+};
 
 export type RequestPrivacy = 'shared' | 'private';
 

@@ -44,3 +44,5 @@ Open:
 ## Open decision to revisit
 
 Tokenised no-login upload links are currently long random tokens with due-date context only. A production decision is still needed on expiry, single-use/reusable behaviour, and whether a second factor is required.
+
+MTD quarterly capture requires a bank statement or MTD-format CSV upload before a period can be posted to the ledger — this is what satisfies the underlying transaction-level compliance requirement. Manual category-figure entry exists only as a fallback layered on top of a posted period; it never substitutes for the mandatory statement/CSV. Whether practices will actually get clients to upload real statements every quarter, versus reverting to a bridging-spreadsheet-style summary, is a real open product question this prototype doesn't resolve.
