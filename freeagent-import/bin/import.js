@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { uploadStatement } from '../src/statement.js';
 import { explainTransaction } from '../src/explanations.js';
+import { apiRequest } from '../src/client.js';
 
 const filePath = process.argv[2];
 if (!filePath) {
@@ -21,16 +22,21 @@ const statementTransactions = input.transactions.map(
 );
 
 console.log(`Uploading statement (${statementTransactions.length} transactions)...`);
-const result = await uploadStatement(input.bankAccount, statementTransactions);
-const created = result.bank_transactions ?? [];
-console.log(`Created ${created.length} bank transaction(s).`);
+// The statement endpoint responds 200 with an empty body on success, so the
+// created transactions have to be looked up separately to match against.
+await uploadStatement(input.bankAccount, statementTransactions);
+
+const { bank_transactions: created = [] } = await apiRequest(
+  `/bank_transactions?bank_account=${encodeURIComponent(input.bankAccount)}`
+);
 
 function findMatch(source) {
   return created.find(
     (t) =>
       t.dated_on === source.dated_on &&
       Number(t.amount) === Number(source.amount) &&
-      t.description === source.description
+      // FreeAgent appends "//DEBIT/" or "//CREDIT/" to the description we sent.
+      t.description.startsWith(source.description)
   );
 }
 
@@ -40,6 +46,11 @@ for (const source of input.transactions) {
   const match = findMatch(source);
   if (!match) {
     console.warn(`No matching created transaction for "${source.description}" on ${source.dated_on} — skipping explanation.`);
+    continue;
+  }
+
+  if (Number(match.unexplained_amount) === 0) {
+    console.log(`"${source.description}" is already fully explained — skipping.`);
     continue;
   }
 

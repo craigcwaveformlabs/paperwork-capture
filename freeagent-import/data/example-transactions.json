@@ -1,5 +1,5 @@
 {
-  "bankAccount": "https://api.sandbox.freeagent.com/v2/bank_accounts/1",
+  "bankAccount": "https://api.sandbox.freeagent.com/v2/bank_accounts/50271",
   "transactions": [
     {
       "dated_on": "2026-07-05",
@@ -13,22 +13,21 @@
       "description": "Other income - consulting",
       "amount": 350.00,
       "transaction_type": "credit",
-      "category": "https://api.sandbox.freeagent.com/v2/categories/002"
+      "category": "https://api.sandbox.freeagent.com/v2/categories/001"
     },
     {
       "dated_on": "2026-07-18",
       "description": "Professional fees - accountant",
       "amount": -180.00,
       "transaction_type": "debit",
-      "category": "https://api.sandbox.freeagent.com/v2/categories/240",
-      "receipt": "./data/receipts/accountant-invoice.pdf"
+      "category": "https://api.sandbox.freeagent.com/v2/categories/292"
     },
     {
       "dated_on": "2026-07-22",
       "description": "Software subscription",
       "amount": -29.99,
       "transaction_type": "debit",
-      "category": "https://api.sandbox.freeagent.com/v2/categories/247"
+      "category": "https://api.sandbox.freeagent.com/v2/categories/269"
     }
   ]
 }
