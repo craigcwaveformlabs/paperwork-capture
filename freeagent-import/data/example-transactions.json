@@ -1,0 +1,34 @@
+{
+  "bankAccount": "https://api.sandbox.freeagent.com/v2/bank_accounts/1",
+  "transactions": [
+    {
+      "dated_on": "2026-07-05",
+      "description": "Turnover - Acme Ltd invoice",
+      "amount": 2400.00,
+      "transaction_type": "credit",
+      "category": "https://api.sandbox.freeagent.com/v2/categories/001"
+    },
+    {
+      "dated_on": "2026-07-12",
+      "description": "Other income - consulting",
+      "amount": 350.00,
+      "transaction_type": "credit",
+      "category": "https://api.sandbox.freeagent.com/v2/categories/002"
+    },
+    {
+      "dated_on": "2026-07-18",
+      "description": "Professional fees - accountant",
+      "amount": -180.00,
+      "transaction_type": "debit",
+      "category": "https://api.sandbox.freeagent.com/v2/categories/240",
+      "receipt": "./data/receipts/accountant-invoice.pdf"
+    },
+    {
+      "dated_on": "2026-07-22",
+      "description": "Software subscription",
+      "amount": -29.99,
+      "transaction_type": "debit",
+      "category": "https://api.sandbox.freeagent.com/v2/categories/247"
+    }
+  ]
+}
