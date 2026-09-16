@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Mulish", system-ui, sans-serif; color: #1a2530; background: #eef1f9; -webkit-font-smoothing: antialiased; }
+  a { color: #1a6ec4; text-decoration: none; }
+  a:hover { color: #12508f; }
+  .num { font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-thumb { background: #cdd4de; border-radius: 6px; border: 3px solid #eef1f9; }
+  input[type=range] { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 3px; background: #d7dce4; outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 17px; height: 17px; border-radius: 50%; background: #4a7d2b; cursor: pointer; border: 3px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.28); }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column; background: #eef1f9;">
+
+  <div style="display: flex; align-items: center; gap: 18px; padding: 9px 26px; background: #2b3844; color: #cdd4de; font-size: 13.5px;">
+    <div style="flex: 1;"></div>
+    <span>Need a hand getting set up on your Practice Dashboard?</span>
+    <button style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #1a6ec4; background: #fff; border: none; border-radius: 6px; padding: 7px 13px; cursor: pointer;">Getting started</button>
+  </div>
+
+  <nav style="display: flex; align-items: stretch; background: #4a7d2b; height: 54px; padding: 0 18px;">
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+      <a href="javascript:void(0)" onClick="{{ n.onClick }}" style="display: flex; align-items: center; padding: 0 20px; color: #fff; font-size: 16px; font-weight: 600; background: {{ n.bg }};">{{ n.label }}</a>
+    </sc-for>
+    <div style="flex: 1;"></div>
+    <div style="display: flex; align-items: center; gap: 18px; color: #fff; padding-right: 6px;">
+      <span style="font-size: 19px; position: relative;">🔔</span>
+      <span style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 6px;">Northwood Accountancy <span style="font-size: 10px;">▾</span></span>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <sc-if value="{{ showPageHeader }}" hint-placeholder-val="{{ true }}">
+  <div style="background: #fff; border-bottom: 1px solid #e2e7f0;">
+    <div style="max-width: 1440px; width: 100%; margin: 0 auto; padding: 22px 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.01em; color: #1a2530;">{{ pageTitle }}</h1>
+      <sc-if value="{{ hdrClients }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; gap: 12px;">
+          <button style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 17px; cursor: pointer;">Manage groups</button>
+          <button style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 8px; padding: 10px 17px; cursor: pointer;">Add client ▾</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hdrInsights }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 12px;">
+          <button onClick="{{ goAsk }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #14310a; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 17px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">✦ Insights</button>
+          <button onClick="{{ openColPanel }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 17px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">▦ Customise view</button>
+          <button style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 17px; cursor: pointer;">Export</button>
+          <button onClick="{{ openEditor }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 8px; padding: 10px 17px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">⚙ Adjust score weights</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hdrAlerts }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 12px;">
+          <button onClick="{{ goInsights }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 17px; cursor: pointer;">Back to Insights</button>
+          <button onClick="{{ openAlertNew }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 8px; padding: 10px 17px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">+ New alert rule</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hdrAsk }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 12px;">
+          <button onClick="{{ goInsights }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 17px; cursor: pointer;">Back to Insights</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- CLIENTS -->
+  <sc-if value="{{ showClients }}" hint-placeholder-val="{{ true }}">
+  <main style="flex: 1; max-width: 1440px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+    <!-- MTD summary strip -->
+    <div style="display: flex; align-items: center; gap: 18px; padding: 15px 20px; margin-bottom: 16px; background: #f7fbff; border: 1px solid #d7e3ee; border-left: 5px solid #2c6ca8; border-radius: 12px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 11px;">
+        <div style="width: 40px; height: 40px; border-radius: 11px; background: #e6eff8; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        </div>
+        <div>
+          <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #2c6ca8;">Making Tax Digital</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a2530; margin-top: 1px;">Q1 2026-27 quarterly update · due 7 Aug 2026</div>
+        </div>
+      </div>
+      <div style="flex: 1;"></div>
+      <div style="display: flex; align-items: center; gap: 22px;">
+        <div><span class="num" style="font-size: 20px; font-weight: 800; color: #1a2530;">{{ mtdDue }}</span> <span style="font-size: 13px; color: #5f6b78;">updates due</span></div>
+        <div><span class="num" style="font-size: 20px; font-weight: 800; color: #b0781a;">{{ mtdNeedData }}</span> <span style="font-size: 13px; color: #5f6b78;">awaiting data</span></div>
+        <a href="javascript:void(0)" onClick="{{ goMtdReview }}" style="display: inline-flex; align-items: baseline; gap: 6px;"><span class="num" style="font-size: 20px; font-weight: 800; color: #3a8b3b;">{{ mtdReady }}</span> <span style="font-size: 13px; font-weight: 700;">ready to review →</span></a>
+      </div>
+    </div>
+
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; box-shadow: 0 1px 2px rgba(20,40,70,.04);">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid #eceff3; flex-wrap: wrap;">
+        <select value="{{ mgr }}" onChange="{{ onMgr }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ mgrOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ typeFilter }}" onChange="{{ onType }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ typeOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ clientFilter }}" onChange="{{ onClientFilter }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ clientOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <div style="flex: 1;"></div>
+        <div style="position: relative;">
+          <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px 9px 32px; width: 230px;">
+          <span style="position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #8a94a1; font-size: 15px;">⌕</span>
+        </div>
+        <button style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: none; border: none; cursor: pointer; padding: 8px 6px;">Search</button>
+      </div>
+      <!-- bulk action bar -->
+      <sc-if value="{{ mtdBarShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 12px 20px; border-bottom: 1px solid #cfe0d0; background: #eef8ea;">
+          <span style="font-size: 14.5px; font-weight: 700; color: #2a5d2c;"><span class="num">{{ mtdSelCount }}</span> {{ mtdClientWord }} selected</span>
+          <div style="flex: 1;"></div>
+          <button onClick="{{ goMtdRequest }}" style="font-family: 'Mulish', sans-serif; font-size: 14.5px; font-weight: 700; color: #fff; background: #4e9d3a; border: none; border-radius: 7px; padding: 10px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 2H2v20h20V6l-4-4z"></path><path d="M14 2v6h6"></path></svg>
+            Request quarterly data
+          </button>
+          <a href="javascript:void(0)" onClick="{{ mtdClear }}" style="font-size: 14px; font-weight: 700;">Clear</a>
+        </div>
+      </sc-if>
+      <div style="display: grid; grid-template-columns: 44px 2fr 1.5fr 1.4fr 1.4fr 1.4fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid #eceff3; align-items: center;">
+        <div><input type="checkbox" checked="{{ mtdAllChecked }}" onChange="{{ mtdToggleAll }}" style="width: 16px; height: 16px; cursor: pointer;"></div>
+        <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Name</div>
+        <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Account manager</div>
+        <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Bookkeeping</div>
+        <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Compliance</div>
+        <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Business health</div>
+        <div></div>
+      </div>
+      <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+        <div style="display: grid; grid-template-columns: 44px 2fr 1.5fr 1.4fr 1.4fr 1.4fr 0.8fr; padding: 17px 20px; border-bottom: 1px solid #f0f2f6; align-items: center; background: {{ row.mtdRowBg }};" style-hover="background: #f8fafc;">
+          <div><input type="checkbox" checked="{{ row.mtdChecked }}" onChange="{{ row.mtdToggle }}" style="width: 16px; height: 16px; cursor: pointer;"></div>
+          <div>
+            <a href="javascript:void(0)" onClick="{{ row.open }}" style="font-size: 16px; font-weight: 700; color: #1a6ec4;">{{ row.name }}</a>
+            <div style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ row.type }} · {{ row.vat }}</div>
+          </div>
+          <div style="font-size: 15px; color: #1a6ec4; font-weight: 600;">{{ row.manager }}</div>
+          <div onClick="{{ row.peekBk }}" title="Quick peek" style="cursor: pointer;"><span style="display: inline-block; font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 20px; background: {{ row.mBkBg }}; color: {{ row.mBkC }};">{{ row.score }} · {{ row.mBkLabel }}</span></div>
+          <div onClick="{{ row.peekCo }}" title="Quick peek" style="cursor: pointer;"><span style="display: inline-block; font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 20px; background: {{ row.mCoBg }}; color: {{ row.mCoC }};">{{ row.mCoLabel }}</span></div>
+          <div onClick="{{ row.peekBiz }}" title="Quick peek" style="cursor: pointer;"><span style="display: inline-block; font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 20px; background: {{ row.mBizBg }}; color: {{ row.mBizC }};">{{ row.mBizLabel }}</span></div>
+          <div style="text-align: right;"><a href="javascript:void(0)" onClick="{{ row.open }}" style="display: inline-block; font-size: 14px; font-weight: 700; color: #1a6ec4; border: 1px solid #c3ccd6; border-radius: 7px; padding: 7px 13px;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">View →</a></div>
+        </div>
+      </sc-for>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 16px 20px;">
+        <select style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 8px 10px;"><option>25</option></select>
+        <span style="font-size: 15px; color: #5f6b78;">per page · {{ rows.length }} clients</span>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- INSIGHTS -->
+  <sc-if value="{{ showInsights }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1440px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+
+    <!-- Smart Collect banner -->
+    <sc-if value="{{ smartCollectHasItems }}" hint-placeholder-val="{{ true }}">
+    <a href="javascript:void(0)" onClick="{{ goSmartCollectAll }}" style="display: flex; align-items: center; gap: 16px; background: #fff; border: 1px solid #f0d9a8; border-left: 5px solid #e6a417; border-radius: 12px; padding: 15px 20px; margin-bottom: 16px;" style-hover="border-color: #e6a417;">
+      <div style="width: 42px; height: 42px; border-radius: 11px; background: #fbf1d8; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b0781a" stroke-width="2"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2-3 2z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path></svg>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #b0781a;">Smart Collect</div>
+        <div style="font-size: 15.5px; font-weight: 700; color: #1a2530; margin-top: 2px;"><span class="num">{{ smartCollectTotal }}</span> transactions across <span class="num">{{ smartCollectClientCount }}</span> clients are missing receipts</div>
+      </div>
+      <span style="font-size: 14px; font-weight: 700; color: #1a6ec4; white-space: nowrap;">Review in Smart Collect →</span>
+    </a>
+    </sc-if>
+
+    <!-- summary tiles -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+      <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: 15px 18px;">
+        <div style="font-size: 13px; color: #5f6b78; font-weight: 600;">Average health score</div>
+        <div class="num" style="font-size: 30px; font-weight: 800; margin-top: 3px; color: {{ summary.avgColor }};">{{ summary.avgScore }}<span style="font-size: 15px; color: #9aa4b0; font-weight: 600;"> / 100</span></div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: 15px 18px;">
+        <div style="font-size: 13px; color: #5f6b78; font-weight: 600;">Needs attention</div>
+        <div class="num" style="font-size: 30px; font-weight: 800; margin-top: 3px; color: #c23b3b;">{{ summary.attention }}<span style="font-size: 15px; color: #9aa4b0; font-weight: 600;"> clients</span></div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: 15px 18px;">
+        <div style="font-size: 13px; color: #5f6b78; font-weight: 600;">Overdue obligations</div>
+        <div class="num" style="font-size: 30px; font-weight: 800; margin-top: 3px; color: #c23b3b;">{{ summary.overdue }}</div>
+      </div>
+      <a href="javascript:void(0)" onClick="{{ goAlerts }}" style="background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: 15px 18px; display: flex; flex-direction: column; justify-content: space-between;" style-hover="border-color: #b8c0cc;">
+        <div style="font-size: 13px; color: #5f6b78; font-weight: 600;">Active alerts</div>
+        <div class="num" style="font-size: 30px; font-weight: 800; margin-top: 3px; color: #1a2530;">{{ alertsTotal }}</div>
+        <div style="font-size: 13.5px; color: #1a6ec4; font-weight: 700; margin-top: 2px;">View all alerts →</div>
+      </a>
+    </div>
+
+    <!-- view tabs -->
+    <div style="display: flex; align-items: center; gap: 30px; border-bottom: 1px solid #dbe1ea; margin-bottom: 20px;">
+      <sc-for list="{{ viewTabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.onClick }}" style="font-family: 'Mulish', sans-serif; font-size: 16px; font-weight: {{ t.weight }}; color: {{ t.color }}; background: none; border: none; cursor: pointer; padding: 4px 2px 13px; margin-bottom: -1px; border-bottom: 3px solid {{ t.underline }};">{{ t.label }}</button>
+      </sc-for>
+    </div>
+
+    <!-- card -->
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; box-shadow: 0 1px 2px rgba(20,40,70,.04);">
+      <!-- filter row -->
+      <div style="display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid #eceff3; flex-wrap: wrap;">
+        
+        <select value="{{ typeFilter }}" onChange="{{ onType }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ typeOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ statusFilter }}" onChange="{{ onStatus }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ statusOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ mgr }}" onChange="{{ onMgr }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ mgrOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ sortKey }}" onChange="{{ onSortSel }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px;">
+          <sc-for list="{{ sortOptions }}" as="o" hint-placeholder-count="5"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <div style="flex: 1;"></div>
+        <div style="position: relative;">
+          <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="" style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 9px 12px 9px 32px; width: 210px;">
+          <span style="position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #8a94a1; font-size: 15px;">⌕</span>
+        </div>
+        <button style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: none; border: none; cursor: pointer; padding: 8px 6px;">Search</button>
+      </div>
+
+      <!-- OVERVIEW view -->
+      <sc-if value="{{ vOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: 2fr 1.3fr 1.4fr 1.7fr 1.9fr 1.7fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid #eceff3;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Name</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Account manager</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Health score</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Bookkeeping</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Compliance</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Business health</div>
+          <div></div>
+        </div>
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+          <div style="display: grid; grid-template-columns: 2fr 1.3fr 1.4fr 1.7fr 1.9fr 1.7fr 0.8fr; padding: 17px 20px; border-bottom: 1px solid #f0f2f6; align-items: center;" style-hover="background: #f8fafc;">
+            <div>
+              <a href="javascript:void(0)" onClick="{{ row.open }}" style="font-size: 16px; font-weight: 700; color: #1a6ec4;">{{ row.name }}</a>
+              <div style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ row.type }} · {{ row.vat }}</div>
+            </div>
+            <div style="font-size: 15px; color: #1a6ec4; font-weight: 600;">{{ row.manager }}</div>
+            <div style="position: relative; width: 62px; height: 37px;">
+              <svg width="62" height="37" viewBox="0 0 62 37">
+                <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="#edf0f4" stroke-width="6" stroke-linecap="round"></path>
+                <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="{{ row.scoreColor }}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{{ row.gaugeDash }}"></path>
+              </svg>
+              <span class="num" style="position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-weight: 800; font-size: 16px; color: {{ row.scoreColor }};">{{ row.score }}</span>
+            </div>
+            <div onClick="{{ row.peekBk }}" title="Quick peek" style="cursor: pointer;">
+              <div style="display: inline-flex; align-items: center; gap: 7px; font-weight: 700; font-size: 15px; color: {{ row.unexColor }};"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{ row.unexColor }};"></span>{{ row.unexplained }} unexplained</div>
+              <div class="num" style="font-size: 13px; color: #5f6b78; margin-top: 1px;">{{ row.unexVal }} · {{ row.feedLabel }} feed</div>
+            </div>
+            <div onClick="{{ row.peekCo }}" title="Quick peek" style="cursor: pointer;">
+              <span style="display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: {{ row.compBg }}; color: {{ row.compColor }};">{{ row.compStatus }}</span>
+              <div style="font-size: 13px; color: #5f6b78; margin-top: 3px;">{{ row.compLabel }}</div>
+            </div>
+            <div onClick="{{ row.peekBiz }}" title="Quick peek" style="cursor: pointer;">
+              <div class="num" style="font-weight: 700; font-size: 15.5px; color: {{ row.cashColor }};">{{ row.cash }}</div>
+              <div class="num" style="font-size: 13px; color: #5f6b78;">{{ row.debtorDays }}d debtors · {{ row.bizNote }}</div>
+            </div>
+            <div style="text-align: right;"><a href="javascript:void(0)" onClick="{{ row.open }}" style="display: inline-block; font-size: 14px; font-weight: 700; color: #1a6ec4; border: 1px solid #c3ccd6; border-radius: 7px; padding: 7px 13px;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">View →</a></div>
+          </div>
+        </sc-for>
+      </sc-if>
+
+      <!-- BOOKKEEPING view -->
+      <sc-if value="{{ vBookkeeping }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: 1.7fr 1.1fr 1.2fr 1.4fr 1fr 1fr 1.2fr 1.2fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid #eceff3;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Name</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Account manager</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Health score</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Unexplained</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Bank feed</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Reconciled</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Open items</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Missing receipts</div>
+          <div></div>
+        </div>
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+          <div style="display: grid; grid-template-columns: 1.7fr 1.1fr 1.2fr 1.4fr 1fr 1fr 1.2fr 1.2fr 0.8fr; padding: 17px 20px; border-bottom: 1px solid #f0f2f6; align-items: center;" style-hover="background: #f8fafc;">
+            <div>
+              <a href="javascript:void(0)" onClick="{{ row.open }}" style="font-size: 16px; font-weight: 700; color: #1a6ec4;">{{ row.name }}</a>
+              <div style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ row.type }}</div>
+            </div>
+            <div style="font-size: 15px; color: #1a6ec4; font-weight: 600;">{{ row.manager }}</div>
+            <div style="position: relative; width: 62px; height: 37px;">
+              <svg width="62" height="37" viewBox="0 0 62 37">
+                <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="#edf0f4" stroke-width="6" stroke-linecap="round"></path>
+                <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="{{ row.scoreColor }}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{{ row.gaugeDash }}"></path>
+              </svg>
+              <span class="num" style="position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-weight: 800; font-size: 16px; color: {{ row.scoreColor }};">{{ row.score }}</span>
+            </div>
+            <div>
+              <div style="display: inline-flex; align-items: center; gap: 7px; font-weight: 700; font-size: 15px; color: {{ row.unexColor }};"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{ row.unexColor }};"></span>{{ row.unexplained }} items</div>
+              <div class="num" style="font-size: 13px; color: #5f6b78; margin-top: 1px;">{{ row.unexVal }} · {{ row.unexAge }}</div>
+            </div>
+            <div><span style="display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: {{ row.feedBg }}; color: {{ row.feedColor }};">{{ row.feedLabel }}</span></div>
+            <div class="num" style="font-size: 15px; font-weight: 600; color: {{ row.reconColor }};">{{ row.reconLabel }}</div>
+            <div class="num" style="font-size: 14.5px; color: #1a2530;">{{ row.openInv }} inv · {{ row.openBills }} bills</div>
+            <div class="num" style="display: inline-flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; color: {{ row.receiptsColor }};"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{ row.receiptsColor }};"></span>{{ row.receipts }} missing</div>
+            <div style="text-align: right;"><a href="javascript:void(0)" onClick="{{ row.open }}" style="display: inline-block; font-size: 14px; font-weight: 700; color: #1a6ec4; border: 1px solid #c3ccd6; border-radius: 7px; padding: 7px 13px;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">View →</a></div>
+          </div>
+        </sc-for>
+      </sc-if>
+
+      <!-- COMPLIANCE view -->
+      <sc-if value="{{ vCompliance }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: 1.9fr 1.3fr 1.7fr 2fr 1.3fr 1.1fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid #eceff3;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Name</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Account manager</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Next obligation</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Due</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Est. liability</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Status</div>
+          <div></div>
+        </div>
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+          <div style="display: grid; grid-template-columns: 1.9fr 1.3fr 1.7fr 2fr 1.3fr 1.1fr 0.8fr; padding: 17px 20px; border-bottom: 1px solid #f0f2f6; align-items: center;" style-hover="background: #f8fafc;">
+            <div>
+              <a href="javascript:void(0)" onClick="{{ row.open }}" style="font-size: 16px; font-weight: 700; color: #1a6ec4;">{{ row.name }}</a>
+              <div style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ row.vat }}</div>
+            </div>
+            <div style="font-size: 15px; color: #1a6ec4; font-weight: 600;">{{ row.manager }}</div>
+            <div style="font-size: 15px; font-weight: 600; color: #1a2530;">{{ row.compTitle }}</div>
+            <div class="num" style="font-size: 14px; color: #5f6b78;">{{ row.compDue }}</div>
+            <div class="num" style="font-size: 15px; font-weight: 700; color: #1a2530;">{{ row.compLiab }}</div>
+            <div><span style="display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: {{ row.compBg }}; color: {{ row.compColor }};">{{ row.compStatus }}</span></div>
+            <div style="text-align: right;"><a href="javascript:void(0)" onClick="{{ row.open }}" style="display: inline-block; font-size: 14px; font-weight: 700; color: #1a6ec4; border: 1px solid #c3ccd6; border-radius: 7px; padding: 7px 13px;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">View →</a></div>
+          </div>
+        </sc-for>
+      </sc-if>
+
+      <!-- BUSINESS view -->
+      <sc-if value="{{ vBusiness }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: 1.8fr 1.1fr 1.1fr 1.1fr 1.1fr 1fr 1.3fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid #eceff3;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Name</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Account manager</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Revenue</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Net profit</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Cash position</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Debtor days</div>
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Overdue AR</div>
+          <div></div>
+        </div>
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+          <div style="display: grid; grid-template-columns: 1.8fr 1.1fr 1.1fr 1.1fr 1.1fr 1fr 1.3fr 0.8fr; padding: 17px 20px; border-bottom: 1px solid #f0f2f6; align-items: center;" style-hover="background: #f8fafc;">
+            <div>
+              <a href="javascript:void(0)" onClick="{{ row.open }}" style="font-size: 16px; font-weight: 700; color: #1a6ec4;">{{ row.name }}</a>
+              <div style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ row.type }}</div>
+            </div>
+            <div style="font-size: 15px; color: #1a6ec4; font-weight: 600;">{{ row.manager }}</div>
+            <div class="num" style="font-size: 15px; font-weight: 700; color: #1a2530;">{{ row.rev }}</div>
+            <div class="num" style="font-size: 15px; font-weight: 700; color: {{ row.netColor }};">{{ row.netProfit }}</div>
+            <div class="num" style="font-size: 15px; font-weight: 700; color: {{ row.cashColor }};">{{ row.cash }}</div>
+            <div class="num" style="font-size: 15px; font-weight: 600; color: {{ row.debtorColor }};">{{ row.debtorDays }}d</div>
+            <div class="num" style="font-size: 14.5px; font-weight: 600; color: {{ row.ovColor }};">{{ row.ovLabel }}</div>
+            <div style="text-align: right;"><a href="javascript:void(0)" onClick="{{ row.open }}" style="display: inline-block; font-size: 14px; font-weight: 700; color: #1a6ec4; border: 1px solid #c3ccd6; border-radius: 7px; padding: 7px 13px;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">View →</a></div>
+          </div>
+        </sc-for>
+      </sc-if>
+
+      <!-- CUSTOM view -->
+      <sc-if value="{{ vCustom }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid #eceff3; background: #f8fafc;">
+          <span style="font-size: 13.5px; color: #5f6b78;">Custom view · {{ customColumns.length }} columns</span>
+          <div style="flex: 1;"></div>
+          <button onClick="{{ openColPanel }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 7px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px;" style-hover="border-color: #1a6ec4;">▦ Edit columns</button>
+        </div>
+        <div style="display: grid; grid-template-columns: {{ customGrid }}; padding: 14px 20px; border-bottom: 1px solid #eceff3;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">Name</div>
+          <sc-for list="{{ customColumns }}" as="c" hint-placeholder-count="5">
+            <div style="font-size: 15.5px; font-weight: 700; color: #1a6ec4;">{{ c.label }}</div>
+          </sc-for>
+          <div></div>
+        </div>
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+          <div style="display: grid; grid-template-columns: {{ customGrid }}; padding: 17px 20px; border-bottom: 1px solid #f0f2f6; align-items: center;" style-hover="background: #f8fafc;">
+            <div>
+              <a href="javascript:void(0)" onClick="{{ row.open }}" style="font-size: 16px; font-weight: 700; color: #1a6ec4;">{{ row.name }}</a>
+              <div style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ row.type }}</div>
+            </div>
+            <sc-for list="{{ row.customCells }}" as="cell" hint-placeholder-count="5">
+              <div>
+                <sc-if value="{{ cell.isText }}" hint-placeholder-val="{{ true }}">
+                  <span class="num" style="font-size: 15px; font-weight: {{ cell.weight }}; color: {{ cell.color }};">{{ cell.main }}</span>
+                </sc-if>
+                <sc-if value="{{ cell.isPill }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: inline-block; font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 20px; background: {{ cell.bg }}; color: {{ cell.color }};">{{ cell.main }}</span>
+                </sc-if>
+                <sc-if value="{{ cell.isScore }}" hint-placeholder-val="{{ false }}">
+                  <div style="position: relative; width: 62px; height: 37px;">
+                    <svg width="62" height="37" viewBox="0 0 62 37">
+                      <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="#edf0f4" stroke-width="6" stroke-linecap="round"></path>
+                      <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="{{ cell.color }}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{{ cell.dash }}"></path>
+                    </svg>
+                    <span class="num" style="position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-weight: 800; font-size: 16px; color: {{ cell.color }};">{{ cell.main }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ cell.isDot }}" hint-placeholder-val="{{ false }}">
+                  <div>
+                    <div style="display: inline-flex; align-items: center; gap: 7px; font-weight: 700; font-size: 15px; color: {{ cell.color }};"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{ cell.color }};"></span>{{ cell.main }}</div>
+                    <div class="num" style="font-size: 13px; color: #5f6b78; margin-top: 1px;">{{ cell.sub }}</div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+            <div style="text-align: right;"><a href="javascript:void(0)" onClick="{{ row.open }}" style="display: inline-block; font-size: 14px; font-weight: 700; color: #1a6ec4; border: 1px solid #c3ccd6; border-radius: 7px; padding: 7px 13px;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">View →</a></div>
+          </div>
+        </sc-for>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 16px 20px;">
+        <select style="font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 8px 10px;"><option>25</option></select>
+        <span style="font-size: 15px; color: #5f6b78;">per page · {{ rows.length }} clients shown</span>
+      </div>
+    </div>
+    <p style="margin: 16px 2px 0; font-size: 13px; color: #8a94a1;">Sample data for illustration. Signals trace to FreeAgent API resources via the Accountancy Practice API.</p>
+  </main>
+  </sc-if>
+
+  <!-- CLIENT DRILL-DOWN -->
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1240px; width: 100%; margin: 0 auto; padding: 22px 26px 60px;">
+    <a href="javascript:void(0)" onClick="{{ backToOverview }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #1a6ec4; margin-bottom: 16px;">‹ Back to list</a>
+
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 24px 26px; display: flex; align-items: center; gap: 26px; margin-bottom: 18px;">
+      <div style="position: relative; width: 98px; height: 98px; flex-shrink: 0;">
+        <svg width="98" height="98" viewBox="0 0 98 98">
+          <circle cx="49" cy="49" r="42" fill="none" stroke="#edf0f4" stroke-width="9"></circle>
+          <circle cx="49" cy="49" r="42" fill="none" stroke="{{ cl.scoreColor }}" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ cl.ring }}" transform="rotate(-90 49 49)"></circle>
+        </svg>
+        <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div class="num" style="font-weight: 800; font-size: 27px; color: {{ cl.scoreColor }}; line-height: 1;">{{ cl.score }}</div>
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #8a94a1; font-weight: 700;">health</div>
+        </div>
+      </div>
+      <div style="flex: 1;">
+        <div style="display: flex; align-items: center; gap: 11px;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em;">{{ cl.name }}</h1>
+          <span style="font-size: 12px; font-weight: 700; padding: 3px 11px; border-radius: 20px; background: {{ cl.statusBg }}; color: {{ cl.statusColor }};">{{ cl.status }}</span>
+          <div style="flex: 1;"></div>
+          <button onClick="{{ cl.ownerView }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #eef4fb; border: 1px solid #d3e2f2; border-radius: 8px; padding: 10px 16px; cursor: pointer;">Owner view</button>
+          <button onClick="{{ cl.goToClient }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 8px; padding: 10px 17px; cursor: pointer;">Go to client ›</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 26px; margin-top: 13px;">
+          <sc-for list="{{ cl.meta }}" as="m" hint-placeholder-count="4">
+            <div>
+              <div style="font-size: 12.5px; color: #8a94a1; font-weight: 600;">{{ m.k }}</div>
+              <div style="font-size: 15px; font-weight: 700; margin-top: 2px;">{{ m.v }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; align-items: start;">
+      <section style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 22px 24px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px;">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 800;">Bookkeeping health</h2>
+          <span class="num" style="font-weight: 800; font-size: 16px; color: {{ cl.scoreColor }};">{{ cl.score }}/100</span>
+        </div>
+        <p style="margin: 0 0 12px; font-size: 14px; color: #5f6b78;">Weighted score from {{ cl.checks.length }} configurable checks. <a href="javascript:void(0)" onClick="{{ openEditor }}">Adjust weights</a></p>
+        <sc-for list="{{ cl.checks }}" as="ck" hint-placeholder-count="8">
+          <div style="padding: 12px 0; border-top: 1px solid #f0f2f6;">
+            <div style="display: flex; align-items: center; gap: 11px;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: {{ ck.color }}; flex-shrink: 0;"></span>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                  <span style="font-weight: 700; font-size: 14.5px;">{{ ck.label }}</span>
+                  <span class="num" style="font-size: 12px; color: #9aa4b0; font-weight: 600;">weight {{ ck.weight }}</span>
+                </div>
+                <div style="font-size: 13.5px; color: #5f6b78;">{{ ck.signal }}</div>
+                <sc-if value="{{ ck.hasAction }}" hint-placeholder-val="{{ false }}"><a href="javascript:void(0)" onClick="{{ ck.onAction }}" style="display: inline-block; margin-top: 5px; font-size: 13px; font-weight: 700; color: #1a6ec4; text-decoration: none;">→ {{ ck.action }}</a></sc-if>
+              </div>
+              <div style="position: relative; width: 62px; height: 37px; flex-shrink: 0;">
+                <svg width="62" height="37" viewBox="0 0 62 37">
+                  <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="#edf0f4" stroke-width="6" stroke-linecap="round"></path>
+                  <path d="M7 34 A24 24 0 0 1 55 34" fill="none" stroke="{{ ck.color }}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{{ ck.dash }}"></path>
+                </svg>
+                <span class="num" style="position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-weight: 800; font-size: 15px; color: {{ ck.color }};">{{ ck.sub }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </section>
+
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <section style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 22px 24px;">
+          <h2 style="margin: 0 0 12px; font-size: 18px; font-weight: 800;">Compliance timeline</h2>
+          <sc-for list="{{ cl.obligations }}" as="ob" hint-placeholder-count="4">
+            <div style="display: flex; gap: 13px; padding: 12px 0; border-top: 1px solid #f0f2f6;">
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: {{ ob.color }}; margin-top: 5px; flex-shrink: 0;"></span>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-weight: 700; font-size: 14.5px;">{{ ob.label }}</span>
+                  <span style="font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px; background: {{ ob.bg }}; color: {{ ob.color }};">{{ ob.status }}</span>
+                </div>
+                <div class="num" style="font-size: 13.5px; color: #5f6b78; margin-top: 2px;">{{ ob.due }} · {{ ob.liab }}</div>
+                <sc-if value="{{ ob.hasAction }}" hint-placeholder-val="{{ false }}"><a href="javascript:void(0)" style="display: inline-block; margin-top: 5px; font-size: 13px; font-weight: 700; color: #1a6ec4; text-decoration: none;">→ {{ ob.action }}</a></sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </section>
+
+        <section style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 22px 24px;">
+          <h2 style="margin: 0 0 14px; font-size: 18px; font-weight: 800;">Business health</h2>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px;">
+            <sc-for list="{{ cl.biz }}" as="b" hint-placeholder-count="6">
+              <div>
+                <div style="font-size: 12.5px; color: #8a94a1; font-weight: 600;">{{ b.k }}</div>
+                <div class="num" style="font-size: 19px; font-weight: 800; margin-top: 2px; color: {{ b.color }};">{{ b.v }}</div>
+                <div style="font-size: 12.5px; color: #8a94a1;">{{ b.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </div>
+    </div>
+    <p style="margin: 16px 2px 0; font-size: 13px; color: #8a94a1;">Sample data for illustration.</p>
+  </main>
+  </sc-if>
+
+  <!-- PRACTICE -->
+  <sc-if value="{{ showPractice }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1440px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 70px 40px; text-align: center;">
+      <div style="width: 52px; height: 52px; border-radius: 14px; border: 2px solid #dbe1ea; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; color: #b8c0cc; font-size: 24px; font-weight: 800;">P</div>
+      <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #1a2530;">Practice settings</h2>
+      <p style="margin: 8px auto 0; max-width: 460px; font-size: 15px; color: #5f6b78; line-height: 1.5;">Your practice profile, team, groups and account managers will live here. This area is part of the concept and isn't built out yet.</p>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- TAXES -->
+  <sc-if value="{{ showTaxes }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1440px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 70px 40px; text-align: center;">
+      <div style="width: 52px; height: 52px; border-radius: 14px; border: 2px solid #dbe1ea; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; color: #b8c0cc; font-size: 24px; font-weight: 800;">£</div>
+      <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #1a2530;">Tax tools</h2>
+      <p style="margin: 8px auto 0; max-width: 460px; font-size: 15px; color: #5f6b78; line-height: 1.5;">VAT, MTD for Income Tax, Corporation Tax and Self Assessment workflows will live here. This area is part of the concept and isn't built out yet.</p>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- PARTNER ZONE -->
+  <sc-if value="{{ showPartner }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1440px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 70px 40px; text-align: center;">
+      <div style="width: 52px; height: 52px; border-radius: 14px; border: 2px solid #dbe1ea; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; color: #b8c0cc; font-size: 24px; font-weight: 800;">◆</div>
+      <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #1a2530;">Partner resources</h2>
+      <p style="margin: 8px auto 0; max-width: 460px; font-size: 15px; color: #5f6b78; line-height: 1.5;">Accreditation status, product updates, events and marketing resources will live here. This area is part of the concept and isn't built out yet.</p>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ALERTS -->
+  <sc-if value="{{ showAlerts }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1440px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 18px;">
+      <p style="margin: 0; font-size: 15px; color: #5f6b78;"><span class="num" style="font-weight: 800; color: #1a2530;">{{ alertsTotal }}</span> active alerts across <span class="num" style="font-weight: 800; color: #1a2530;">{{ alertsActiveRules }}</span> rules · visible to all account managers.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      <sc-for list="{{ alertCards }}" as="a" hint-placeholder-count="6">
+        <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(20,40,70,.04);">
+          <div style="height: 4px; background: {{ a.topBar }};"></div>
+          <div style="padding: 18px 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="display: flex; align-items: start; justify-content: space-between; gap: 12px;">
+              <div>
+                <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #8a94a1;">{{ a.type }}</div>
+                <h3 style="margin: 3px 0 0; font-size: 16.5px; font-weight: 800; color: #1a2530; line-height: 1.25;">{{ a.title }}</h3>
+              </div>
+              <button onClick="{{ a.onToggle }}" style="flex-shrink: 0; width: 40px; height: 22px; border-radius: 12px; border: none; cursor: pointer; background: {{ a.knobBg }}; position: relative;">
+                <span style="position: absolute; top: 2px; left: {{ a.knobX }}; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3);"></span>
+              </button>
+            </div>
+            <div style="font-size: 13px; color: #5f6b78; margin-top: 8px;">{{ a.summary }}</div>
+            <div style="margin-top: 12px;">
+              <span style="display: inline-block; font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 20px; background: {{ a.badgeBg }}; color: {{ a.badgeC }};">{{ a.countLabel }}</span>
+            </div>
+            <div style="margin-top: 12px; flex: 1;">
+              <sc-for list="{{ a.hits }}" as="h" hint-placeholder-count="3">
+                <a href="javascript:void(0)" onClick="{{ h.open }}" style="display: flex; align-items: center; gap: 9px; padding: 8px 0; border-top: 1px solid #f0f2f6;">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ h.dotColor }}; flex-shrink: 0;"></span>
+                  <span style="min-width: 0; flex: 1;">
+                    <span style="display: block; font-size: 14px; font-weight: 700; color: #1a6ec4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ h.name }}</span>
+                    <span style="display: block; font-size: 12.5px; color: #5f6b78;">{{ h.detail }}</span>
+                  </span>
+                </a>
+              </sc-for>
+              <sc-if value="{{ a.moreCount }}" hint-placeholder-val="{{ 0 }}">
+                <div style="padding: 8px 0 0; border-top: 1px solid #f0f2f6; font-size: 13px; font-weight: 700; color: #5f6b78;">+ {{ a.moreCount }} more clients</div>
+              </sc-if>
+              <sc-if value="{{ a.empty }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 14px 0; text-align: center; font-size: 13.5px; color: #1f8a3b; font-weight: 600;">✓ No clients currently triggering this rule</div>
+              </sc-if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #eceff3;">
+              <button onClick="{{ a.onEdit }}" style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #1a6ec4; background: none; border: none; cursor: pointer; padding: 0;">Edit rule</button>
+              <span style="font-size: 13.5px; color: #c3ccd6;">·</span>
+              <button style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #5f6b78; background: none; border: none; cursor: pointer; padding: 0;">Export</button>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin: 18px 2px 0; font-size: 13px; color: #8a94a1;">Sample data for illustration. Alert rules mirror FreeAgent’s practice alert model — rule type plus parameters, checked automatically.</p>
+  </main>
+  </sc-if>
+
+  <!-- SMART COLLECT -->
+  <sc-if value="{{ showSmartCollect }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 1360px; width: 100%; margin: 0 auto; padding: 22px 26px 60px;">
+    <a href="javascript:void(0)" onClick="{{ smartCollect.back }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #1a6ec4; margin-bottom: 16px;">‹ Back to Insights</a>
+
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 22px 26px; display: flex; align-items: center; gap: 20px; margin-bottom: 16px;">
+      <div style="width: 52px; height: 52px; border-radius: 13px; background: #fbf1d8; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#b0781a" stroke-width="2"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2-3 2z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path></svg>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #b0781a;">Smart Collect</div>
+        <h1 style="margin: 2px 0 0; font-size: 25px; font-weight: 800; color: #1a2530;">{{ smartCollect.clientName }}</h1>
+        <div style="font-size: 14.5px; color: #5f6b78; margin-top: 3px;"><span class="num" style="font-weight: 700; color: #1a2530;">{{ smartCollect.count }}</span> to chase · <span class="num">{{ smartCollect.totalLabel }}</span><sc-if value="{{ smartCollect.excludedCount }}" hint-placeholder-val="{{ false }}"> · <span class="num">{{ smartCollect.excludedCount }}</span> excluded</sc-if></div>
+      </div>
+      <button onClick="{{ smartCollect.request }}" style="font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 8px; padding: 11px 18px; cursor: pointer;">{{ smartCollect.requestLabel }}</button>
+    </div>
+
+    <!-- tabs -->
+    <div style="display: flex; gap: 26px; border-bottom: 1px solid #e2e7ee; margin-bottom: 16px;">
+      <div onClick="{{ smartCollect.setReqTab }}" style="display: flex; align-items: center; gap: 8px; padding: 0 2px 12px; cursor: pointer; font-size: 15px; font-weight: {{ smartCollect.reqTabWeight }}; color: {{ smartCollect.reqTabColor }}; border-bottom: 3px solid {{ smartCollect.reqTabBorder }}; margin-bottom: -1px;">To request</div>
+      <div onClick="{{ smartCollect.setCollTab }}" style="display: flex; align-items: center; gap: 8px; padding: 0 2px 12px; cursor: pointer; font-size: 15px; font-weight: {{ smartCollect.collTabWeight }}; color: {{ smartCollect.collTabColor }}; border-bottom: 3px solid {{ smartCollect.collTabBorder }}; margin-bottom: -1px;">For review <span style="background: {{ smartCollect.collPillBg }}; color: {{ smartCollect.collPillColor }}; font-size: 12px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px;">{{ smartCollect.collection.total }}</span></div>
+    </div>
+
+    <sc-if value="{{ smartCollect.isReqTab }}" hint-placeholder-val="{{ true }}">
+    <!-- filter bar -->
+    <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;">
+      <div style="display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Client</label>
+          <select value="{{ smartCollect.f.client }}" onChange="{{ smartCollect.onClient }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 8px 10px; min-width: 150px;">
+            <sc-for list="{{ smartCollect.clientOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Date from</label>
+          <input type="date" value="{{ smartCollect.f.from }}" onInput="{{ smartCollect.onFrom }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 7px 10px;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Date to</label>
+          <input type="date" value="{{ smartCollect.f.to }}" onInput="{{ smartCollect.onTo }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 7px 10px;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Value £</label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <input type="number" value="{{ smartCollect.f.valMin }}" onInput="{{ smartCollect.onValMin }}" placeholder="min" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 7px 8px; width: 74px;">
+            <span style="color: #8a94a1;">–</span>
+            <input type="number" value="{{ smartCollect.f.valMax }}" onInput="{{ smartCollect.onValMax }}" placeholder="max" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 7px 8px; width: 74px;">
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Direction</label>
+          <select value="{{ smartCollect.f.dir }}" onChange="{{ smartCollect.onDir }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 8px 10px;">
+            <sc-for list="{{ smartCollect.dirOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Category</label>
+          <select value="{{ smartCollect.f.cat }}" onChange="{{ smartCollect.onCat }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 8px 10px; min-width: 150px;">
+            <sc-for list="{{ smartCollect.catOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: #8a94a1; text-transform: uppercase; letter-spacing: .04em;">Outstanding</label>
+          <select value="{{ smartCollect.f.age }}" onChange="{{ smartCollect.onAge }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 7px; padding: 8px 10px;">
+            <sc-for list="{{ smartCollect.ageOptions }}" as="o" hint-placeholder-count="5"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+          </select>
+        </div>
+        <sc-if value="{{ smartCollect.filtersActive }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ smartCollect.resetFilters }}" style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #1a6ec4; background: none; border: none; cursor: pointer; padding: 9px 4px;">Clear filters</button>
+        </sc-if>
+      </div>
+      <sc-if value="{{ smartCollect.selCount }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eceff3;">
+          <span style="font-size: 14px; font-weight: 700; color: #1a2530;"><span class="num">{{ smartCollect.selCount }}</span> selected</span>
+          <button onClick="{{ smartCollect.excludeSelected }}" style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #a4402f; background: #fdeede; border: 1px solid #f2cdcd; border-radius: 7px; padding: 8px 13px; cursor: pointer;">Exclude from chase</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="border: 1px solid #e6eaf0; border-radius: 8px; overflow: hidden; background: #fff;">
+      <div style="display: grid; grid-template-columns: 44px 100px 1.1fr 1.3fr 110px 110px 96px; align-items: center; background: #f7f9fb; border-bottom: 1px solid #e6eaf0; padding: 11px 16px; font-size: 13px;">
+        <div><input type="checkbox" checked="{{ smartCollect.allChecked }}" onChange="{{ smartCollect.toggleAll }}" style="width: 16px; height: 16px; cursor: pointer;"></div>
+        <div style="color: #1a6ec4; font-weight: 700; cursor: pointer;">Date ▲</div>
+        <div style="color: #1a6ec4; font-weight: 700; cursor: pointer;">Client</div>
+        <div style="color: #1a6ec4; font-weight: 700; cursor: pointer;">Description</div>
+        <div style="text-align: right; color: #5f6b78; font-weight: 700;">Money in</div>
+        <div style="text-align: right; color: #5f6b78; font-weight: 700;">Money out</div>
+        <div style="text-align: right; color: #5f6b78; font-weight: 700;">Age</div>
+      </div>
+      <sc-for list="{{ smartCollect.tx }}" as="t" hint-placeholder-count="8">
+        <div style="display: grid; grid-template-columns: 44px 100px 1.1fr 1.3fr 110px 110px 96px; align-items: start; padding: 12px 16px; border-bottom: 1px solid #f0f2f6; font-size: 14px; background: {{ t.rowBg }}; opacity: {{ t.rowOpacity }};" style-hover="background: #f8fafc;">
+          <div style="padding-top: 1px;"><input type="checkbox" checked="{{ t.checked }}" onChange="{{ t.toggle }}" disabled="{{ t.excluded }}" style="width: 16px; height: 16px; cursor: pointer;"></div>
+          <div class="num" style="color: #3a4552;">{{ t.date }}</div>
+          <div style="font-weight: 600; color: #1a2530;">{{ t.client }}</div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <span style="flex-shrink: 0; width: 19px; height: 19px; border-radius: 50%; background: #fbe4e4; color: #c23b3b; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center;">?</span>
+              <span style="font-weight: 600; color: #1a2530; text-decoration: {{ t.strike }};">{{ t.desc }}</span>
+              <span style="color: #3a4552;">{{ t.category }}</span>
+            </div>
+            <div style="margin-top: 4px; display: flex; align-items: center; gap: 12px;">
+              <span class="num" style="font-size: 12px; color: #9aa4b0; letter-spacing: .02em;">{{ t.raw }}</span>
+              <sc-if value="{{ t.excluded }}" hint-placeholder-val="{{ false }}"><a href="javascript:void(0)" onClick="{{ t.restore }}" style="font-size: 12.5px; font-weight: 700; color: #1a6ec4;">Restore</a></sc-if>
+              <sc-if value="{{ t.notExcluded }}" hint-placeholder-val="{{ true }}"><a href="javascript:void(0)" onClick="{{ t.exclude }}" style="font-size: 12.5px; font-weight: 700; color: #a4402f;">Exclude</a></sc-if>
+            </div>
+          </div>
+          <div class="num" style="text-align: right; color: #1f8a3b; font-weight: 600;">{{ t.inLabel }}</div>
+          <div class="num" style="text-align: right; color: #3a4552;">{{ t.outLabel }}</div>
+          <div class="num" style="text-align: right; font-weight: 700; color: {{ t.ageColor }};">{{ t.ageLabel }}</div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ smartCollect.noRows }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 40px; text-align: center; font-size: 14px; color: #8a94a1;">No transactions match these filters.</div>
+      </sc-if>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f7f9fb;">
+        <div class="num" style="font-size: 13px; color: #5f6b78;"><span style="font-weight: 700; color: #1a2530;">{{ smartCollect.count }}</span> to chase · {{ smartCollect.totalLabel }}</div>
+        <div style="display: flex; gap: 18px; font-size: 12.5px; color: #7a8695;"><span>? Missing receipt</span></div>
+      </div>
+    </div>
+    <p style="margin: 16px 2px 0; font-size: 13px; color: #8a94a1;">Sample data for illustration. Filter to the transactions that matter, then exclude anything that doesn’t need chasing before sending requests.</p>
+    </sc-if>
+
+    <!-- COLLECTION TAB -->
+    <sc-if value="{{ smartCollect.isCollTab }}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+      <div style="flex: 1; background: #fff; border: 1px solid #e2e7f0; border-radius: 11px; padding: 14px 16px;">
+        <div class="num" style="font-size: 24px; font-weight: 800; color: #1a2530;">{{ smartCollect.collection.total }}</div>
+        <div style="font-size: 13px; color: #5f6b78;">Requested &amp; tracking</div>
+      </div>
+      <div style="flex: 1; background: #fff; border: 1px solid #f0d9a8; border-radius: 11px; padding: 14px 16px;">
+        <div class="num" style="font-size: 24px; font-weight: 800; color: #b0781a;">{{ smartCollect.collection.outstandingCount }}</div>
+        <div style="font-size: 13px; color: #5f6b78;">Awaiting client</div>
+      </div>
+      <div style="flex: 1; background: #fff; border: 1px solid #cfe0d0; border-radius: 11px; padding: 14px 16px;">
+        <div class="num" style="font-size: 24px; font-weight: 800; color: #3a8b3b;">{{ smartCollect.collection.reviewCount }}</div>
+        <div style="font-size: 13px; color: #5f6b78;">Ready to review</div>
+      </div>
+    </div>
+
+    <div style="border: 1px solid #e6eaf0; border-radius: 8px; overflow: hidden; background: #fff;">
+      <div style="display: flex; gap: 26px; border-bottom: 1px solid #e2e7ee; padding: 12px 16px 0;">
+        <sc-for list="{{ smartCollect.collection.trTabs }}" as="t" hint-placeholder-count="4">
+          <div onClick="{{ t.select }}" style="display: flex; align-items: center; gap: 8px; padding: 0 2px 12px; cursor: pointer; font-size: 14.5px; font-weight: {{ t.weight }}; color: {{ t.color }}; border-bottom: 3px solid {{ t.border }}; margin-bottom: -1px;">
+            {{ t.label }} <span style="background: {{ t.pillBg }}; color: {{ t.pillColor }}; font-size: 12px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px;">{{ t.count }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.6fr .8fr .9fr 1.1fr 1fr 1.1fr; align-items: center; background: #f7f9fb; border-bottom: 1px solid #e6eaf0; padding: 11px 16px; font-size: 12.5px; color: #5f6b78; font-weight: 700;">
+        <div>Client</div><div>Requested</div><div>Received</div><div>Status</div><div>Sent</div><div></div>
+      </div>
+      <sc-for list="{{ smartCollect.collection.trRows }}" as="r" hint-placeholder-count="5">
+        <div style="display: grid; grid-template-columns: 1.6fr .8fr .9fr 1.1fr 1fr 1.1fr; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f0f2f6; font-size: 13.5px;" style-hover="background: #f8fafc;">
+          <div style="font-weight: 600; color: #1a2530;">{{ r.client }}</div>
+          <div class="num" style="color: #3a4552;">{{ r.req }} items</div>
+          <div class="num" style="color: #3a4552;">{{ r.rec }} of {{ r.req }}</div>
+          <div><span style="background: {{ r.stBg }}; color: {{ r.stColor }}; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 11px;">{{ r.status }}</span></div>
+          <div class="num" style="color: #5f6b78;">{{ r.sent }}<div style="font-size: 11.5px; color: #9aa4b0;">{{ r.daysLabel }}</div></div>
+          <div style="text-align: right;">
+            <sc-if value="{{ r.hasReview }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.review }}" style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #fff; background: #1a6ec4; border: none; border-radius: 7px; padding: 8px 15px; cursor: pointer;">Review →</button></sc-if>
+            <sc-if value="{{ r.noReview }}" hint-placeholder-val="{{ true }}"><a href="javascript:void(0)" style="font-size: 13px; font-weight: 700; color: #1a6ec4;">Send reminder</a></sc-if>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ smartCollect.collection.trNoRows }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 40px; text-align: center; font-size: 14px; color: #8a94a1;">No requests in this status.</div>
+      </sc-if>
+    </div>
+    <p style="margin: 16px 2px 0; font-size: 13px; color: #8a94a1;">Every paperwork request is tracked here by client. When receipts arrive a request becomes reviewable — <strong>Review →</strong> opens the client’s app to explain the transactions, and completed requests drop off.</p>
+    </sc-if>
+  </main>
+  </sc-if>
+
+  <!-- ASK INSIGHTS (LLM) -->
+  <sc-if value="{{ showAsk }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; max-width: 820px; width: 100%; margin: 0 auto; padding: 26px 26px 50px;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+      <div style="width: 40px; height: 40px; border-radius: 11px; background: #4a7d2b; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 19px;">✦</div>
+      <div>
+        <div style="font-size: 17px; font-weight: 800; color: #1a2530;">Ask about your portfolio</div>
+        <div style="font-size: 13.5px; color: #5f6b78;">Natural-language answers grounded in your clients’ FreeAgent data. Sample responses.</div>
+      </div>
+    </div>
+
+    <!-- transcript -->
+    <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px;">
+      <sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ true }}">
+        <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 14px; padding: 22px 24px;">
+          <p style="margin: 0; font-size: 15px; color: #1a2530; line-height: 1.5;">Hi — I can interrogate the bookkeeping health of your book. Ask about unexplained transactions, VAT and Corporation Tax deadlines, cash flow, or a specific client. Try one of these to start:</p>
+        </div>
+      </sc-if>
+      <sc-for list="{{ chat }}" as="m" hint-placeholder-count="0">
+        <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self: flex-end; max-width: 78%; background: #e6efe0; border: 1px solid #d3e3c8; border-radius: 14px 14px 4px 14px; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #23370f;">{{ m.text }}</div>
+        </sc-if>
+        <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ true }}">
+          <div style="align-self: flex-start; max-width: 92%; display: flex; gap: 11px;">
+            <div style="width: 30px; height: 30px; border-radius: 8px; background: #4a7d2b; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;">✦</div>
+            <div style="background: #fff; border: 1px solid #e2e7f0; border-radius: 4px 14px 14px 14px; padding: 15px 18px; flex: 1;">
+              <p style="margin: 0; font-size: 15px; color: #1a2530; line-height: 1.5;">{{ m.text }}</p>
+              <sc-if value="{{ m.hasItems }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top: 12px; display: flex; flex-direction: column;">
+                  <sc-for list="{{ m.items }}" as="it" hint-placeholder-count="3">
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid #f0f2f6;">
+                      <span style="width: 9px; height: 9px; border-radius: 50%; background: {{ it.color }}; flex-shrink: 0;"></span>
+                      <span style="font-size: 14.5px; font-weight: 700; color: #1a2530; min-width: 190px;">{{ it.name }}</span>
+                      <span class="num" style="font-size: 13.5px; color: #5f6b78;">{{ it.detail }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.hasFoot }}" hint-placeholder-val="{{ false }}">
+                <p style="margin: 12px 0 0; font-size: 13.5px; color: #5f6b78; line-height: 1.5; font-style: italic;">{{ m.foot }}</p>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+      </sc-for>
+    </div>
+
+    <!-- suggestions -->
+    <div style="display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px;">
+      <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="5">
+        <button onClick="{{ s.onClick }}" style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 600; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 20px; padding: 8px 14px; cursor: pointer;" style-hover="border-color: #1a6ec4; background: #f2f7fc;">{{ s.label }}</button>
+      </sc-for>
+    </div>
+
+    <!-- input -->
+    <div style="display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid #c3ccd6; border-radius: 12px; padding: 8px 8px 8px 16px; box-shadow: 0 1px 2px rgba(20,40,70,.04);">
+      <input value="{{ chatInput }}" onInput="{{ onChatInput }}" onKeyDown="{{ onChatKey }}" placeholder="Ask about bookkeeping health, deadlines, cash flow…" style="flex: 1; font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: none; border: none; outline: none;" />
+      <button onClick="{{ sendChat }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; font-weight: 800; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 9px; padding: 10px 18px; cursor: pointer;">Send</button>
+    </div>
+    <p style="margin: 12px 2px 0; font-size: 12.5px; color: #a0a49e;">Sample assistant for concept demonstration — responses are generated from the illustrative portfolio data, not a live model.</p>
+  </main>
+  </sc-if>
+
+  <!-- QUICK-PEEK MODAL -->
+  <sc-if value="{{ peek }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px;">
+    <div onClick="{{ peek.close }}" style="position: absolute; inset: 0; background: rgba(20,35,52,.42);"></div>
+    <div style="position: relative; width: 560px; max-width: 100%; max-height: 86vh; overflow-y: auto; background: #fff; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.28);">
+      <div style="display: flex; align-items: start; justify-content: space-between; padding: 22px 24px 16px; border-bottom: 1px solid #eceff3;">
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #8a94a1;">{{ peek.title }}</div>
+          <h2 style="margin: 3px 0 0; font-size: 21px; font-weight: 800; color: #1a2530;">{{ peek.name }}</h2>
+        </div>
+        <button onClick="{{ peek.close }}" style="background: none; border: none; font-size: 24px; color: #8a94a1; cursor: pointer; line-height: 1;">×</button>
+      </div>
+      <div style="padding: 18px 24px 8px;">
+        <sc-if value="{{ peek.isBk }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 13.5px; color: #5f6b78;">Weighted health score</span>
+            <span class="num" style="font-weight: 800; font-size: 16px; color: {{ peek.d.scoreColor }};">{{ peek.d.score }}/100</span>
+          </div>
+          <sc-for list="{{ peek.d.checks }}" as="ck" hint-placeholder-count="8">
+            <div style="display: flex; align-items: center; gap: 11px; padding: 10px 0; border-top: 1px solid #f0f2f6;">
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: {{ ck.color }}; flex-shrink: 0;"></span>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 13.5px;">{{ ck.label }}</div>
+                <div style="font-size: 12.5px; color: #5f6b78;">{{ ck.signal }}</div>
+                <sc-if value="{{ ck.hasAction }}" hint-placeholder-val="{{ false }}"><a href="javascript:void(0)" onClick="{{ ck.onAction }}" style="display: inline-block; margin-top: 4px; font-size: 12px; font-weight: 700; color: #1a6ec4; text-decoration: none;">→ {{ ck.action }}</a></sc-if>
+              </div>
+              <div class="num" style="width: 30px; text-align: right; font-weight: 700; font-size: 13.5px; color: {{ ck.color }};">{{ ck.sub }}</div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ peek.isCo }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ peek.d.obligations }}" as="ob" hint-placeholder-count="3">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #f0f2f6;">
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: {{ ob.color }}; flex-shrink: 0;"></span>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 14px;">{{ ob.label }}</div>
+                <div class="num" style="font-size: 13px; color: #5f6b78;">{{ ob.due }} · {{ ob.liab }}</div>
+                <sc-if value="{{ ob.hasAction }}" hint-placeholder-val="{{ false }}"><a href="javascript:void(0)" style="display: inline-block; margin-top: 4px; font-size: 12px; font-weight: 700; color: #1a6ec4; text-decoration: none;">→ {{ ob.action }}</a></sc-if>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px; background: {{ ob.bg }}; color: {{ ob.color }};">{{ ob.status }}</span>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ peek.isBiz }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; padding: 4px 0 8px;">
+            <sc-for list="{{ peek.d.biz }}" as="b" hint-placeholder-count="6">
+              <div>
+                <div style="font-size: 12.5px; color: #8a94a1; font-weight: 600;">{{ b.k }}</div>
+                <div class="num" style="font-size: 19px; font-weight: 800; margin-top: 2px; color: {{ b.color }};">{{ b.v }}</div>
+                <div style="font-size: 12.5px; color: #8a94a1;">{{ b.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="padding: 14px 24px 20px; display: flex; justify-content: flex-end; gap: 12px;">
+        <button onClick="{{ peek.close }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 8px; padding: 10px 16px; cursor: pointer;">Close</button>
+        <button onClick="{{ peek.open }}" style="font-family: 'Mulish', sans-serif; font-size: 14px; font-weight: 800; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 8px; padding: 10px 16px; cursor: pointer;">Open full client →</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <footer style="background: #2b3844; color: #aeb8c4; padding: 22px 26px; display: flex; align-items: center; gap: 26px; margin-top: auto;">
+    <span style="font-weight: 800; font-size: 17px; color: #fff;">Practice Dashboard</span>
+    <a href="javascript:void(0)" style="color: #cdd4de; text-decoration: underline; font-size: 14px;">Privacy Notice</a>
+    <a href="javascript:void(0)" style="color: #cdd4de; text-decoration: underline; font-size: 14px;">Terms of Service</a>
+    <a href="javascript:void(0)" style="color: #cdd4de; text-decoration: underline; font-size: 14px;">Knowledge Base</a>
+    <div style="flex: 1;"></div>
+    <span style="font-size: 15px; color: #fff; font-weight: 600;">Practice Support ▾</span>
+  </footer>
+
+  <!-- COLUMN SELECT PANEL -->
+  <sc-if value="{{ colPanelOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end;">
+    <div onClick="{{ closeColPanel }}" style="position: absolute; inset: 0; background: rgba(20,35,52,.42);"></div>
+    <aside style="position: relative; width: 480px; max-width: 92vw; height: 100%; background: #eef1f9; box-shadow: -12px 0 40px rgba(0,0,0,.22); display: flex; flex-direction: column;">
+      <div style="padding: 22px 24px 16px; border-bottom: 1px solid #dbe1ea; background: #fff;">
+        <div style="display: flex; align-items: start; justify-content: space-between;">
+          <div>
+            <h2 style="margin: 0; font-size: 20px; font-weight: 800;">Customise view</h2>
+            <p style="margin: 5px 0 0; font-size: 14px; color: #5f6b78;">Choose which data attributes to show. Your selection becomes a Custom tab in the table.</p>
+          </div>
+          <button onClick="{{ closeColPanel }}" style="background: none; border: none; font-size: 24px; color: #8a94a1; cursor: pointer; line-height: 1;">×</button>
+        </div>
+        <div style="margin-top: 12px; font-size: 13.5px; color: #5f6b78;"><span class="num" style="font-weight: 800; color: #1a2530;">{{ draftCount }}</span> attributes selected · Name is always shown</div>
+      </div>
+      <div style="flex: 1; overflow-y: auto; padding: 8px 24px 24px;">
+        <sc-for list="{{ colGroups }}" as="grp" hint-placeholder-count="4">
+          <div style="margin-top: 18px;">
+            <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #8a94a1; margin-bottom: 6px;">{{ grp.group }}</div>
+            <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="5">
+              <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-top: 1px solid #e2e7f0;">
+                <div style="flex: 1;">
+                  <div style="font-weight: 700; font-size: 14.5px;">{{ it.label }}</div>
+                  <div style="font-size: 12.5px; color: #8a94a1; margin-top: 1px;">{{ it.desc }}</div>
+                </div>
+                <button onClick="{{ it.onToggle }}" style="flex-shrink: 0; width: 40px; height: 22px; border-radius: 12px; border: none; cursor: pointer; background: {{ it.knobBg }}; position: relative; transition: background .15s;">
+                  <span style="position: absolute; top: 2px; left: {{ it.knobX }}; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: left .15s;"></span>
+                </button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid #dbe1ea; background: #fff; display: flex; gap: 12px;">
+        <button onClick="{{ closeColPanel }}" style="flex: 1; font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 9px; padding: 13px; cursor: pointer;">Cancel</button>
+        <button onClick="{{ applyCols }}" style="flex: 1.4; font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 800; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 9px; padding: 13px; cursor: pointer;">Save custom view</button>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
+  <!-- ALERT RULE PANEL -->
+  <sc-if value="{{ alertPanel }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end;">
+    <div onClick="{{ closeAlertPanel }}" style="position: absolute; inset: 0; background: rgba(20,35,52,.42);"></div>
+    <aside style="position: relative; width: 460px; max-width: 92vw; height: 100%; background: #eef1f9; box-shadow: -12px 0 40px rgba(0,0,0,.22); display: flex; flex-direction: column;">
+      <div style="padding: 22px 24px 18px; border-bottom: 1px solid #dbe1ea; background: #fff;">
+        <div style="display: flex; align-items: start; justify-content: space-between;">
+          <h2 style="margin: 0; font-size: 20px; font-weight: 800;">{{ alertPanel.title }}</h2>
+          <button onClick="{{ closeAlertPanel }}" style="background: none; border: none; font-size: 24px; color: #8a94a1; cursor: pointer; line-height: 1;">×</button>
+        </div>
+      </div>
+      <div style="flex: 1; overflow-y: auto; padding: 22px 24px;">
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 13px; font-weight: 700; color: #5f6b78; margin-bottom: 6px;">Rule type</label>
+          <sc-if value="{{ alertPanel.isNew }}" hint-placeholder-val="{{ true }}">
+            <select value="{{ alertPanel.ruleKey }}" onChange="{{ alertPanel.onRuleChange }}" style="width: 100%; font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 8px; padding: 11px 12px;">
+              <sc-for list="{{ alertPanel.ruleOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+            </select>
+          </sc-if>
+          <sc-if value="{{ alertPanel.isEdit }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size: 16px; font-weight: 800; color: #1a2530;">{{ alertPanel.ruleTitle }}</div>
+          </sc-if>
+        </div>
+        <div style="background: #f4f6fb; border: 1px solid #e2e7f0; border-radius: 10px; padding: 13px 15px; margin-bottom: 20px;">
+          <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #8a94a1;">{{ alertPanel.ruleType }}</div>
+          <p style="margin: 5px 0 0; font-size: 13.5px; color: #5f6b78; line-height: 1.45;">{{ alertPanel.ruleDesc }}</p>
+        </div>
+        <sc-for list="{{ alertPanel.fields }}" as="f" hint-placeholder-count="1">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; color: #5f6b78; margin-bottom: 6px;">{{ f.label }}</label>
+            <sc-if value="{{ f.isNumber }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="number" min="{{ f.min }}" max="{{ f.max }}" step="{{ f.step }}" value="{{ f.value }}" onInput="{{ f.onInput }}" style="width: 130px; font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 8px; padding: 11px 12px;" />
+                <span style="font-size: 14px; color: #5f6b78;">{{ f.unit }}</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+              <select value="{{ f.value }}" onChange="{{ f.onInput }}" style="width: 100%; font-family: 'Mulish', sans-serif; font-size: 15px; color: #1a2530; background: #fff; border: 1px solid #b8c0cc; border-radius: 8px; padding: 11px 12px;">
+                <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+              </select>
+            </sc-if>
+          </div>
+        </sc-for>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid #e2e7f0;">
+          <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 14.5px;">Rule enabled</div>
+            <div style="font-size: 12.5px; color: #8a94a1;">Turn off to stop generating these alerts.</div>
+          </div>
+          <button onClick="{{ alertPanel.onToggleEnabled }}" style="flex-shrink: 0; width: 40px; height: 22px; border-radius: 12px; border: none; cursor: pointer; background: {{ alertPanel.knobBg }}; position: relative;">
+            <span style="position: absolute; top: 2px; left: {{ alertPanel.knobX }}; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3);"></span>
+          </button>
+        </div>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid #dbe1ea; background: #fff; display: flex; gap: 12px;">
+        <button onClick="{{ closeAlertPanel }}" style="flex: 1; font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 700; color: #1a6ec4; background: #fff; border: 1px solid #c3ccd6; border-radius: 9px; padding: 13px; cursor: pointer;">Cancel</button>
+        <button onClick="{{ saveAlert }}" style="flex: 1.4; font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 800; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 9px; padding: 13px; cursor: pointer;">Save alert rule</button>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
+  <!-- SCORE WEIGHT EDITOR -->
+  <sc-if value="{{ editorOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end;">
+    <div onClick="{{ closeEditor }}" style="position: absolute; inset: 0; background: rgba(20,35,52,.42);"></div>
+    <aside style="position: relative; width: 450px; max-width: 92vw; height: 100%; background: #eef1f9; box-shadow: -12px 0 40px rgba(0,0,0,.22); display: flex; flex-direction: column;">
+      <div style="padding: 22px 24px 16px; border-bottom: 1px solid #dbe1ea; background: #fff;">
+        <div style="display: flex; align-items: start; justify-content: space-between;">
+          <div>
+            <h2 style="margin: 0; font-size: 20px; font-weight: 800;">Score weights</h2>
+            <p style="margin: 5px 0 0; font-size: 14px; color: #5f6b78;">Tune what drives the bookkeeping &amp; overview health score. Changes apply live.</p>
+          </div>
+          <button onClick="{{ closeEditor }}" style="background: none; border: none; font-size: 24px; color: #8a94a1; cursor: pointer; line-height: 1;">×</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 11px 14px; background: #f4f6fb; border: 1px solid #e2e7f0; border-radius: 10px;">
+          <span style="font-size: 14px; color: #5f6b78;">Total weight</span>
+          <span class="num" style="font-weight: 800; font-size: 16px;">{{ totalWeight }}</span>
+          <div style="flex: 1;"></div>
+          <button onClick="{{ resetWeights }}" style="font-family: 'Mulish', sans-serif; font-size: 13.5px; font-weight: 700; color: #1a6ec4; background: none; border: none; cursor: pointer;">Reset defaults</button>
+        </div>
+      </div>
+      <div style="flex: 1; overflow-y: auto; padding: 4px 24px 24px;">
+        <sc-for list="{{ editorChecks }}" as="ck" hint-placeholder-count="8">
+          <div style="padding: 16px 0; border-bottom: 1px solid #e2e7f0;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <span style="font-weight: 700; font-size: 14.5px;">{{ ck.label }}</span>
+              <span class="num" style="font-weight: 800; font-size: 14px; white-space: nowrap; flex-shrink: 0;">{{ ck.weight }} <span style="color: #9aa4b0; font-weight: 600;">· {{ ck.pct }}%</span></span>
+            </div>
+            <div style="font-size: 12.5px; color: #8a94a1; margin: 2px 0 11px;">{{ ck.desc }}</div>
+            <input type="range" min="0" max="40" value="{{ ck.weight }}" onInput="{{ ck.onInput }}" style="width: 100%;">
+            <sc-if value="{{ ck.headline }}" hint-placeholder-val="{{ false }}">
+              <div style="display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; font-size: 11px; font-weight: 700; color: #b0781a; background: #faf1db; padding: 3px 9px; border-radius: 20px;">★ Headline signal</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid #dbe1ea; background: #fff;">
+        <button onClick="{{ closeEditor }}" style="width: 100%; font-family: 'Mulish', sans-serif; font-size: 15px; font-weight: 800; color: #14310a; background: #6fbf5a; border: 1px solid #5aa843; border-radius: 9px; padding: 13px; cursor: pointer;">Done</button>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultClient&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;Harrow &amp; Vine Ltd&quot;,&quot;Meridian Studios&quot;,&quot;Oakfield Joinery&quot;,&quot;Blue Anchor Cafés&quot;,&quot;Fernlea Property Co&quot;,&quot;Copper &amp; Reed Design&quot;,&quot;Selby Logistics Ltd&quot;,&quot;Willow Lane Dental&quot;,&quot;Thornbury Retail&quot;,&quot;Aldergate Legal&quot;,&quot;Kestrel Fitness&quot;,&quot;Marsden Farms&quot;,&quot;Northgate Tech Ltd&quot;,&quot;Priory Gardens Care&quot;,&quot;Ravenswood Wines&quot;],&quot;section&quot;:&quot;Table&quot;}}">
+class Component extends DCLogic {
+  state = {
+    page: 'clients', selId: null, editorOpen: false, tableView: 'overview',
+    sortKey: 'score', sortDir: 'asc', search: '', mgr: 'all',
+    typeFilter: 'all', statusFilter: 'all', clientFilter: undefined, scSel: {},
+    scExcluded: {}, scTab: 'request', scTrackerTab: 'all', scCollBump: 0, scFilters: { client:'all', from:'', to:'', valMin:'', valMax:'', dir:'all', cat:'all', age:'0' },
+    weights: { unexplained: 30, feed: 14, recon: 14, invoices: 10, bills: 10, journals: 6, contacts: 6, locks: 10, estimates: 6, receipts: 8, recurring: 6 },
+    colPanelOpen: false, customActive: false,
+    customCols: ['manager','score','unexplained','compStatus','cash'],
+    draftCols: ['manager','score','unexplained','compStatus','cash'],
+    peek: null, chat: [], chatInput: '',
+    mtdSel: {},
+    alertPanel: null,
+    alertEnabled: { vatDue:true, unexplained:true, feedBroken:true, bigTxn:true, noLogin:true, corpTax:true, smartCollect:true },
+    alertParams: { vatDue:{days:30}, unexplained:{count:10}, feedBroken:{mode:'stale'}, bigTxn:{amount:10000}, noLogin:{days:30}, corpTax:{days:90}, smartCollect:{count:1} },
+    scClient: null,
+  };
+
+  ALERT_RULES = [
+    { key:'vatDue', title:'VAT return due soon', type:'Compliance deadline',
+      desc:'Notify when a client’s VAT return is due within a chosen number of days.',
+      fields:[{name:'days', label:'Days before due date', kind:'number', min:1, max:120, unit:'days'}] },
+    { key:'unexplained', title:'Unexplained transactions above threshold', type:'Bookkeeping quality',
+      desc:'Notify when a client has more than a set number of unexplained bank transactions.',
+      fields:[{name:'count', label:'Number of unexplained items', kind:'number', min:1, max:100, unit:'items'}] },
+    { key:'feedBroken', title:'Bank feed needs attention', type:'Bookkeeping quality',
+      desc:'Notify when a client’s bank feed stops updating and needs reconnecting.',
+      fields:[{name:'mode', label:'Trigger on', kind:'select', options:[{v:'broken',l:'Broken feeds only'},{v:'stale',l:'Broken or stale feeds'}]}] },
+    { key:'bigTxn', title:'Large transaction entered', type:'Transaction value',
+      desc:'Notify when a transaction is explained above a chosen value, for review.',
+      fields:[{name:'amount', label:'Transaction value over', kind:'number', min:500, max:100000, step:500, unit:'£'}] },
+    { key:'noLogin', title:'Client hasn’t logged in', type:'Engagement',
+      desc:'Notify when none of a client’s users have logged in for a number of days.',
+      fields:[{name:'days', label:'Days since last login', kind:'number', min:7, max:180, unit:'days'}] },
+    { key:'corpTax', title:'Corporation Tax due soon', type:'Compliance deadline',
+      desc:'Notify when a client’s Corporation Tax filing is due within a chosen number of days.',
+      fields:[{name:'days', label:'Days before due date', kind:'number', min:1, max:180, unit:'days'}] },
+    { key:'smartCollect', title:'Missing receipts — Smart Collect', type:'Bookkeeping quality',
+      desc:'Notify when a client has explained transactions with no attached receipt, ready to collect.',
+      fields:[{name:'count', label:'Transactions missing a receipt', kind:'number', min:1, max:50, unit:'items'}] },
+  ];
+
+  gaugeDash(score){ const len=Math.PI*24; return (score/100*len).toFixed(1)+' '+(len+2).toFixed(1); }
+  clientDetail(c){
+    const score=this.scoreOf(c), sc=this.bandColor(score);
+    const R=42, circ=2*Math.PI*R; const dash=`${(score/100*circ).toFixed(1)} ${circ.toFixed(1)}`;
+    const bk=c.bk;
+    const signalText = {
+      unexplained: bk.unex+' items · '+this.gbp(bk.unexVal)+(bk.unex?' · oldest '+bk.unexOld+'d':''),
+      feed: bk.feed==='connected'?'Connected · last refresh today':bk.feed==='stale'?'Stale · not refreshed '+bk.recon+'d':'Broken — needs reconnect',
+      recon: bk.recon+' days since reconciled',
+      invoices: (bk.draftInv+bk.unmInv)+' draft/unmatched ('+bk.draftInv+' draft, '+bk.unmInv+' unmatched)',
+      bills: (bk.draftBills+bk.awBills)+' pending ('+bk.draftBills+' draft, '+bk.awBills+' awaiting)',
+      journals: bk.journals+' manual journals this period',
+      contacts: (bk.dup+bk.inc)+' issues ('+bk.dup+' duplicate, '+bk.inc+' incomplete)',
+      locks: bk.locked?'Filed periods locked':'Filed periods unlocked',
+      estimates: (bk.est||0)+' estimates awaiting conversion',
+      receipts: (bk.rcpt||0)+' transactions missing a receipt',
+      recurring: bk.recur? bk.recur+' recurring invoices due to send':'recurring invoices up to date',
+    };
+    const checks = this.CHECKS.map(ch=>{ const sub=this.subScore(ch.key,bk); const act=this.CHECK_ACTIONS[ch.key]; const hasAction=sub<80&&!!act; return { label:ch.label, weight:this.state.weights[ch.key], sub, color:this.bandColor(sub), signal:signalText[ch.key], action:hasAction?act:'', hasAction, dash:this.gaugeDash(sub), onAction:()=>{ if(ch.key==='receipts') this.goSmartCollect(c.id); } }; });
+    const obligations = c.comp.map(o=>{ const du=this.daysUntil(o.due); const overdue=du<0&&o.st!=='filed'; const oc=this.obStatusColor(o.st,overdue);
+      const hasAction=o.st!=='filed'; return { label:o.t, status: overdue?'overdue':o.st, color:oc.c, bg:oc.bg, due:this.fmtDue({...o,du,overdue}), liab: o.liab>0?'est. '+this.gbp(o.liab):'no liability', action:hasAction?(this.OB_ACTIONS[o.t]||'Review filing'):'', hasAction }; });
+    const profit=c.biz.rev-c.biz.exp;
+    const totalLiab = c.comp.reduce((s,o)=>s+(o.liab||0),0);
+    const biz=[
+      {k:'Revenue (12m)', v:this.gbp(c.biz.rev), note:'trailing 12 months', color:'#1a2530'},
+      {k:'Net profit', v:this.gbp(profit), note:profit>=0?'profitable':'loss-making', color: profit>=0?'#1f8a3b':'#c23b3b'},
+      {k:'Cash position', v:this.gbp(c.biz.cash), note: c.biz.negM>0? c.biz.negM+' months negative':'positive', color: c.biz.cash<0?'#c23b3b':'#1a2530'},
+      {k:'Debtor days', v:c.biz.debtor+'d', note: c.biz.debtor>55?'slow collection':'healthy', color: c.biz.debtor>55?'#b0781a':'#1a2530'},
+      {k:'Overdue invoices', v:c.biz.ovC+' · '+this.gbpK(c.biz.ovV), note:'accounts receivable', color: c.biz.ovC>3?'#c23b3b':c.biz.ovC>0?'#b0781a':'#1f8a3b'},
+      {k:'Tax set-aside', v:this.gbpK(c.biz.setAside), note: c.biz.setAside < totalLiab*0.4 ? 'under-provisioned' : 'adequate cover', color: c.biz.setAside < totalLiab*0.4 ? '#c23b3b':'#1a2530'},
+    ];
+    const stColor = { 'Active':{c:'#1f8a3b',bg:'#e6f4ea'},'Year-end':{c:'#b0781a',bg:'#faf1db'},'At risk':{c:'#c23b3b',bg:'#fbe9e9'},'Onboarding':{c:'#1a6ec4',bg:'#e7f0fb'} }[c.status] || {c:'#5f6b78',bg:'#eef1f5'};
+    return {
+      name:c.name, status:c.status, statusColor:stColor.c, statusBg:stColor.bg,
+      score, scoreColor:sc, ring:dash, gaugeDash:this.gaugeDash(score), goToClient:()=>this.goToClient(c.id), ownerView:()=>{ window.location.href='CFO%20Command%20Centre.dc.html?client='+c.id; },
+      meta:[ {k:'Business type',v:c.type},{k:'VAT scheme',v:c.vat},{k:'Year end',v:c.ye},{k:'Account manager',v:c.mgr} ],
+      checks, obligations, biz,
+    };
+  }
+  openPeek(id, group){ this.setState({ peek:{ id, group } }); }
+  closePeek(){ this.setState({ peek:null }); }
+
+  SUGGESTIONS = [
+    { id:'attention', label:'Which clients need attention this week?' },
+    { id:'unexplained', label:'Who has the most unexplained transactions?' },
+    { id:'vat', label:'Which VAT returns are due or overdue?' },
+    { id:'cash', label:'Where is cash flow a concern?' },
+    { id:'summary', label:'Summarise Blue Anchor Cafés’ bookkeeping health' },
+  ];
+
+  buildAnswer(key){
+    const scored = this.clients.map(c=>({ c, score:this.scoreOf(c), overdue:this.hasOverdue(c) }));
+    if(key==='attention'){
+      const list = scored.filter(e=>e.score<80 || e.overdue).sort((a,b)=>a.score-b.score);
+      return { text: list.length+' clients are below the 80 health threshold or carry an overdue obligation. Worst first:',
+        items: list.slice(0,5).map(e=>({ name:e.c.name, detail:'Score '+e.score+' · '+(e.overdue?'overdue filing':'watch')+' · '+e.c.mgr, color:this.bandColor(e.score) })),
+        foot:'Prioritise Blue Anchor Cafés and Kestrel Fitness — both have broken feeds compounding the score.' };
+    }
+    if(key==='unexplained'){
+      const list = [...this.clients].sort((a,b)=>b.bk.unex-a.bk.unex).slice(0,5);
+      const tot = this.clients.reduce((s,c)=>s+c.bk.unex,0);
+      return { text: tot+' unexplained transactions across the book. The heaviest concentrations:',
+        items: list.map(c=>({ name:c.name, detail:c.bk.unex+' items · '+this.gbp(c.bk.unexVal)+' · oldest '+c.bk.unexOld+' days', color: c.bk.unex>=25?'#c23b3b':c.bk.unex>=8?'#b0781a':'#1f8a3b' })),
+        foot:'Unexplained items are the highest-weighted signal in the health score, so clearing these lifts scores fastest.' };
+    }
+    if(key==='vat'){
+      const list = this.clients.map(c=>{ const o=c.comp.find(x=>x.t==='VAT return'); if(!o||o.st==='filed') return null; const du=this.daysUntil(o.due); return {c,o,du}; }).filter(Boolean).sort((a,b)=>a.du-b.du);
+      return { text: list.length+' VAT returns are open. Ordered by urgency:',
+        items: list.slice(0,6).map(x=>({ name:x.c.name, detail:(x.du<0?('Overdue by '+(-x.du)+'d'):('Due in '+x.du+'d'))+' · est. '+this.gbp(x.o.liab), color: x.du<0?'#c23b3b':x.du<=14?'#b0781a':'#1f8a3b' })),
+        foot:'Meridian Studios and Blue Anchor Cafés are already overdue — worth chasing today.' };
+    }
+    if(key==='cash'){
+      const list = this.clients.filter(c=>c.biz.cash<0 || c.biz.negM>0).sort((a,b)=>a.biz.cash-b.biz.cash);
+      return { text: list.length+' clients show cash-flow strain — negative balances or sustained negative months:',
+        items: list.map(c=>({ name:c.name, detail:this.gbp(c.biz.cash)+' cash · '+(c.biz.negM>0?c.biz.negM+' negative months':'tight')+' · '+c.biz.debtor+'d debtors', color:'#c23b3b' })),
+        foot:'Blue Anchor Cafés combines negative cash with £33k of overdue receivables — collections is the fastest lever.' };
+    }
+    if(key==='summary'){
+      const c = this.clients.find(x=>x.id==='c4'); const score=this.scoreOf(c);
+      return { text: 'Blue Anchor Cafés scores '+score+'/100 — the weakest in the portfolio. The bookkeeping picture:',
+        items: [
+          { name:'Unexplained transactions', detail:c.bk.unex+' items · '+this.gbp(c.bk.unexVal)+' · oldest '+c.bk.unexOld+' days', color:'#c23b3b' },
+          { name:'Bank feed', detail:'Broken — no update in '+c.bk.recon+' days', color:'#c23b3b' },
+          { name:'Open items', detail:(c.bk.draftBills+c.bk.awBills)+' bills, '+(c.bk.draftInv+c.bk.unmInv)+' invoices awaiting action', color:'#b0781a' },
+          { name:'Compliance', detail:'VAT and Corporation Tax both overdue', color:'#c23b3b' },
+        ],
+        foot:'Recommended order: reconnect the feed, clear the oldest unexplained items, then file the overdue VAT return.' };
+    }
+    return { text:'I can help interrogate the portfolio’s bookkeeping health. Try one of the suggested questions below, or ask about unexplained transactions, VAT deadlines, cash flow or a specific client.', items:[], foot:'' };
+  }
+  routeQuestion(text){
+    const t=text.toLowerCase();
+    if(/unexplain|transaction/.test(t)) return 'unexplained';
+    if(/vat|return|deadline|due|overdue|filing/.test(t)) return 'vat';
+    if(/cash|flow|solven|runway/.test(t)) return 'cash';
+    if(/attention|risk|week|worst|priorit/.test(t)) return 'attention';
+    if(/blue anchor|summar/.test(t)) return 'summary';
+    return 'default';
+  }
+  pushQA(label, key){ const a=this.buildAnswer(key); this.setState(s=>({ chat:[...s.chat, {role:'user', text:label}, {role:'assistant', ...a}], chatInput:'' })); }
+  askSuggestion(id){ const s=this.SUGGESTIONS.find(x=>x.id===id); this.pushQA(s.label, id); }
+  sendChat(){ const t=this.state.chatInput.trim(); if(!t) return; this.pushQA(t, this.routeQuestion(t)); }
+  loginDays(c){ return Math.round(c.bk.recon*0.9) + (c.status==='Onboarding'?18:0) + (c.status==='At risk'?9:0); }
+
+  evalRule(key, c, p){
+    switch(key){
+      case 'vatDue': { const o=c.comp.find(x=>x.t==='VAT return'); if(!o||o.st==='filed') return null; const du=this.daysUntil(o.due); if(du>p.days) return null; return { detail: du<0?('VAT overdue by '+(-du)+'d'):('VAT due in '+du+'d · '+this.gbp(o.liab)), sev: du<0?'high':'med' }; }
+      case 'unexplained': { if(c.bk.unex<p.count) return null; return { detail: c.bk.unex+' items · '+this.gbp(c.bk.unexVal)+' · oldest '+c.bk.unexOld+'d', sev: c.bk.unex>=25?'high':'med' }; }
+      case 'feedBroken': { const bad = p.mode==='broken' ? c.bk.feed==='broken' : c.bk.feed!=='connected'; if(!bad) return null; return { detail: (c.bk.feed==='broken'?'Feed broken':'Feed stale')+' · last update '+c.bk.recon+'d ago', sev: c.bk.feed==='broken'?'high':'med' }; }
+      case 'bigTxn': { const big=Math.max(c.bk.unexVal, c.biz.ovV); if(big<p.amount) return null; return { detail: this.gbp(big)+' explained · awaiting review', sev: big>=30000?'high':'med' }; }
+      case 'noLogin': { const d=this.loginDays(c); if(d<p.days) return null; return { detail: 'Last login '+d+' days ago', sev: d>=60?'high':'med' }; }
+      case 'corpTax': { const o=c.comp.find(x=>x.t==='Corporation Tax'); if(!o||o.st==='filed') return null; const du=this.daysUntil(o.due); if(du>p.days) return null; return { detail: du<0?('Corp Tax overdue by '+(-du)+'d'):('Corp Tax due in '+du+'d · '+this.gbp(o.liab)), sev: du<0?'high':'med' }; }
+      case 'smartCollect': { const n=c.bk.rcpt||0; if(n<p.count) return null; return { detail: n+' transactions missing a receipt', sev: n>=10?'high':'med' }; }
+      default: return null;
+    }
+  }
+
+  STATUS = { 'Active':{c:'#1f8a3b',bg:'#e6f4ea'},'Year-end':{c:'#b0781a',bg:'#faf1db'},'At risk':{c:'#c23b3b',bg:'#fbe9e9'},'Onboarding':{c:'#1a6ec4',bg:'#e7f0fb'} };
+
+  CATALOG = [
+    { key:'manager', label:'Account manager', group:'General', desc:'The team member responsible for this client.' },
+    { key:'score', label:'Health score', group:'General', desc:'Weighted 0–100 bookkeeping health score.' },
+    { key:'status', label:'Client status', group:'General', desc:'Lifecycle stage — active, year-end, at risk or onboarding.' },
+    { key:'type', label:'Business type', group:'General', desc:'Entity type — limited company, sole trader or partnership.' },
+    { key:'vat', label:'VAT scheme', group:'General', desc:'Registration and VAT scheme in use.' },
+    { key:'unexplained', label:'Unexplained transactions', group:'Bookkeeping', desc:'Bank items with no matching explanation — the headline data-quality signal.' },
+    { key:'feed', label:'Bank feed status', group:'Bookkeeping', desc:'Whether bank feeds are connected, stale or broken.' },
+    { key:'recon', label:'Reconciliation recency', group:'Bookkeeping', desc:'How recently bank accounts were reconciled.' },
+    { key:'openInv', label:'Open invoices', group:'Bookkeeping', desc:'Draft or unmatched sales invoices awaiting action.' },
+    { key:'openBills', label:'Open bills', group:'Bookkeeping', desc:'Draft or unentered purchase bills awaiting action.' },
+    { key:'estimates', label:'Open estimates', group:'Bookkeeping', desc:'Accepted estimates not yet converted to invoices.' },
+    { key:'receipts', label:'Missing receipts', group:'Bookkeeping', desc:'Explained spend with no attached receipt.' },
+    { key:'recurring', label:'Recurring invoices', group:'Bookkeeping', desc:'Scheduled recurring invoices overdue to send.' },
+    { key:'nextOb', label:'Next obligation', group:'Compliance', desc:'The most pressing upcoming filing or return.' },
+    { key:'due', label:'Obligation due', group:'Compliance', desc:'When the next obligation is due, or how overdue it is.' },
+    { key:'liab', label:'Estimated liability', group:'Compliance', desc:'Estimated tax liability for the next obligation.' },
+    { key:'compStatus', label:'Compliance status', group:'Compliance', desc:'Overall filing status — on track, due soon or overdue.' },
+    { key:'rev', label:'Revenue (12m)', group:'Business health', desc:'Trailing twelve-month turnover.' },
+    { key:'netProfit', label:'Net profit', group:'Business health', desc:'Revenue less expenses over the trailing year.' },
+    { key:'cash', label:'Cash position', group:'Business health', desc:'Current cash balance across bank accounts.' },
+    { key:'debtor', label:'Debtor days', group:'Business health', desc:'Average days to collect receivables.' },
+    { key:'overdueAR', label:'Overdue receivables', group:'Business health', desc:'Count and value of overdue sales invoices.' },
+    { key:'setAside', label:'Tax set-aside', group:'Business health', desc:'Cash provisioned against upcoming tax liabilities.' },
+  ];
+
+  DEFAULTS = { unexplained: 30, feed: 14, recon: 14, invoices: 10, bills: 10, journals: 6, contacts: 6, locks: 10, estimates: 6, receipts: 8, recurring: 6 };
+  CHECK_ACTIONS = { unexplained:'Explain transactions', feed:'Reconnect feed', recon:'Reconcile now', invoices:'Review & send', bills:'Enter bills', journals:'Review journals', contacts:'Clean up contacts', locks:'Lock filed period', estimates:'Convert estimates', receipts:'Request receipts', recurring:'Send recurring invoices' };
+  OB_ACTIONS = { 'VAT return':'Review & file VAT', 'Corporation Tax':'Prepare CT600', 'Self Assessment':'Prepare return', 'MTD Income Tax (Q1)':'Review quarter', 'PAYE / RTI':'Run payroll' };
+  SORT_DIR = { score: 'asc', name: 'asc', unexplained: 'desc', comp: 'asc', cash: 'asc' };
+  FEED = { connected:{l:'Connected',c:'#1f8a3b',bg:'#e6f4ea'}, stale:{l:'Stale',c:'#b0781a',bg:'#faf1db'}, broken:{l:'Broken',c:'#c23b3b',bg:'#fbe9e9'} };
+
+  CHECKS = [
+    { key: 'unexplained', label: 'Unexplained transactions', desc: 'Bank items with no matching explanation — undermines VAT/tax accuracy.', headline: true },
+    { key: 'feed', label: 'Bank feed status', desc: 'Connected, stale or broken bank feeds.' },
+    { key: 'recon', label: 'Reconciliation recency', desc: 'Days since bank accounts were reconciled.' },
+    { key: 'invoices', label: 'Draft / unsent invoices', desc: 'Invoices not issued or not matched to a payment.' },
+    { key: 'bills', label: 'Draft / unentered bills', desc: 'Bills awaiting entry or payment matching.' },
+    { key: 'journals', label: 'Manual journals', desc: 'Volume of manual adjustments — correction effort.' },
+    { key: 'contacts', label: 'Contact data quality', desc: 'Duplicate or incomplete contact records.' },
+    { key: 'locks', label: 'Filed period locks', desc: 'Whether filed periods are locked to protect data.' },
+    { key: 'estimates', label: 'Open estimates', desc: 'Accepted estimates not yet converted to invoices — unbilled work.' },
+    { key: 'receipts', label: 'Missing receipts', desc: 'Explained spend with no attached receipt — audit exposure.' },
+    { key: 'recurring', label: 'Recurring invoices', desc: 'Scheduled recurring invoices overdue to be sent.' },
+  ];
+
+  TODAY = new Date('2026-07-15');
+
+  clients = [
+    { id:'c1', name:'Harrow & Vine Ltd', type:'Limited company', vat:'Standard VAT', ye:'31 Mar', mgr:'Priya Nair', status:'Active',
+      bk:{ unex:2, unexVal:840, est:1, rcpt:0, recur:0, unexOld:9, feed:'connected', recon:3, draftInv:0, unmInv:1, draftBills:1, awBills:0, journals:1, dup:0, inc:0, locked:true },
+      comp:[ {t:'VAT return',st:'ready',due:'2026-08-07',liab:4210},{t:'Corporation Tax',st:'filed',due:'2026-01-01',liab:11800},{t:'MTD Income Tax (Q1)',st:'open',due:'2026-08-05',liab:0} ],
+      biz:{ rev:412000, exp:318000, cash:64200, negM:0, debtor:31, ovC:1, ovV:2100, ap:18400, setAside:16010 } },
+    { id:'c2', name:'Meridian Studios', type:'Limited company', vat:'Flat Rate', ye:'30 Jun', mgr:'Priya Nair', status:'Year-end',
+      bk:{ unex:23, unexVal:14200, est:5, rcpt:9, recur:3, unexOld:74, feed:'stale', recon:28, draftInv:4, unmInv:3, draftBills:5, awBills:2, journals:6, dup:2, inc:3, locked:false },
+      comp:[ {t:'VAT return',st:'overdue',due:'2026-06-07',liab:9300},{t:'Corporation Tax',st:'open',due:'2027-03-31',liab:22400},{t:'MTD Income Tax (Q1)',st:'open',due:'2026-08-05',liab:0} ],
+      biz:{ rev:688000, exp:640000, cash:-12400, negM:2, debtor:68, ovC:6, ovV:41200, ap:52000, setAside:2100 } },
+    { id:'c3', name:'Oakfield Joinery', type:'Sole trader', vat:'Not registered', ye:'05 Apr', mgr:'James Okafor', status:'Active',
+      bk:{ unex:0, unexVal:0, est:0, rcpt:1, recur:0, unexOld:0, feed:'connected', recon:2, draftInv:0, unmInv:0, draftBills:0, awBills:1, journals:0, dup:0, inc:1, locked:true },
+      comp:[ {t:'Self Assessment',st:'filed',due:'2026-01-31',liab:6400},{t:'MTD Income Tax (Q1)',st:'ready',due:'2026-08-05',liab:0} ],
+      biz:{ rev:98000, exp:61000, cash:22400, negM:0, debtor:14, ovC:0, ovV:0, ap:3200, setAside:5800 } },
+    { id:'c4', name:'Blue Anchor Cafés', type:'Limited company', vat:'Standard VAT', ye:'31 Dec', mgr:'James Okafor', status:'At risk',
+      bk:{ unex:47, unexVal:38600, est:7, rcpt:14, recur:4, unexOld:118, feed:'broken', recon:63, draftInv:2, unmInv:8, draftBills:11, awBills:6, journals:9, dup:4, inc:6, locked:false },
+      comp:[ {t:'VAT return',st:'overdue',due:'2026-05-07',liab:15800},{t:'Corporation Tax',st:'overdue',due:'2026-06-30',liab:19200},{t:'PAYE / RTI',st:'open',due:'2026-07-22',liab:0} ],
+      biz:{ rev:540000, exp:571000, cash:-28900, negM:4, debtor:52, ovC:9, ovV:33400, ap:78000, setAside:900 } },
+    { id:'c5', name:'Fernlea Property Co', type:'Limited company', vat:'Standard VAT', ye:'31 Mar', mgr:'Ade Kensington', status:'Active',
+      bk:{ unex:6, unexVal:5100, est:2, rcpt:3, recur:1, unexOld:22, feed:'connected', recon:6, draftInv:1, unmInv:0, draftBills:2, awBills:1, journals:3, dup:1, inc:0, locked:true },
+      comp:[ {t:'VAT return',st:'ready',due:'2026-08-07',liab:7100},{t:'Corporation Tax',st:'open',due:'2026-12-31',liab:14300} ],
+      biz:{ rev:295000, exp:198000, cash:41000, negM:0, debtor:40, ovC:2, ovV:8800, ap:12600, setAside:19200 } },
+    { id:'c6', name:'Copper & Reed Design', type:'Limited company', vat:'Flat Rate', ye:'30 Sep', mgr:'Priya Nair', status:'Active',
+      bk:{ unex:11, unexVal:6300, est:3, rcpt:4, recur:2, unexOld:41, feed:'connected', recon:12, draftInv:3, unmInv:2, draftBills:1, awBills:0, journals:2, dup:0, inc:2, locked:true },
+      comp:[ {t:'VAT return',st:'open',due:'2026-10-07',liab:3900},{t:'Corporation Tax',st:'open',due:'2027-06-30',liab:9100},{t:'MTD Income Tax (Q1)',st:'open',due:'2026-08-05',liab:0} ],
+      biz:{ rev:221000, exp:176000, cash:18900, negM:0, debtor:47, ovC:3, ovV:9200, ap:14100, setAside:5100 } },
+    { id:'c7', name:'Selby Logistics Ltd', type:'Limited company', vat:'Standard VAT', ye:'31 Dec', mgr:'Ade Kensington', status:'Active',
+      bk:{ unex:4, unexVal:2900, est:1, rcpt:2, recur:0, unexOld:15, feed:'connected', recon:5, draftInv:0, unmInv:1, draftBills:3, awBills:1, journals:1, dup:1, inc:0, locked:true },
+      comp:[ {t:'VAT return',st:'ready',due:'2026-08-07',liab:12400},{t:'Corporation Tax',st:'filed',due:'2026-03-31',liab:26800},{t:'PAYE / RTI',st:'open',due:'2026-07-22',liab:0} ],
+      biz:{ rev:1240000, exp:1090000, cash:112000, negM:0, debtor:38, ovC:2, ovV:18400, ap:96000, setAside:39200 } },
+    { id:'c8', name:'Willow Lane Dental', type:'Limited company', vat:'Not registered', ye:'31 Mar', mgr:'James Okafor', status:'Active',
+      bk:{ unex:1, unexVal:210, est:0, rcpt:0, recur:0, unexOld:4, feed:'connected', recon:1, draftInv:0, unmInv:0, draftBills:0, awBills:0, journals:0, dup:0, inc:0, locked:true },
+      comp:[ {t:'Corporation Tax',st:'ready',due:'2026-12-31',liab:8600},{t:'PAYE / RTI',st:'open',due:'2026-07-22',liab:0} ],
+      biz:{ rev:430000, exp:352000, cash:58000, negM:0, debtor:9, ovC:0, ovV:0, ap:9800, setAside:12100 } },
+    { id:'c9', name:'Thornbury Retail', type:'Limited company', vat:'Standard VAT', ye:'30 Jun', mgr:'Priya Nair', status:'Year-end',
+      bk:{ unex:18, unexVal:11700, est:4, rcpt:7, recur:2, unexOld:58, feed:'stale', recon:34, draftInv:1, unmInv:4, draftBills:6, awBills:3, journals:5, dup:2, inc:2, locked:false },
+      comp:[ {t:'VAT return',st:'open',due:'2026-07-31',liab:6800},{t:'Corporation Tax',st:'open',due:'2027-03-31',liab:13200} ],
+      biz:{ rev:602000, exp:558000, cash:9400, negM:1, debtor:44, ovC:5, ovV:22100, ap:61000, setAside:3400 } },
+    { id:'c10', name:'Aldergate Legal', type:'Partnership', vat:'Standard VAT', ye:'30 Apr', mgr:'Ade Kensington', status:'Active',
+      bk:{ unex:3, unexVal:1600, est:2, rcpt:2, recur:1, unexOld:11, feed:'connected', recon:4, draftInv:2, unmInv:0, draftBills:1, awBills:0, journals:2, dup:0, inc:1, locked:true },
+      comp:[ {t:'VAT return',st:'ready',due:'2026-08-07',liab:8900},{t:'Corporation Tax',st:'open',due:'2027-01-31',liab:16700} ],
+      biz:{ rev:512000, exp:388000, cash:74000, negM:0, debtor:53, ovC:3, ovV:26800, ap:22400, setAside:24100 } },
+    { id:'c11', name:'Kestrel Fitness', type:'Limited company', vat:'Flat Rate', ye:'31 Dec', mgr:'James Okafor', status:'Onboarding',
+      bk:{ unex:31, unexVal:9800, est:6, rcpt:11, recur:3, unexOld:96, feed:'broken', recon:71, draftInv:0, unmInv:6, draftBills:9, awBills:4, journals:4, dup:3, inc:5, locked:false },
+      comp:[ {t:'VAT return',st:'open',due:'2026-10-07',liab:4100},{t:'Corporation Tax',st:'open',due:'2027-09-30',liab:6200} ],
+      biz:{ rev:186000, exp:191000, cash:-4200, negM:3, debtor:29, ovC:2, ovV:5400, ap:19800, setAside:400 } },
+    { id:'c12', name:'Marsden Farms', type:'Sole trader', vat:'Standard VAT', ye:'05 Apr', mgr:'Ade Kensington', status:'Active',
+      bk:{ unex:8, unexVal:7400, est:2, rcpt:4, recur:1, unexOld:33, feed:'connected', recon:9, draftInv:1, unmInv:1, draftBills:2, awBills:2, journals:3, dup:1, inc:1, locked:true },
+      comp:[ {t:'VAT return',st:'ready',due:'2026-08-07',liab:5600},{t:'Self Assessment',st:'open',due:'2027-01-31',liab:9200},{t:'MTD Income Tax (Q1)',st:'open',due:'2026-08-05',liab:0} ],
+      biz:{ rev:348000, exp:301000, cash:27600, negM:0, debtor:58, ovC:4, ovV:14900, ap:31200, setAside:8700 } },
+    { id:'c13', name:'Northgate Tech Ltd', type:'Limited company', vat:'Standard VAT', ye:'31 Dec', mgr:'Priya Nair', status:'Active',
+      bk:{ unex:5, unexVal:3300, est:2, rcpt:1, recur:0, unexOld:19, feed:'connected', recon:7, draftInv:2, unmInv:1, draftBills:0, awBills:1, journals:1, dup:0, inc:0, locked:true },
+      comp:[ {t:'VAT return',st:'open',due:'2026-10-07',liab:10200},{t:'Corporation Tax',st:'open',due:'2027-09-30',liab:18900},{t:'PAYE / RTI',st:'open',due:'2026-07-22',liab:0} ],
+      biz:{ rev:970000, exp:812000, cash:158000, negM:0, debtor:42, ovC:2, ovV:31000, ap:44000, setAside:42600 } },
+    { id:'c14', name:'Priory Gardens Care', type:'Limited company', vat:'Not registered', ye:'31 Mar', mgr:'James Okafor', status:'At risk',
+      bk:{ unex:14, unexVal:8900, est:3, rcpt:8, recur:3, unexOld:52, feed:'stale', recon:41, draftInv:0, unmInv:3, draftBills:7, awBills:5, journals:7, dup:2, inc:4, locked:false },
+      comp:[ {t:'Corporation Tax',st:'overdue',due:'2026-03-31',liab:7300},{t:'PAYE / RTI',st:'open',due:'2026-07-22',liab:0} ],
+      biz:{ rev:398000, exp:409000, cash:-9800, negM:2, debtor:61, ovC:4, ovV:19200, ap:47000, setAside:1200 } },
+    { id:'c15', name:'Ravenswood Wines', type:'Partnership', vat:'Standard VAT', ye:'30 Sep', mgr:'Ade Kensington', status:'Active',
+      bk:{ unex:9, unexVal:4700, est:2, rcpt:3, recur:1, unexOld:28, feed:'connected', recon:11, draftInv:1, unmInv:2, draftBills:3, awBills:1, journals:2, dup:1, inc:1, locked:true },
+      comp:[ {t:'VAT return',st:'ready',due:'2026-08-07',liab:6100},{t:'Corporation Tax',st:'open',due:'2027-06-30',liab:11400} ],
+      biz:{ rev:274000, exp:229000, cash:21300, negM:0, debtor:49, ovC:3, ovV:11700, ap:26800, setAside:7900 } },
+  ];
+
+  clamp(x){ return Math.max(0, Math.min(100, Math.round(x))); }
+  gbp(n){ const neg = n < 0; return (neg?'−£':'£') + Math.abs(Math.round(n)).toLocaleString('en-GB'); }
+  gbpK(n){ const neg = n<0, a=Math.abs(n); const s = a>=1000 ? '£'+(a/1000).toFixed(a>=100000?0:1)+'k' : '£'+a; return (neg?'−':'')+s; }
+  daysUntil(d){ return Math.round((new Date(d) - this.TODAY) / 86400000); }
+
+  subScore(key, bk){
+    switch(key){
+      case 'unexplained': return this.clamp(100 - bk.unex*3 - (bk.unexOld>60?15:bk.unexOld>30?6:0));
+      case 'feed': return bk.feed==='connected'?100:bk.feed==='stale'?52:8;
+      case 'recon': { const d=bk.recon; return d<=7?100:d<=14?84:d<=30?62:d<=60?38:14; }
+      case 'invoices': return this.clamp(100 - (bk.draftInv+bk.unmInv)*7);
+      case 'bills': return this.clamp(100 - (bk.draftBills+bk.awBills)*6);
+      case 'journals': return this.clamp(100 - Math.max(0,bk.journals-2)*8);
+      case 'contacts': return this.clamp(100 - (bk.dup+bk.inc)*4);
+      case 'locks': return bk.locked?100:58;
+      case 'estimates': return this.clamp(100 - (bk.est||0)*8);
+      case 'receipts': return this.clamp(100 - (bk.rcpt||0)*5);
+      case 'recurring': return this.clamp(100 - (bk.recur||0)*12);
+      default: return 100;
+    }
+  }
+  scoreOf(client){
+    const w = this.state.weights; let sum=0, tot=0;
+    for(const c of this.CHECKS){ const wt=w[c.key]??0; sum += wt*this.subScore(c.key, client.bk); tot += wt; }
+    return tot>0 ? Math.round(sum/tot) : 0;
+  }
+  bandColor(s){ return s>=80?'#1f8a3b':s>=60?'#b0781a':'#c23b3b'; }
+
+  nextObligation(client){
+    const list = client.comp.map(o=>{ const du=this.daysUntil(o.due); const overdue = du<0 && o.st!=='filed'; return {...o, du, overdue}; });
+    const overdue = list.filter(o=>o.overdue).sort((a,b)=>a.du-b.du);
+    if(overdue.length) return overdue[0];
+    const open = list.filter(o=>o.st!=='filed').sort((a,b)=>a.du-b.du);
+    return open[0] || list.sort((a,b)=>b.du-a.du)[0];
+  }
+  obStatusColor(st, overdue){
+    if(overdue) return {c:'#c23b3b', bg:'#fbe9e9'};
+    if(st==='filed'||st==='ready') return {c:'#1f8a3b', bg:'#e6f4ea'};
+    if(st==='open') return {c:'#b0781a', bg:'#faf1db'};
+    return {c:'#5f6b78', bg:'#eef1f5'};
+  }
+  hasOverdue(client){ return client.comp.some(o=>o.st!=='filed' && this.daysUntil(o.due)<0) || client.comp.some(o=>o.st==='overdue'); }
+
+  fmtDue(o){
+    const dt = new Date(o.due).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    if(o.st==='filed') return 'Filed · was due '+dt;
+    if(o.overdue) return 'Overdue by '+Math.abs(o.du)+'d · was '+dt;
+    if(o.du<=30) return 'Due in '+o.du+'d · '+dt;
+    return 'Due '+dt;
+  }
+
+  open(id){ this.setState({ selId:id }); window.scrollTo(0,0); }
+  goToClient(id){ window.location.href = 'Paperwork%20Capture.dc.html?client=' + id; }
+  goCompose(id, items){ try{ localStorage.setItem('omSmartCollectReq', JSON.stringify(items||[])); this.addToCollection(items||[]); }catch(e){} window.location.href = 'Paperwork%20Capture.dc.html?compose=1' + (id!=null?('&client='+id):''); }
+
+  COLL_KEY='omPaperworkCollection';
+  todayStr(){ const d=new Date(2026,6,21); return String(d.getDate()).padStart(2,'0')+'/07/2026'; }
+  seedCollection(){
+    // deterministic prior requests: a spread of clients, some already returned & awaiting review
+    const src=this.clients.filter(c=>(c.bk.rcpt||0)>0).slice(0,6);
+    const out=[]; let n=0;
+    const sents=['05/07/2026','08/07/2026','11/07/2026','12/07/2026','15/07/2026','18/07/2026'];
+    src.forEach((c,ci)=>{
+      const items=this.missingReceiptTx(c).slice(0,2);
+      items.forEach((it,ii)=>{
+        const ready=(n%3===0); // ~1/3 have attachments back → need review
+        out.push({ id:'col-'+c.id+'-'+ii, clientId:c.id, client:c.name, date:it.date, desc:it.desc, category:it.category, amount:it.amount, sent:sents[(ci+ii)%sents.length], status: ready?'review':'outstanding', file: ready?(it.desc.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.jpg'):'' });
+        n++;
+      });
+    });
+    return out;
+  }
+  loadCollection(){
+    let raw=null; try{ raw=localStorage.getItem(this.COLL_KEY); }catch(e){}
+    if(raw){ try{ return JSON.parse(raw); }catch(e){} }
+    const seed=this.seedCollection(); try{ localStorage.setItem(this.COLL_KEY, JSON.stringify(seed)); }catch(e){}
+    return seed;
+  }
+  saveCollection(list){ try{ localStorage.setItem(this.COLL_KEY, JSON.stringify(list)); }catch(e){} this.setState(s=>({ scCollBump:s.scCollBump+1 })); }
+  addToCollection(items){
+    const list=this.loadCollection();
+    const keys=new Set(list.map(x=>x.id));
+    items.forEach((t,i)=>{
+      const id='col-'+(t.clientId||'x')+'-'+(t.date||'')+'-'+(t.name||'')+'-'+i;
+      if(keys.has(id)) return;
+      list.push({ id, clientId:t.clientId, client:t.client||'Client', date:t.date, desc:t.name, category:t.category, amount:t.amount, sent:this.todayStr(), status:'outstanding', file:'' });
+    });
+    try{ localStorage.setItem(this.COLL_KEY, JSON.stringify(list)); }catch(e){}
+  }
+  reviewInApp(clientId){ window.location.href = 'Paperwork%20Capture.dc.html?screen=review' + (clientId!=null?('&client='+clientId):''); }
+  goSmartCollect(clientId){ this.setState({ page:'smartcollect', scClient: clientId==null?null:clientId, selId:null, peek:null }); window.scrollTo(0,0); }
+  backFromSmartCollect(){ this.setState({ page:'insights', scClient:null }); window.scrollTo(0,0); }
+  scToggle(id){ this.setState(s=>({ scSel:{...s.scSel, [id]:!s.scSel[id]} })); }
+  scSetFilter(k,v){ this.setState(s=>({ scFilters:{...s.scFilters, [k]:v} })); }
+  scResetFilters(){ this.setState({ scFilters:{ client:'all', from:'', to:'', valMin:'', valMax:'', dir:'all', cat:'all', age:'0' } }); }
+  scExclude(id){ this.setState(s=>{ const e={...s.scExcluded, [id]:true}; const sel={...s.scSel}; delete sel[id]; return { scExcluded:e, scSel:sel }; }); }
+  scRestore(id){ this.setState(s=>{ const e={...s.scExcluded}; delete e[id]; return { scExcluded:e }; }); }
+  scExcludeSelected(ids){ this.setState(s=>{ const e={...s.scExcluded}; const sel={...s.scSel}; ids.forEach(id=>{ e[id]=true; delete sel[id]; }); return { scExcluded:e, scSel:sel }; }); }
+
+  RCPT_VENDORS = [
+    {v:'Amazon Business', cat:'Office supplies', group:'Admin expenses', dir:'out', lo:40, hi:280},
+    {v:'Screwfix', cat:'Tools & equipment', group:'Cost of sales', dir:'out', lo:60, hi:340},
+    {v:'Shell', cat:'Motoring', group:'Admin expenses', dir:'out', lo:45, hi:110},
+    {v:'Costa Coffee', cat:'Subsistence', group:'Admin expenses', dir:'out', lo:8, hi:45},
+    {v:'Apple Store', cat:'Equipment', group:'Capital assets', dir:'out', lo:120, hi:1200},
+    {v:'Trainline', cat:'Travel', group:'Admin expenses', dir:'out', lo:25, hi:180},
+    {v:'B&Q', cat:'Repairs & renewals', group:'Cost of sales', dir:'out', lo:30, hi:260},
+    {v:'Dropbox', cat:'Software', group:'Admin expenses', dir:'out', lo:10, hi:90},
+    {v:'Uber', cat:'Travel', group:'Admin expenses', dir:'out', lo:9, hi:60},
+    {v:'Currys', cat:'Equipment', group:'Capital assets', dir:'out', lo:80, hi:900},
+    {v:'Royal Mail', cat:'Postage', group:'Admin expenses', dir:'out', lo:5, hi:70},
+    {v:'Premier Inn', cat:'Accommodation', group:'Admin expenses', dir:'out', lo:65, hi:190},
+    {v:'Wickes', cat:'Repairs & renewals', group:'Cost of sales', dir:'out', lo:35, hi:300},
+    {v:'Sainsbury\u2019s', cat:'Subsistence', group:'Admin expenses', dir:'out', lo:12, hi:95},
+    {v:'Owner reimbursement', cat:'Money paid to user', group:'Money paid to user', dir:'out', lo:40, hi:520},
+    {v:'Petty cash withdrawal', cat:'Money paid to user', group:'Money paid to user', dir:'out', lo:20, hi:200},
+    {v:'Stripe payout', cat:'Sales', group:'Money in', dir:'in', lo:180, hi:1400},
+    {v:'Supplier refund', cat:'Refunds', group:'Money in', dir:'in', lo:15, hi:240},
+  ];
+  CAT_GROUPS = ['Admin expenses','Cost of sales','Capital assets','Money paid to user','Money in'];
+  missingReceiptTx(c){
+    const out=[]; const n=c.bk.rcpt||0; let seed=0;
+    for(let i=0;i<c.name.length;i++) seed=(seed*31+c.name.charCodeAt(i))>>>0;
+    const rand=()=>{ seed=(seed*1103515245+12345)>>>0; return seed/4294967296; };
+    const NOW=new Date(2026,6,21);
+    for(let i=0;i<n;i++){
+      const ven=this.RCPT_VENDORS[Math.floor(rand()*this.RCPT_VENDORS.length)];
+      const amt=Math.round((ven.lo+rand()*(ven.hi-ven.lo))*100)/100;
+      const day=1+Math.floor(rand()*27);
+      const monN=[5,6,7][Math.floor(rand()*3)];
+      const dt=new Date(2026,monN-1,day);
+      const outstanding=Math.max(0,Math.round((NOW-dt)/86400000));
+      const mon=String(monN).padStart(2,'0');
+      out.push({ id:c.id+'-r'+i, clientId:c.id, client:c.name, date:String(day).padStart(2,'0')+'/'+mon+'/2026', dateSort:mon+String(day).padStart(2,'0'), iso:'2026-'+mon+'-'+String(day).padStart(2,'0'), desc:ven.v, raw:ven.v.toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()+'//CARD', category:ven.cat, group:ven.group, dir:ven.dir, amount:amt, outstanding });
+    }
+    return out.sort((a,b)=> a.dateSort<b.dateSort?1:-1);
+  }
+  backToOverview(){ this.setState({ selId:null }); window.scrollTo(0,0); }
+  setPage(p){ this.setState({ page:p, selId:null }); window.scrollTo(0,0); }
+  goCompliance(){ this.setState({ page:'insights', tableView:'compliance', selId:null, peek:null }); window.scrollTo(0,0); }
+  mtdToggle(id){ this.setState(s=>({ mtdSel:{...s.mtdSel,[id]:!s.mtdSel[id]} })); }
+  mtdClear(){ this.setState({ mtdSel:{} }); }
+  mtdToggleAllRows(ids){ const all=ids.length>0&&ids.every(i=>this.state.mtdSel[i]); const sel={...this.state.mtdSel}; ids.forEach(i=>sel[i]=!all); this.setState({ mtdSel:sel }); }
+  goMtdRequest(){ const sel=Object.keys(this.state.mtdSel).filter(k=>this.state.mtdSel[k]); const clients=sel.map(id=>{ const c=this.clients.find(x=>x.id===id); return c?{ name:c.name, tag:c.type }:null; }).filter(Boolean); if(!clients.length) return; try{ localStorage.setItem('omMtdReq', JSON.stringify(clients)); }catch(e){} window.location.href='MTD%20Quarterly%20Capture.dc.html?screen=request'; }
+  openEditor(){ this.setState({ editorOpen:true }); }
+  closeEditor(){ this.setState({ editorOpen:false }); }
+  resetWeights(){ this.setState({ weights: {...this.DEFAULTS} }); }
+  setWeight(key, val){ this.setState(s=>({ weights: {...s.weights, [key]: val} })); }
+  setSort(key){ this.setState(s=>({ sortKey:key, sortDir: s.sortKey===key ? (s.sortDir==='asc'?'desc':'asc') : (this.SORT_DIR[key]||'asc') })); }
+  setTableView(v){ this.setState({ tableView:v }); }
+  openColPanel(){ this.setState(s=>({ colPanelOpen:true, draftCols:[...s.customCols] })); }
+  closeColPanel(){ this.setState({ colPanelOpen:false }); }
+  toggleDraft(key){ this.setState(s=>({ draftCols: s.draftCols.includes(key) ? s.draftCols.filter(k=>k!==key) : [...s.draftCols, key] })); }
+  applyCols(){ this.setState({ customCols:[...this.state.draftCols], customActive:true, tableView:'custom', colPanelOpen:false }); }
+  toggleAlert(key){ this.setState(s=>({ alertEnabled: {...s.alertEnabled, [key]: !s.alertEnabled[key]} })); }
+  openAlertEdit(key){ const p=this.state.alertParams[key]; this.setState({ alertPanel:{ mode:'edit', ruleKey:key, draft:{...p}, enabled:this.state.alertEnabled[key] } }); }
+  openAlertNew(){ const k=this.ALERT_RULES[0].key; this.setState({ alertPanel:{ mode:'new', ruleKey:k, draft:{...this.state.alertParams[k]}, enabled:true } }); }
+  setAlertRuleKey(key){ this.setState(s=>({ alertPanel:{...s.alertPanel, ruleKey:key, draft:{...s.alertParams[key]}} })); }
+  setAlertDraft(name, val){ this.setState(s=>({ alertPanel:{...s.alertPanel, draft:{...s.alertPanel.draft, [name]:val}} })); }
+  toggleAlertDraft(){ this.setState(s=>({ alertPanel:{...s.alertPanel, enabled:!s.alertPanel.enabled} })); }
+  saveAlert(){ const ap=this.state.alertPanel; this.setState(s=>({ alertParams:{...s.alertParams, [ap.ruleKey]:{...ap.draft}}, alertEnabled:{...s.alertEnabled, [ap.ruleKey]:ap.enabled}, alertPanel:null })); }
+  closeAlertPanel(){ this.setState({ alertPanel:null }); }
+
+  cellFor(key, r, e){
+    const base = { isText:false, isPill:false, isScore:false, isDot:false, main:'', sub:'', color:'#1a2530', bg:'#eef1f5', weight:'400' };
+    const st = this.STATUS[e.c.status] || {c:'#5f6b78',bg:'#eef1f5'};
+    const M = {
+      manager: { isText:true, main:r.manager, color:'#1a6ec4', weight:'600' },
+      score: { isScore:true, main:''+r.score, color:r.scoreColor, dash:r.gaugeDash },
+      status: { isPill:true, main:e.c.status, color:st.c, bg:st.bg },
+      type: { isText:true, main:r.type },
+      vat: { isText:true, main:r.vat },
+      unexplained: { isDot:true, main:r.unexplained+' items', sub:r.unexVal+' · '+r.unexAge, color:r.unexColor },
+      feed: { isPill:true, main:r.feedLabel, color:r.feedColor, bg:r.feedBg },
+      recon: { isText:true, main:r.reconLabel, color:r.reconColor, weight:'600' },
+      openInv: { isText:true, main:r.openInv+' invoices' },
+      openBills: { isText:true, main:r.openBills+' bills' },
+      nextOb: { isText:true, main:r.compTitle, weight:'600' },
+      due: { isText:true, main:r.compDue, color:'#5f6b78' },
+      liab: { isText:true, main:r.compLiab, weight:'700' },
+      compStatus: { isPill:true, main:r.compStatus, color:r.compColor, bg:r.compBg },
+      rev: { isText:true, main:r.rev, weight:'700' },
+      netProfit: { isText:true, main:r.netProfit, color:r.netColor, weight:'700' },
+      cash: { isText:true, main:r.cash, color:r.cashColor, weight:'700' },
+      debtor: { isText:true, main:r.debtorDays+'d', color:r.debtorColor, weight:'600' },
+      overdueAR: { isText:true, main:r.ovLabel, color:r.ovColor, weight:'600' },
+      setAside: { isText:true, main:this.gbpK(e.c.biz.setAside), weight:'600' },
+      estimates: { isText:true, main:(r.estimates||0)+' est.', color:r.estimatesColor, weight:'600' },
+      receipts: { isText:true, main:(r.receipts||0)+' missing', color:r.receiptsColor, weight:'600' },
+      recurring: { isText:true, main:(r.recurring||0)+' due', color:r.recurringColor, weight:'600' },
+    };
+    return { ...base, ...(M[key]||{}) };
+  }
+
+  renderVals(){
+    const S = this.state;
+    const enriched = this.clients.map(c=>({ c, score:this.scoreOf(c), nextOb:this.nextObligation(c), overdue:this.hasOverdue(c) }));
+
+    const PAGES = [['clients','Clients'],['practice','Practice'],['insights','Insights'],['taxes','Taxes'],['partner','Partner Zone']];
+    const navItems = PAGES.map(([k,l])=>({ label:l, onClick:()=>this.setPage(k), bg: S.page===k?'#3a6318':'transparent' }));
+
+    const mgrs = [...new Set(this.clients.map(c=>c.mgr))];
+    const mgrOptions = [{value:'all', label:'All account managers'}, ...mgrs.map(m=>({value:m, label:m}))];
+    const types = [...new Set(this.clients.map(c=>c.type))];
+    const typeOptions = [{value:'all', label:'All client types'}, ...types.map(t=>({value:t, label:t}))];
+    const clientOptions = [{value:'all', label:'All clients'}, ...this.clients.map(c=>({value:c.name, label:c.name}))];
+    const clientFilter = S.clientFilter!==undefined ? S.clientFilter : (this.props.defaultClient ?? 'all');
+    const statuses = [...new Set(this.clients.map(c=>c.status))];
+    const statusOptions = [{value:'all', label:'All statuses'}, ...statuses.map(s=>({value:s, label:s}))];
+    const sortOptions = [
+      {value:'score', label:'Sort: Health score (low→high)'},
+      {value:'name', label:'Sort: Name (A–Z)'},
+      {value:'unexplained', label:'Sort: Unexplained items'},
+      {value:'comp', label:'Sort: Next deadline'},
+      {value:'cash', label:'Sort: Cash position'},
+    ];
+
+    const VIEWS = [ {key:'overview',label:'Overview'}, {key:'bookkeeping',label:'Bookkeeping'}, {key:'compliance',label:'Compliance'}, {key:'business',label:'Business health'} ];
+    if(S.customActive) VIEWS.push({key:'custom',label:'Custom'});
+    const viewTabs = VIEWS.map(v=>({ label:v.label, onClick:()=>this.setTableView(v.key),
+      color: S.tableView===v.key?'#1a2530':'#5f6b78', weight: S.tableView===v.key?'800':'600',
+      underline: S.tableView===v.key?'#1a6ec4':'transparent' }));
+    const viewOptions = VIEWS.map(v=>({ value:v.key, label:'View: '+v.label }));
+
+    let pool = enriched;
+    if(S.mgr!=='all') pool = pool.filter(e=>e.c.mgr===S.mgr);
+    if(S.typeFilter!=='all') pool = pool.filter(e=>e.c.type===S.typeFilter);
+    if(S.statusFilter!=='all') pool = pool.filter(e=>e.c.status===S.statusFilter);
+    if(clientFilter!=='all') pool = pool.filter(e=>e.c.name===clientFilter);
+    if(S.search.trim()){ const q=S.search.toLowerCase(); pool = pool.filter(e=>e.c.name.toLowerCase().includes(q)); }
+
+    const dir = S.sortDir==='asc'?1:-1;
+    const keyFn = { name:e=>e.c.name.toLowerCase(), score:e=>e.score, unexplained:e=>e.c.bk.unex, comp:e=>e.nextOb?e.nextOb.du:9999, cash:e=>e.c.biz.cash }[S.sortKey] || (e=>e.score);
+    const shown = [...pool].sort((a,b)=>{ const va=keyFn(a), vb=keyFn(b); return va<vb?-1*dir:va>vb?1*dir:0; });
+
+    const unexColor = n => n===0?'#1f8a3b':n<=8?'#b0781a':'#c23b3b';
+
+    const selectedCols = this.CATALOG.filter(a=>S.customCols.includes(a.key));
+    const customColumns = selectedCols.map(a=>({ label:a.label }));
+    const customGrid = '1.9fr ' + selectedCols.map(()=>'1.3fr').join(' ') + ' 0.8fr';
+
+    const rows = shown.map(e=>{
+      const c=e.c, ob=e.nextOb, bk=c.bk, biz=c.biz;
+      const oc = ob ? this.obStatusColor(ob.st, ob.overdue) : {c:'#5f6b78',bg:'#eef1f5'};
+      const sc=this.bandColor(e.score);
+      const fm=this.FEED[bk.feed];
+      const reconC = bk.recon<=7?'#1f8a3b':bk.recon<=30?'#b0781a':'#c23b3b';
+      const profit = biz.rev-biz.exp;
+      const bkBand = e.score>=80?{l:'Healthy',c:'#1f8a3b',bg:'#e6f4ea'}:e.score>=60?{l:'Watch',c:'#b0781a',bg:'#faf1db'}:{l:'Attention',c:'#c23b3b',bg:'#fbe9e9'};
+      const coBand = e.overdue?{l:'Attention',c:'#c23b3b',bg:'#fbe9e9'}:(ob&&!ob.overdue&&ob.st!=='filed'&&ob.du<=14?{l:'Due soon',c:'#b0781a',bg:'#faf1db'}:{l:'On track',c:'#1f8a3b',bg:'#e6f4ea'});
+      const bizBand = (biz.cash<0||biz.negM>0)?{l:'Strained',c:'#c23b3b',bg:'#fbe9e9'}:((biz.debtor>55||biz.ovC>3)?{l:'Watch',c:'#b0781a',bg:'#faf1db'}:{l:'Healthy',c:'#1f8a3b',bg:'#e6f4ea'});
+      const r = {
+        id:c.id, name:c.name, type:c.type, vat:c.vat, manager:c.mgr,
+        score:e.score, scoreColor:sc, gaugeDash:this.gaugeDash(e.score),
+        unexplained:bk.unex, unexColor:unexColor(bk.unex),
+        unexVal:this.gbp(bk.unexVal), unexAge: bk.unex===0?'all clear':'oldest '+bk.unexOld+'d',
+        feedLabel:fm.l, feedColor:fm.c, feedBg:fm.bg,
+        reconLabel: bk.recon+'d ago', reconColor: reconC,
+        openInv: bk.draftInv+bk.unmInv, openBills: bk.draftBills+bk.awBills,
+        compStatus: ob? (ob.overdue?'Overdue':ob.st.charAt(0).toUpperCase()+ob.st.slice(1)) : '—',
+        compBg: oc.bg, compColor: oc.c,
+        compLabel: ob? ob.t+' · '+this.fmtDue(ob) : 'No obligations',
+        compTitle: ob? ob.t : '—',
+        compDue: ob? this.fmtDue(ob) : '—',
+        compLiab: ob&&ob.liab? 'est. '+this.gbp(ob.liab) : '—',
+        cash: this.gbpK(biz.cash), cashColor: biz.cash<0?'#c23b3b':'#1a2530',
+        debtorDays:biz.debtor, debtorColor: biz.debtor>55?'#b0781a':'#1a2530',
+        bizNote: biz.negM>0 ? biz.negM+'mo neg cash' : (biz.ovC>0? biz.ovC+' overdue inv':'on track'),
+        rev: this.gbp(biz.rev), netProfit: this.gbp(profit), netColor: profit>=0?'#1f8a3b':'#c23b3b',
+        ovLabel: biz.ovC+' · '+this.gbpK(biz.ovV), ovColor: biz.ovC>3?'#c23b3b':biz.ovC>0?'#b0781a':'#1f8a3b',
+        estimates: bk.est||0, estimatesColor: (bk.est||0)>4?'#c23b3b':(bk.est||0)>0?'#b0781a':'#1f8a3b',
+        receipts: bk.rcpt||0, receiptsColor: (bk.rcpt||0)>6?'#c23b3b':(bk.rcpt||0)>0?'#b0781a':'#1f8a3b',
+        recurring: bk.recur||0, recurringColor: (bk.recur||0)>0?'#b0781a':'#1f8a3b',
+        mBkLabel:bkBand.l, mBkC:bkBand.c, mBkBg:bkBand.bg,
+        mCoLabel:coBand.l, mCoC:coBand.c, mCoBg:coBand.bg,
+        mBizLabel:bizBand.l, mBizC:bizBand.c, mBizBg:bizBand.bg,
+        open: ()=>this.open(c.id),
+        peekBk: ()=>this.openPeek(c.id,'bk'), peekCo: ()=>this.openPeek(c.id,'co'), peekBiz: ()=>this.openPeek(c.id,'biz'),
+        mtdChecked: !!S.mtdSel[c.id], mtdToggle: ()=>this.mtdToggle(c.id), mtdRowBg: S.mtdSel[c.id]?'#f2f9ee':'#fff',
+      };
+      r.customCells = selectedCols.map(a=>this.cellFor(a.key, r, e));
+      return r;
+    });
+
+    const mtdSelCount = Object.keys(S.mtdSel).filter(k=>S.mtdSel[k]).length;
+    const mtdScope = this.clients.filter(c=>c.comp.some(o=>/MTD Income Tax/.test(o.t)));
+    const mtdDue = mtdScope.length;
+    const mtdNeedData = mtdScope.filter(c=>c.bk.unex>0).length;
+    const mtdReady = mtdScope.filter(c=>c.comp.some(o=>/MTD Income Tax/.test(o.t) && o.st==='ready')).length;
+
+    let base = enriched;
+    if(S.mgr!=='all') base = base.filter(e=>e.c.mgr===S.mgr);
+    const avg = base.length? Math.round(base.reduce((s,e)=>s+e.score,0)/base.length):0;
+    const overdueCount = base.reduce((s,e)=>s + e.c.comp.filter(o=>o.st!=='filed' && (this.daysUntil(o.due)<0 || o.st==='overdue')).length,0);
+    const summary = {
+      avgScore: avg, avgColor: this.bandColor(avg),
+      attention: base.filter(e=>e.score<80).length,
+      overdue: overdueCount,
+      totalUnexplained: base.reduce((s,e)=>s+e.c.bk.unex,0),
+      unexplainedVal: this.gbp(base.reduce((s,e)=>s+e.c.bk.unexVal,0)),
+    };
+
+    const totalW = Object.values(S.weights).reduce((a,b)=>a+b,0);
+    const editorChecks = this.CHECKS.map(ch=>({
+      label:ch.label, desc:ch.desc, headline:!!ch.headline,
+      weight: S.weights[ch.key], pct: totalW>0? Math.round(S.weights[ch.key]/totalW*100):0,
+      onInput: (e)=>this.setWeight(ch.key, +e.target.value),
+    }));
+
+    let cl = null;
+    if(S.selId){ const c=this.clients.find(x=>x.id===S.selId); if(c) cl=this.clientDetail(c); }
+
+    let peek = null;
+    if(S.peek){ const c=this.clients.find(x=>x.id===S.peek.id); if(c){ const d=this.clientDetail(c); const g=S.peek.group;
+      peek = { name:c.name, group:g,
+        isBk:g==='bk', isCo:g==='co', isBiz:g==='biz',
+        title: g==='bk'?'Bookkeeping health':g==='co'?'Compliance':'Business health',
+        d, close:()=>this.closePeek(), open:()=>{ this.setState({peek:null}); this.open(c.id); } };
+    } }
+
+    // ---- alerts ----
+    const sevColor = { high:'#c23b3b', med:'#b0781a' };
+    const alertCards = this.ALERT_RULES.map(r=>{
+      const p = S.alertParams[r.key]; const enabled = S.alertEnabled[r.key];
+      const hits = enabled ? this.clients.map(c=>{ const d=this.evalRule(r.key,c,p); return d? { name:c.name, mgr:c.mgr, detail:d.detail, dotColor:sevColor[d.sev], open: r.key==='smartCollect' ? ()=>this.goSmartCollect(c.id) : ()=>this.open(c.id) } : null; }).filter(Boolean) : [];
+      const anyHigh = enabled && this.clients.some(c=>{ const d=this.evalRule(r.key,c,p); return d&&d.sev==='high'; });
+      const count = hits.length;
+      const summary = r.key==='vatDue'||r.key==='corpTax' ? ('Within '+p.days+' days of the due date')
+        : r.key==='unexplained' ? ('More than '+p.count+' unexplained items')
+        : r.key==='feedBroken' ? (p.mode==='broken'?'Broken feeds only':'Broken or stale feeds')
+        : r.key==='bigTxn' ? ('Transactions over '+this.gbp(p.amount))
+        : r.key==='smartCollect' ? (p.count+'+ transactions missing a receipt')
+        : ('No login for '+p.days+' days');
+      const badgeC = !enabled?'#8a94a1':count===0?'#1f8a3b':anyHigh?'#c23b3b':'#b0781a';
+      const badgeBg = !enabled?'#eef1f5':count===0?'#e6f4ea':anyHigh?'#fbe9e9':'#faf1db';
+      return {
+        key:r.key, title:r.title, type:r.type, summary, enabled, count,
+        countLabel: !enabled?'Off':count===0?'No alerts':count+(count===1?' client':' clients'),
+        badgeC, badgeBg,
+        topBar: !enabled?'#dbe1ea':count===0?'#6fbf5a':anyHigh?'#c23b3b':'#e6a417',
+        hits: hits.slice(0,4), moreCount: Math.max(0, count-4),
+        empty: enabled && count===0,
+        onToggle: ()=>this.toggleAlert(r.key), knobBg: enabled?'#4a7d2b':'#c3ccd6', knobX: enabled?'20px':'2px',
+        onEdit: ()=>this.openAlertEdit(r.key),
+      };
+    });
+    const alertsTotal = alertCards.reduce((s,c)=>s+c.count,0);
+    const alertsActiveRules = alertCards.filter(c=>c.enabled).length;
+
+    // ---- smart collect ----
+    const scClientObj = S.scClient!=null ? this.clients.find(c=>c.id===S.scClient) : null;
+    const scSource = scClientObj ? [scClientObj] : this.clients;
+    const scAll = scSource.flatMap(c=>this.missingReceiptTx(c));
+    const F = S.scFilters;
+    const catList = [...new Set(scAll.map(t=>t.category))].sort();
+    const scClientDropdown = [...new Set(scAll.map(t=>t.client))].sort();
+    const matchFilters = (t)=>{
+      if(F.client!=='all' && t.client!==F.client) return false;
+      if(F.from && t.iso < F.from) return false;
+      if(F.to && t.iso > F.to) return false;
+      if(F.valMin!=='' && t.amount < parseFloat(F.valMin)) return false;
+      if(F.valMax!=='' && t.amount > parseFloat(F.valMax)) return false;
+      if(F.dir!=='all' && t.dir!==F.dir) return false;
+      if(F.cat!=='all'){ if(F.cat.startsWith('g:')){ if(t.group!==F.cat.slice(2)) return false; } else if(t.category!==F.cat.slice(2)) return false; }
+      if(F.age!=='0' && t.outstanding < parseInt(F.age)) return false;
+      return true;
+    };
+    const scFiltered = scAll.filter(matchFilters);
+    const decorate = (t)=>({ ...t, amountLabel:this.gbp(t.amount), inLabel: t.dir==='in'?this.gbp(t.amount):'', outLabel: t.dir==='out'?this.gbp(t.amount):'',
+      ageLabel: t.outstanding+'d', ageColor: t.outstanding>=60?'#c23b3b':t.outstanding>=30?'#b0781a':'#5f6b78',
+      checked:!!S.scSel[t.id], toggle:()=>this.scToggle(t.id), excluded:!!S.scExcluded[t.id], notExcluded:!S.scExcluded[t.id],
+      rowBg: S.scExcluded[t.id]?'#fafbfc':'#fff', rowOpacity: S.scExcluded[t.id]?'0.55':'1', strike: S.scExcluded[t.id]?'line-through':'none',
+      exclude:()=>this.scExclude(t.id), restore:()=>this.scRestore(t.id), request:()=>this.goCompose(t.clientId, [{date:t.date,name:t.desc,category:t.category,amount:t.amount,client:t.client,clientId:t.clientId}]) });
+    const scIncluded = scFiltered.filter(t=>!S.scExcluded[t.id]);
+    const scExcludedList = scFiltered.filter(t=>S.scExcluded[t.id]);
+    const scTx = [...scIncluded.map(decorate), ...scExcludedList.map(decorate)];
+    const selectedIds = scIncluded.filter(t=>S.scSel[t.id]).map(t=>t.id);
+    const filtersActive = F.client!=='all'||F.from||F.to||F.valMin!==''||F.valMax!==''||F.dir!=='all'||F.cat!=='all'||F.age!=='0';
+    const scTotal = this.clients.reduce((s,c)=>s+(c.bk.rcpt||0),0);
+    const scClientCount = this.clients.filter(c=>(c.bk.rcpt||0)>0).length;
+    const catOptions = [{value:'all', label:'All categories'},
+      ...this.CAT_GROUPS.filter(g=>scAll.some(t=>t.group===g)).map(g=>({value:'g:'+g, label:'Group · '+g})),
+      ...catList.map(c=>({value:'c:'+c, label:c}))];
+    const smartCollect = {
+      isAll: !scClientObj,
+      clientName: scClientObj ? scClientObj.name : 'All clients',
+      count: scIncluded.length,
+      totalLabel: this.gbp(scIncluded.reduce((s,t)=>s+t.amount,0)),
+      excludedCount: scExcludedList.length,
+      tx: scTx,
+      hasRows: scTx.length>0,
+      noRows: scTx.length===0,
+      requestLabel: 'Request receipts for '+scIncluded.length+(scIncluded.length===1?' transaction':' transactions'),
+      request: ()=>{ const items=scIncluded.map(t=>({date:t.date,name:t.desc,category:t.category,amount:t.amount,client:t.client,clientId:t.clientId})); this.goCompose(scClientObj?scClientObj.id:null, items); },
+      back: ()=>this.backFromSmartCollect(),
+      allChecked: scIncluded.length>0 && scIncluded.every(t=>S.scSel[t.id]),
+      toggleAll: ()=>{ const all=scIncluded.length>0 && scIncluded.every(t=>S.scSel[t.id]); const sel={...S.scSel}; scIncluded.forEach(t=>sel[t.id]=!all); this.setState({scSel:sel}); },
+      selCount: selectedIds.length,
+      excludeSelected: ()=>this.scExcludeSelected(selectedIds),
+      // filters
+      f: F, filtersActive, resetFilters:()=>this.scResetFilters(),
+      clientOptions: [{value:'all', label:'All clients'}, ...scClientDropdown.map(n=>({value:n, label:n}))],
+      catOptions,
+      ageOptions: [{value:'0',label:'Any age'},{value:'15',label:'15+ days'},{value:'30',label:'30+ days'},{value:'45',label:'45+ days'},{value:'60',label:'60+ days'}],
+      dirOptions: [{value:'all',label:'Money in & out'},{value:'out',label:'Money out only'},{value:'in',label:'Money in only'}],
+      onClient:(e)=>this.scSetFilter('client',e.target.value),
+      onFrom:(e)=>this.scSetFilter('from',e.target.value), onTo:(e)=>this.scSetFilter('to',e.target.value),
+      onValMin:(e)=>this.scSetFilter('valMin',e.target.value), onValMax:(e)=>this.scSetFilter('valMax',e.target.value),
+      onDir:(e)=>this.scSetFilter('dir',e.target.value), onCat:(e)=>this.scSetFilter('cat',e.target.value),
+      onAge:(e)=>this.scSetFilter('age',e.target.value),
+      tab: S.scTab, isReqTab: S.scTab==='request', isCollTab: S.scTab==='collection',
+      setReqTab: ()=>this.setState({scTab:'request'}), setCollTab: ()=>this.setState({scTab:'collection'}),
+      reqTabWeight: S.scTab==='request'?'700':'500', reqTabColor: S.scTab==='request'?'#1a2530':'#5f6b78', reqTabBorder: S.scTab==='request'?'#1a6ec4':'transparent',
+      collTabWeight: S.scTab==='collection'?'700':'500', collTabColor: S.scTab==='collection'?'#1a2530':'#5f6b78', collTabBorder: S.scTab==='collection'?'#1a6ec4':'transparent',
+      collPillBg: S.scTab==='collection'?'#1a6ec4':'#eef1f5', collPillColor: S.scTab==='collection'?'#fff':'#5f6b78',
+    };
+    // ---- collection (tracking) ----
+    void S.scCollBump;
+    const collAll = this.loadCollection().filter(x=> scClientObj ? x.clientId===scClientObj.id : true);
+    const collRows = collAll.map(x=>{
+      const ready = x.status==='review';
+      return { client:x.client, desc:x.desc, category:x.category, amountLabel:this.gbp(x.amount), sent:x.sent,
+        statusLabel: ready?'Ready to review':'Awaiting client',
+        statusBg: ready?'#e2f2e0':'#fdf0dc', statusColor: ready?'#3a8b3b':'#b0781a',
+        ready, notReady:!ready, file:x.file, review:()=>this.reviewInApp(x.clientId) };
+    });
+    const collReview = collRows.filter(r=>r.ready);
+    const collOutstanding = collRows.filter(r=>r.notReady);
+    // per-client request tracker (lifted from Paperwork Capture)
+    const daysAgo=(d)=>{ const p=(d||'').split('/'); if(p.length<3) return 0; const dt=new Date(+p[2],+p[1]-1,+p[0]); return Math.max(0,Math.round((new Date(2026,6,21)-dt)/86400000)); };
+    const byClient={};
+    collAll.forEach(x=>{ (byClient[x.clientId]=byClient[x.clientId]||{clientId:x.clientId,client:x.client,items:[]}).items.push(x); });
+    const trackAll = Object.values(byClient).map(g=>{
+      const req=g.items.length, rec=g.items.filter(i=>i.status==='review').length;
+      const sent=g.items.map(i=>i.sent).sort((a,b)=>{ const pa=a.split('/'),pb=b.split('/'); return (pa[2]+pa[1]+pa[0])<(pb[2]+pb[1]+pb[0])?-1:1; })[0];
+      const age=daysAgo(sent);
+      let status, cat;
+      if(rec>=req){ status='Complete'; cat='complete'; }
+      else if(rec>0){ status='Partially fulfilled'; cat='await'; }
+      else if(age>14){ status='Overdue'; cat='overdue'; }
+      else { status='Awaiting client'; cat='await'; }
+      return { clientId:g.clientId, client:g.client, req, rec, status, cat, sent, age, hasReview: rec>0 };
+    });
+    const trStColors={ 'Awaiting client':['#fdf0dc','#b0781a'], 'Partially fulfilled':['#fdf0dc','#b0781a'], 'Complete':['#e2f2e0','#3a8b3b'], 'Overdue':['#fbe4e4','#c23b3b'] };
+    const trTabDefs=[{key:'all',label:'All'},{key:'await',label:'Awaiting client'},{key:'overdue',label:'Overdue'},{key:'complete',label:'Complete'}];
+    const trCounts={ all:trackAll.length, await:trackAll.filter(r=>r.cat==='await').length, overdue:trackAll.filter(r=>r.cat==='overdue').length, complete:trackAll.filter(r=>r.cat==='complete').length };
+    const trTabs=trTabDefs.map(t=>{ const on=t.key===S.scTrackerTab; return { label:t.label, count:trCounts[t.key], weight:on?'700':'500', color:on?'#1f2a36':'#5f6b78', border:on?'#1a6ec4':'transparent', pillBg:on?'#1a6ec4':'#eef1f5', pillColor:on?'#fff':'#5f6b78', select:()=>this.setState({scTrackerTab:t.key}) }; });
+    const trRows=trackAll.filter(r=> S.scTrackerTab==='all'?true:r.cat===S.scTrackerTab).map(r=>{ const c=trStColors[r.status]||['#eef1f5','#5f6b78'];
+      return { client:r.client, req:r.req, rec:r.rec, status:r.status, stBg:c[0], stColor:c[1], sent:r.sent, daysLabel: r.age===0?'today':(r.age+' days ago'),
+        hasReview:r.hasReview, noReview:!r.hasReview, review:()=>this.reviewInApp(r.clientId) }; });
+    smartCollect.collection = {
+      rows: [...collReview, ...collOutstanding],
+      total: collRows.length,
+      outstandingCount: collOutstanding.length,
+      reviewCount: collReview.length,
+      hasRows: collRows.length>0, noRows: collRows.length===0,
+      trTabs, trRows, trNoRows: trRows.length===0,
+    };
+
+    // alert edit/new panel
+    let alertPanel = null;
+    if(S.alertPanel){
+      const ap = S.alertPanel; const rule = this.ALERT_RULES.find(r=>r.key===ap.ruleKey);
+      alertPanel = {
+        mode:ap.mode, isNew: ap.mode==='new', isEdit: ap.mode==='edit',
+        title: ap.mode==='new'?'New alert rule':'Edit alert rule',
+        ruleKey: ap.ruleKey,
+        ruleOptions: this.ALERT_RULES.map(r=>({ value:r.key, label:r.title })),
+        ruleTitle: rule.title, ruleDesc: rule.desc, ruleType: rule.type,
+        enabled: ap.enabled, onToggleEnabled:()=>this.toggleAlertDraft(), knobBg: ap.enabled?'#4a7d2b':'#c3ccd6', knobX: ap.enabled?'20px':'2px',
+        onRuleChange:(e)=>this.setAlertRuleKey(e.target.value),
+        fields: rule.fields.map(f=>({
+          name:f.name, label:f.label, kind:f.kind, unit:f.unit||'',
+          isNumber:f.kind==='number', isSelect:f.kind==='select',
+          value: ap.draft[f.name], min:f.min, max:f.max, step:f.step||1,
+          options: (f.options||[]).map(o=>({value:o.v,label:o.l})),
+          onInput:(e)=>this.setAlertDraft(f.name, f.kind==='number'?+e.target.value:e.target.value),
+        })),
+      };
+    }
+
+    return {
+      isDetail: !!S.selId,
+      pageTitle: {clients:'Clients',practice:'Practice',insights:'Insights',taxes:'Taxes',partner:'Partner Zone',alerts:'Alerts',ask:'Ask Insights',smartcollect:'Smart Collect'}[S.page] || '',
+      showSmartCollect: S.page==='smartcollect' && !S.selId,
+      smartCollect, smartCollectTotal: scTotal, smartCollectClientCount: scClientCount, smartCollectHasItems: scTotal>0,
+      goSmartCollectAll: ()=>this.goSmartCollect(null),
+      hdrClients: S.page==='clients' && !S.selId,
+      hdrInsights: S.page==='insights' && !S.selId,
+      hdrAlerts: S.page==='alerts' && !S.selId,
+      hdrAsk: S.page==='ask' && !S.selId,
+      showPageHeader: !S.selId && S.page!=='smartcollect',
+      showAlerts: S.page==='alerts' && !S.selId,
+      showAsk: S.page==='ask' && !S.selId,
+      goInsights: ()=>this.setPage('insights'),
+      goAsk: ()=>this.setPage('ask'),
+      peek,
+      chat: S.chat.map(m=>({ ...m, isUser:m.role==='user', isBot:m.role==='assistant', hasItems:!!(m.items&&m.items.length), hasFoot:!!m.foot })), chatEmpty: S.chat.length===0,
+      chatInput: S.chatInput, onChatInput:(e)=>this.setState({chatInput:e.target.value}),
+      onChatKey:(e)=>{ if(e.key==='Enter'){ this.sendChat(); } },
+      sendChat:()=>this.sendChat(),
+      suggestions: this.SUGGESTIONS.map(s=>({ label:s.label, onClick:()=>this.askSuggestion(s.id) })),
+      showClients: S.page==='clients' && !S.selId,
+      showInsights: S.page==='insights' && !S.selId,
+      showPractice: S.page==='practice' && !S.selId,
+      showTaxes: S.page==='taxes' && !S.selId,
+      showPartner: S.page==='partner' && !S.selId,
+      navItems,
+      mgr:S.mgr, onMgr:(e)=>this.setState({mgr:e.target.value}), mgrOptions,
+      typeFilter:S.typeFilter, onType:(e)=>this.setState({typeFilter:e.target.value}), typeOptions,
+      clientFilter, onClientFilter:(e)=>this.setState({clientFilter:e.target.value}), clientOptions,
+      statusFilter:S.statusFilter, onStatus:(e)=>this.setState({statusFilter:e.target.value}), statusOptions,
+      sortKey:S.sortKey, onSortSel:(e)=>this.setSort(e.target.value), sortOptions,
+      search:S.search, onSearch:(e)=>this.setState({search:e.target.value}),
+      openEditor:()=>this.openEditor(), closeEditor:()=>this.closeEditor(), resetWeights:()=>this.resetWeights(),
+      editorOpen:S.editorOpen, editorChecks, totalWeight:totalW,
+      summary, rows,
+      goCompliance:()=>this.goCompliance(),
+      mtdSelCount, mtdBarShow: mtdSelCount>0,
+      mtdAllChecked: rows.length>0 && rows.every(r=>S.mtdSel[r.id]),
+      mtdToggleAll: ()=>this.mtdToggleAllRows(rows.map(r=>r.id)),
+      mtdClear:()=>this.mtdClear(), goMtdRequest:()=>this.goMtdRequest(),
+      mtdDue, mtdNeedData, mtdReady, mtdClientWord: mtdSelCount===1?'client':'clients',
+      goMtdReview: ()=>{ window.location.href='MTD%20Quarterly%20Capture.dc.html?screen=review'; },
+      tableView:S.tableView, viewTabs, viewOptions, onViewSel:(e)=>this.setTableView(e.target.value),
+      vOverview: S.tableView==='overview', vBookkeeping: S.tableView==='bookkeeping', vCompliance: S.tableView==='compliance', vBusiness: S.tableView==='business', vCustom: S.tableView==='custom',
+      customColumns, customGrid,
+      openColPanel:()=>this.openColPanel(), closeColPanel:()=>this.closeColPanel(), applyCols:()=>this.applyCols(),
+      colPanelOpen:S.colPanelOpen, draftCount:S.draftCols.length,
+      colGroups: ['General','Bookkeeping','Compliance','Business health'].map(g=>({
+        group:g,
+        items: this.CATALOG.filter(a=>a.group===g).map(a=>({
+          key:a.key, label:a.label, desc:a.desc,
+          on: S.draftCols.includes(a.key),
+          onToggle: ()=>this.toggleDraft(a.key),
+          knobBg: S.draftCols.includes(a.key)?'#4a7d2b':'#c3ccd6',
+          knobX: S.draftCols.includes(a.key)?'20px':'2px',
+        })),
+      })),
+      backToOverview:()=>this.backToOverview(),
+      alertCards, alertsTotal, alertsActiveRules, alertPanel,
+      goAlerts:()=>this.setPage('alerts'), openAlertNew:()=>this.openAlertNew(),
+      closeAlertPanel:()=>this.closeAlertPanel(), saveAlert:()=>this.saveAlert(),
+      cl,
+    };
+  }
+}
+</script>
+</body>
+</html>

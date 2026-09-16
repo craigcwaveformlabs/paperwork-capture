@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#11223d"/><rect x="30" y="34" width="40" height="32" rx="4" fill="none" stroke="#4e9d3a" stroke-width="4"/><path d="M30 44h40" stroke="#4e9d3a" stroke-width="4"/><path d="M40 56h12" stroke="#9fb2cc" stroke-width="4"/></svg>
+</template>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; }
+  .fa{ font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  .num{ font-variant-numeric:tabular-nums; }
+  a{ color:#1a6ec4; text-decoration:none; }
+  a:hover{ color:#12508f; }
+  input.fa-in, select.fa-sel, textarea{ font-family:inherit; }
+  input.cell{ font-family:inherit; font-variant-numeric:tabular-nums; text-align:right; width:100%; border:1px solid transparent; border-radius:5px; padding:6px 8px; font-size:13.5px; color:#1f2a36; background:transparent; }
+  input.cell:hover{ border-color:#d3dae3; background:#fff; }
+  input.cell:focus{ border-color:#1a6ec4; background:#fff; outline:none; }
+  input.field{ font-family:inherit; font-variant-numeric:tabular-nums; text-align:right; width:100%; border:1px solid #cdd5df; border-radius:7px; padding:9px 11px; font-size:14px; color:#1f2a36; background:#fff; }
+  input.field:focus{ border-color:#1a6ec4; outline:none; box-shadow:0 0 0 3px rgba(26,110,196,.12); }
+  .ios{ font-family:-apple-system,'Helvetica Neue',Arial,sans-serif; -webkit-font-smoothing:antialiased; color:#1a1a1a; }
+  input.iosf{ font-family:inherit; font-variant-numeric:tabular-nums; text-align:right; border:none; background:transparent; font-size:16px; color:#1a1a1a; padding:2px 0; }
+  input.iosf:focus{ outline:none; }
+</style>
+</helmet>
+<div class="fa" style="min-height:100vh; background:#eef1f5; color:#1f2a36; padding-bottom:52px;">
+
+  <!-- ===================== CLIENT-ACCOUNT CHROME (bank account / income tax) ===================== -->
+  <sc-if value="{{ isAcctChrome }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1280px; margin:0 auto; background:#fff; min-height:calc(100vh - 52px); box-shadow:0 0 0 1px rgba(0,0,0,.04);">
+      <div style="background:#2b333c; height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px;">
+        <div style="font-size:13px; color:#c8d0d8;">Hi, Jim. You are currently viewing the <strong style="color:#fff;">{{ client.name }} - Sole Trader</strong> account.</div>
+        <button onClick="{{ returnToDashboard }}" style="background:#fff; color:#1a6ec4; border:none; border-radius:5px; font-size:12.5px; font-weight:700; padding:7px 14px; cursor:pointer;">Return to your dashboard</button>
+      </div>
+      <div style="background:#1069c4; display:flex; align-items:stretch; height:50px;">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8">
+          <div style="display:flex; align-items:center; padding:0 15px; color:#fff; font-size:14px; font-weight:500; cursor:pointer; background:{{ n.bg }};">{{ n.label }}</div>
+        </sc-for>
+        <div style="flex:1;"></div>
+        <div style="display:flex; align-items:center; padding:0 12px; cursor:pointer;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg></div>
+        <div style="display:flex; align-items:center; padding:0 12px; position:relative; cursor:pointer;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+          <span style="position:absolute; top:6px; right:6px; background:#f2c744; color:#3a2f00; font-size:10px; font-weight:800; min-width:15px; height:15px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px;">{{ bellCount }}</span>
+        </div>
+        <div style="display:flex; align-items:center; padding:0 18px 0 8px; color:#fff; font-size:14px; font-weight:600; cursor:pointer;">{{ client.name }} ▾</div>
+      </div>
+
+      <!-- ---------- BANK ACCOUNT (MTD Import) ---------- -->
+      <sc-if value="{{ isBank }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:22px 30px 60px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px;">
+            <div>
+              <div style="font-size:12.5px; color:#8a94a1; margin-bottom:3px;">Banking · {{ client.name }}</div>
+              <h1 style="margin:0; font-size:26px; font-weight:700;">MTD Import</h1>
+            </div>
+            <div style="display:flex; gap:9px;">
+              <button style="background:#fff; color:#1a6ec4; border:1px solid #bcd6ef; border-radius:6px; font-size:13px; font-weight:700; padding:9px 14px; cursor:pointer;">Upload statement</button>
+              <button style="background:#fff; color:#5f6b78; border:1px solid #cdd5df; border-radius:6px; font-size:13px; font-weight:700; padding:9px 14px; cursor:pointer;">Account settings</button>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 260px; gap:24px; align-items:start;">
+            <div>
+              <div style="display:flex; gap:22px; border-bottom:1px solid #e6eaf0; margin-bottom:14px;">
+                <sc-for list="{{ bankTabs }}" as="t" hint-placeholder-count="4">
+                  <div style="display:flex; align-items:center; gap:7px; padding:0 1px 12px; font-size:14px; font-weight:{{ t.weight }}; color:{{ t.color }}; border-bottom:3px solid {{ t.underline }}; margin-bottom:-1px; cursor:pointer;">
+                    {{ t.label }}
+                    <sc-if value="{{ t.hasCount }}" hint-placeholder-val="{{ false }}"><span style="background:{{ t.badgeBg }}; color:#fff; font-size:11px; font-weight:800; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 5px;">{{ t.count }}</span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:9px; border:1px solid #cdd5df; border-radius:7px; padding:8px 12px; font-size:13.5px; color:#3a4552; min-width:200px;"><span style="flex:1;">Most Recent</span><span style="color:#9aa4b0;">▾</span></div>
+                <div style="display:flex; align-items:center; gap:9px; border:1px solid #cdd5df; border-radius:7px; padding:8px 12px; font-size:13.5px; color:#9aa4b0; min-width:220px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa4b0" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><span>Search</span></div>
+              </div>
+
+              <div style="border:1px solid #e6eaf0; border-radius:8px; overflow:hidden;">
+                <div style="display:grid; grid-template-columns:34px 96px 1fr 120px 120px 130px; align-items:center; background:#f7f9fb; border-bottom:1px solid #e6eaf0; padding:10px 14px; font-size:12.5px; color:#5f6b78; font-weight:700;">
+                  <div></div><div>Date</div><div>Description</div><div style="text-align:right;">Money In</div><div style="text-align:right;">Money Out</div><div style="text-align:right;">Balance</div>
+                </div>
+                <div style="display:grid; grid-template-columns:34px 96px 1fr 120px 120px 130px; align-items:center; padding:9px 14px; border-bottom:1px solid #f0f2f6; font-size:13px; font-style:italic; color:#8a94a1;">
+                  <div></div><div></div><div>Balance brought forward</div><div></div><div></div><div class="num" style="text-align:right; font-style:normal; font-weight:700; color:#3a4552;">£0.00</div>
+                </div>
+                <sc-for list="{{ bankRows }}" as="r" hint-placeholder-count="8">
+                  <div style="display:grid; grid-template-columns:34px 96px 1fr 120px 120px 130px; align-items:center; padding:11px 14px; border-bottom:1px solid #f0f2f6; font-size:14px;">
+                    <div><span style="display:block; width:15px; height:15px; border:1px solid #cdd5df; border-radius:3px;"></span></div>
+                    <div class="num" style="color:#3a4552;">{{ r.date }}</div>
+                    <div style="min-width:0;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <svg style="flex-shrink:0;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg>
+                        <span style="font-weight:700; color:#1a6ec4;">{{ r.name }}</span>
+                        <sc-if value="{{ r.hasReceipt }}" hint-placeholder-val="{{ false }}"><svg style="flex-shrink:0;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8a94a1" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></sc-if>
+                      </div>
+                      <div style="font-size:12px; color:#8a94a1; margin-top:2px; margin-left:23px;">{{ r.explain }}</div>
+                    </div>
+                    <div class="num" style="text-align:right; color:#3a4552;">{{ r.mIn }}</div>
+                    <div class="num" style="text-align:right; color:#3a4552;">{{ r.mOut }}</div>
+                    <div class="num" style="text-align:right; color:#3a4552;">{{ r.bal }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="margin-top:22px; border:1px solid #d7e3ee; border-radius:10px; padding:16px 20px; display:flex; align-items:center; gap:16px; background:#f7fbff;">
+                <div style="flex:1;">
+                  <div style="font-size:15px; font-weight:700;">All {{ txnCount }} transactions explained</div>
+                  <div style="font-size:13.5px; color:#5f6b78; margin-top:2px;">The {{ periodShort }} figures are populated. Head to Income Tax to review and file the quarterly update.</div>
+                </div>
+                <button onClick="{{ goIncomeTax }}" style="background:#1a6ec4; color:#fff; border:none; border-radius:7px; font-size:14px; font-weight:700; padding:11px 18px; cursor:pointer; white-space:nowrap;">Go to Income Tax →</button>
+              </div>
+            </div>
+
+            <!-- right rail -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div style="border:1px solid #e6eaf0; border-radius:9px; overflow:hidden;">
+                <div style="padding:13px 16px 11px; border-bottom:1px solid #eceff3; font-size:14px; font-weight:700;">Import feed</div>
+                <div style="padding:13px 16px;">
+                  <div style="display:inline-flex; align-items:center; gap:7px; background:#e2f2e0; color:#2a5d2c; font-size:12.5px; font-weight:700; padding:5px 11px; border-radius:20px; margin-bottom:10px;"><span style="width:8px; height:8px; border-radius:50%; background:#3a8b3b;"></span> Active</div>
+                  <div style="font-size:12.5px; color:#8a94a1;">Last import</div>
+                  <div style="font-size:13.5px; font-weight:700;">This morning</div>
+                  <div style="font-size:12px; color:#9aa4b0; margin-top:3px;">Source: MTD upload · {{ client.contact }}</div>
+                </div>
+              </div>
+              <div style="border:1px solid #e6eaf0; border-radius:9px; overflow:hidden;">
+                <div style="padding:13px 16px 11px; border-bottom:1px solid #eceff3; font-size:14px; font-weight:700;">Status</div>
+                <div style="padding:8px 16px 12px;">
+                  <div style="display:flex; justify-content:space-between; padding:7px 0; font-size:13px;"><span style="color:#5f6b78;">Explained</span><span class="num" style="font-weight:700; color:#3a8b3b;">{{ txnCount }}</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:7px 0; font-size:13px;"><span style="color:#5f6b78;">For approval</span><span class="num" style="font-weight:700;">0</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:7px 0; font-size:13px;"><span style="color:#5f6b78;">Unexplained</span><span class="num" style="font-weight:700;">0</span></div>
+                </div>
+              </div>
+              <div style="border:1px solid #e6eaf0; border-radius:9px; overflow:hidden;">
+                <div style="padding:13px 16px 11px; border-bottom:1px solid #eceff3; font-size:14px; font-weight:700;">Bank details</div>
+                <div style="padding:13px 16px;">
+                  <div style="font-size:12.5px; color:#8a94a1;">MTD Import · {{ periodShort }}</div>
+                  <div class="num" style="font-size:22px; font-weight:800; margin-top:4px;">{{ bankBalance }}</div>
+                  <div style="font-size:12px; color:#9aa4b0; margin-top:2px;">Net of {{ txnCount }} imported transactions</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ---------- INCOME TAX (FreeAgent MTD table) ---------- -->
+      <sc-if value="{{ isIncomeTax }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px 30px 60px;">
+          <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:12px; background:#eaf6e8; border:1px solid #a9d4a0; border-radius:10px; padding:14px 18px; margin-bottom:20px;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#4e9d3a; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></div>
+              <div style="font-size:14px; color:#2a5d2c;"><strong>Your {{ periodShort }} quarterly update was submitted to HMRC.</strong> It may take a few minutes for HMRC to process the submission.</div>
+            </div>
+          </sc-if>
+
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px;">
+            <h1 style="margin:0; font-size:22px; font-weight:700;">MTD for Income Tax {{ taxYearLong }} - {{ client.contact }} ▾</h1>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+              <button style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:6px; font-size:12.5px; font-weight:700; padding:8px 13px; cursor:pointer;">Export ▾</button>
+              <button style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:6px; font-size:12.5px; font-weight:700; padding:8px 13px; cursor:pointer;">Edit tax year details</button>
+              <button style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:6px; font-size:12.5px; font-weight:700; padding:8px 13px; cursor:pointer;">More ▾</button>
+              <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openSubmit }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:6px; font-size:12.5px; font-weight:700; padding:8px 15px; cursor:pointer;">Send update</button></sc-if>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:26px; border-bottom:1px solid #e6eaf0; margin-bottom:22px;">
+            <sc-for list="{{ itTabs }}" as="t" hint-placeholder-count="6">
+              <div style="padding:0 1px 12px; font-size:14px; font-weight:{{ t.weight }}; color:{{ t.color }}; border-bottom:3px solid {{ t.underline }}; margin-bottom:-1px; cursor:pointer;">{{ t.label }}</div>
+            </sc-for>
+          </div>
+
+          <div style="border:1px solid #e6eaf0; border-radius:10px; padding:18px 20px; margin-bottom:22px; display:grid; grid-template-columns:280px 1fr; gap:24px; align-items:center;">
+            <div>
+              <div style="font-size:13.5px; font-weight:700; margin-bottom:6px;">Your annual tax estimate</div>
+              <div class="num" style="font-size:30px; font-weight:800;">{{ est.total }}</div>
+              <div style="font-size:12.5px; color:#8a94a1; margin-top:2px;">Last updated: 15 July 2026</div>
+            </div>
+            <div style="font-size:13.5px; color:#5f6b78; line-height:1.6;">
+              This estimate, provided by HMRC for informational purposes only, does not guarantee accuracy and may not reflect your final tax liability. You can request an update based on your current figures by sending your income and expenses to date.
+              <div style="margin-top:6px;"><a href="javascript:void(0)">View the breakdown</a> for your current estimate provided by HMRC.</div>
+            </div>
+          </div>
+
+          <div style="border:1px solid #e6eaf0; border-radius:10px; overflow:hidden; overflow-x:auto;">
+            <!-- column headers -->
+            <div style="display:grid; grid-template-columns:230px repeat(6, minmax(128px,1fr)); min-width:1000px; border-bottom:1px solid #e6eaf0;">
+              <div style="padding:14px 16px;"></div>
+              <sc-for list="{{ mtdCols }}" as="c" hint-placeholder-count="6">
+                <div style="padding:12px 14px; text-align:right; border-left:1px solid #f0f2f6;">
+                  <div style="font-size:13.5px; font-weight:800; color:#1a2530;">{{ c.name }}</div>
+                  <div class="num" style="font-size:11.5px; color:#8a94a1; margin-top:2px;">{{ c.covers }}</div>
+                  <div style="margin-top:7px; display:flex; justify-content:flex-end;"><span style="background:#fdf0dc; color:#b0781a; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Due</span></div>
+                  <div class="num" style="font-size:11px; color:#9aa4b0; margin-top:5px;">{{ c.due }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <!-- rows -->
+            <sc-for list="{{ mtdRows }}" as="r" hint-placeholder-count="12">
+              <div style="display:grid; grid-template-columns:230px repeat(6, minmax(128px,1fr)); min-width:1000px; border-bottom:1px solid {{ r.borderColor }}; background:{{ r.bg }};">
+                <div style="padding:{{ r.pad }} 16px; padding-left:{{ r.indent }}; font-size:{{ r.fs }}; font-weight:{{ r.labelWeight }}; color:{{ r.labelColor }};">{{ r.label }}</div>
+                <sc-for list="{{ r.vals }}" as="v" hint-placeholder-count="6">
+                  <div class="num" style="padding:{{ r.pad }} 14px; text-align:right; border-left:1px solid #f4f6f8; font-size:{{ r.fs }}; font-weight:{{ r.valWeight }}; color:{{ r.valColor }};">{{ v }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===================== MICRO-SITE (client figure entry / receipts) ===================== -->
+  <sc-if value="{{ isMicro }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 52px); display:flex; flex-direction:column; background:#eef1f5;">
+      <div style="background:#1c6fc4; height:60px; display:flex; align-items:center; justify-content:space-between; padding:0 26px; flex-shrink:0;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="color:#fff; font-size:18px; font-weight:800; letter-spacing:-.01em;">FreeAgent</span>
+          <span style="width:1px; height:20px; background:rgba(255,255,255,.35);"></span>
+          <span style="color:#dcecfb; font-size:14px; font-weight:600;">MTD upload</span>
+        </div>
+        <sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; align-items:center; gap:9px; color:#fff; font-size:13.5px;">
+            <div style="width:30px; height:30px; border-radius:50%; background:#fff; color:#1c6fc4; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">{{ client.initials }}</div>
+            <span style="font-weight:600;">{{ client.contact }}</span>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="flex:1; padding:34px 16px 44px; display:flex; justify-content:center;">
+        <div style="width:100%; max-width:940px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+            <sc-for list="{{ microSteps }}" as="s" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="width:24px; height:24px; border-radius:50%; background:{{ s.bg }}; color:{{ s.color }}; display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:800;">{{ s.n }}</span>
+                <span style="font-size:13.5px; font-weight:700; color:{{ s.label }};">{{ s.text }}</span>
+              </div>
+              <span style="width:26px; height:2px; background:#d3dae3;"></span>
+            </sc-for>
+            <span style="font-size:13.5px; color:#9aa4b0;">Send</span>
+          </div>
+
+          <sc-if value="{{ isFigures }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; box-shadow:0 2px 10px rgba(20,40,70,.05); overflow:hidden;">
+              <div style="padding:22px 26px 18px; border-bottom:1px solid #eceff3;">
+                <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#2c6ca8; margin-bottom:5px;">Making Tax Digital · Quarterly update</div>
+                <h1 style="margin:0 0 5px; font-size:23px; font-weight:800;">Your {{ periodShort }} figures</h1>
+                <p style="margin:0; font-size:14.5px; color:#5f6b78; line-height:1.5;">{{ practice }} have asked you to confirm your self-employment income and expenses for <strong>{{ periodRange }}</strong>.</p>
+              </div>
+
+              <sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; align-items:center; gap:10px; background:#eaf3fb; border-bottom:1px solid #d7e6f5; padding:11px 26px; font-size:13px; color:#2c5d8c;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5v3H5v12h14V10h-2V7a5 5 0 0 0-5-5z"></path></svg>
+                  <span>Signed in as <strong>{{ client.contact }}</strong> — we've shown last quarter's figures beneath each box for reference.</span>
+                </div>
+              </sc-if>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 26px 6px; gap:14px;">
+                <div style="display:inline-flex; background:#eef1f5; border-radius:9px; padding:3px;">
+                  <button onClick="{{ setQuarter }}" style="background:{{ tgQ.bg }}; color:{{ tgQ.color }}; border:none; border-radius:7px; font-size:13px; font-weight:700; padding:8px 15px; cursor:pointer; box-shadow:{{ tgQ.shadow }};">Quarter total</button>
+                  <button onClick="{{ setMonth }}" style="background:{{ tgM.bg }}; color:{{ tgM.color }}; border:none; border-radius:7px; font-size:13px; font-weight:700; padding:8px 15px; cursor:pointer; box-shadow:{{ tgM.shadow }};">Month by month</button>
+                </div>
+                <div style="font-size:13px; color:#9aa4b0;">All figures in £</div>
+              </div>
+
+              <sc-if value="{{ isQuarter }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:8px 26px 4px;">
+                  <div style="display:grid; grid-template-columns:1fr 200px; padding:9px 4px; font-size:12px; font-weight:800; color:#5f6b78; text-transform:uppercase; letter-spacing:.04em; border-bottom:2px solid #e6eaf0;">
+                    <div>Income</div><div style="text-align:right;">{{ periodShort }}</div>
+                  </div>
+                  <sc-for list="{{ incQ }}" as="r" hint-placeholder-count="2">
+                    <div style="display:grid; grid-template-columns:1fr 200px; align-items:center; gap:12px; padding:9px 4px; border-bottom:1px solid #f2f4f7;">
+                      <div><div style="font-size:14.5px; color:#2a3644;">{{ r.label }}</div><sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}"><div class="num" style="font-size:12px; color:#9aa4b0; margin-top:2px;">Last quarter {{ r.prev }}</div></sc-if></div>
+                      <div><input class="field" value="{{ r.val }}" onInput="{{ r.set }}" /></div>
+                    </div>
+                  </sc-for>
+                  <div style="display:grid; grid-template-columns:1fr 200px; align-items:center; padding:11px 4px; border-bottom:2px solid #e6eaf0; font-size:14.5px; font-weight:800;">
+                    <div>Total income</div><div class="num" style="text-align:right; padding-right:11px;">{{ totalIncome }}</div>
+                  </div>
+                  <div style="display:grid; grid-template-columns:1fr 200px; padding:14px 4px 9px; font-size:12px; font-weight:800; color:#5f6b78; text-transform:uppercase; letter-spacing:.04em; border-bottom:2px solid #e6eaf0;">
+                    <div>Expenses</div><div style="text-align:right;">{{ periodShort }}</div>
+                  </div>
+                  <sc-for list="{{ expQ }}" as="r" hint-placeholder-count="8">
+                    <div style="display:grid; grid-template-columns:1fr 200px; align-items:center; gap:12px; padding:9px 4px; border-bottom:1px solid #f2f4f7;">
+                      <div><div style="font-size:14.5px; color:#2a3644;">{{ r.label }}</div><sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}"><div class="num" style="font-size:12px; color:#9aa4b0; margin-top:2px;">Last quarter {{ r.prev }}</div></sc-if></div>
+                      <div><input class="field" value="{{ r.val }}" onInput="{{ r.set }}" /></div>
+                    </div>
+                  </sc-for>
+                  <div style="display:grid; grid-template-columns:1fr 200px; align-items:center; padding:11px 4px; font-size:14.5px; font-weight:800;">
+                    <div>Total expenses</div><div class="num" style="text-align:right; padding-right:11px;">{{ totalExp }}</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isMonthView }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:8px 26px 4px; overflow-x:auto;">
+                  <div style="display:grid; grid-template-columns:1fr repeat(3,1fr) 120px; gap:8px; padding:9px 4px; font-size:12px; font-weight:800; color:#5f6b78; text-transform:uppercase; letter-spacing:.03em; border-bottom:2px solid #e6eaf0;">
+                    <div>Income</div>
+                    <sc-for list="{{ months }}" as="m" hint-placeholder-count="3"><div style="text-align:right;">{{ m }}</div></sc-for>
+                    <div style="text-align:right; color:#2c6ca8;">Quarter</div>
+                  </div>
+                  <sc-for list="{{ incM }}" as="r" hint-placeholder-count="2">
+                    <div style="display:grid; grid-template-columns:1fr repeat(3,1fr) 120px; gap:8px; align-items:center; padding:8px 4px; border-bottom:1px solid #f2f4f7;">
+                      <div style="font-size:14px; color:#2a3644;">{{ r.label }}</div>
+                      <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3"><div><input class="field" value="{{ c.val }}" onInput="{{ c.set }}" style="padding:8px 9px;" /></div></sc-for>
+                      <div class="num" style="text-align:right; font-weight:700; padding-right:6px;">{{ r.q }}</div>
+                    </div>
+                  </sc-for>
+                  <div style="display:grid; grid-template-columns:1fr repeat(3,1fr) 120px; gap:8px; align-items:center; padding:11px 4px; border-bottom:2px solid #e6eaf0; font-size:14px; font-weight:800;">
+                    <div>Total income</div><div></div><div></div><div></div><div class="num" style="text-align:right; padding-right:6px;">{{ totalIncome }}</div>
+                  </div>
+                  <div style="display:grid; grid-template-columns:1fr repeat(3,1fr) 120px; gap:8px; padding:14px 4px 9px; font-size:12px; font-weight:800; color:#5f6b78; text-transform:uppercase; letter-spacing:.03em; border-bottom:2px solid #e6eaf0;">
+                    <div>Expenses</div>
+                    <sc-for list="{{ months }}" as="m" hint-placeholder-count="3"><div style="text-align:right;">{{ m }}</div></sc-for>
+                    <div style="text-align:right; color:#2c6ca8;">Quarter</div>
+                  </div>
+                  <sc-for list="{{ expM }}" as="r" hint-placeholder-count="8">
+                    <div style="display:grid; grid-template-columns:1fr repeat(3,1fr) 120px; gap:8px; align-items:center; padding:8px 4px; border-bottom:1px solid #f2f4f7;">
+                      <div style="font-size:14px; color:#2a3644;">{{ r.label }}</div>
+                      <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3"><div><input class="field" value="{{ c.val }}" onInput="{{ c.set }}" style="padding:8px 9px;" /></div></sc-for>
+                      <div class="num" style="text-align:right; font-weight:700; padding-right:6px;">{{ r.q }}</div>
+                    </div>
+                  </sc-for>
+                  <div style="display:grid; grid-template-columns:1fr repeat(3,1fr) 120px; gap:8px; align-items:center; padding:11px 4px; font-size:14px; font-weight:800;">
+                    <div>Total expenses</div><div></div><div></div><div></div><div class="num" style="text-align:right; padding-right:6px;">{{ totalExp }}</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="display:flex; align-items:center; gap:16px; padding:18px 26px; border-top:1px solid #eceff3; background:#f7f9fb;">
+                <div style="font-size:13.5px; color:#5f6b78;">Net profit this quarter</div>
+                <div class="num" style="font-size:19px; font-weight:800;">{{ netProfit }}</div>
+                <div style="flex:1;"></div>
+                <button onClick="{{ goReceipts }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:9px; font-size:15px; font-weight:700; padding:13px 26px; cursor:pointer;">Continue to receipts →</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isReceipts }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ microOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; box-shadow:0 2px 10px rgba(20,40,70,.05); overflow:hidden;">
+                <div style="padding:22px 26px 18px; border-bottom:1px solid #eceff3;">
+                  <h1 style="margin:0 0 5px; font-size:23px; font-weight:800;">Capture your evidence for {{ periodShort }}</h1>
+                  <p style="margin:0; font-size:14.5px; color:#5f6b78; line-height:1.5;">Making Tax Digital requires a clear thread of evidence for the quarter. Upload the bank statement covering {{ periodRange }} — receipts are welcome too. Everything is saved to Files on your account for {{ practice }} to review.</p>
+                </div>
+                <div style="padding:22px 26px;">
+
+                  <div style="display:flex; align-items:center; gap:9px; margin-bottom:6px;">
+                    <span style="font-size:15px; font-weight:800; color:#1a2530;">Bank statement</span>
+                    <span style="background:#fdecec; color:#c23b3b; font-size:11px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; padding:3px 8px; border-radius:20px;">Required</span>
+                  </div>
+                  <p style="margin:0 0 11px; font-size:13px; color:#8a94a1; line-height:1.5;">The source transactions for the period — your thread of evidence. Export from your online banking as a PDF or CSV.</p>
+                  <div onClick="{{ addBankStatement }}" style="border:2px dashed {{ stmtBorder }}; border-radius:12px; background:{{ stmtBg }}; padding:30px 20px; text-align:center; cursor:pointer;">
+                    <div style="width:48px; height:48px; border-radius:12px; background:#e6eff8; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M7 14h5"></path></svg></div>
+                    <div style="font-size:15px; font-weight:700; color:#2a3644;">Drag &amp; drop your bank statement</div>
+                    <div style="font-size:13px; color:#9aa4b0; margin-top:3px;">or click to browse · PDF or CSV · max 20MB</div>
+                  </div>
+                  <sc-if value="{{ hasBankStmt }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:14px; display:flex; flex-direction:column; gap:9px;">
+                      <sc-for list="{{ bankStmtList }}" as="b" hint-placeholder-count="1">
+                        <div style="display:flex; align-items:center; gap:12px; border:1px solid #d7e6d5; background:#f7fcf5; border-radius:10px; padding:11px 14px;">
+                          <div style="width:38px; height:38px; border-radius:8px; background:#eaf6e8; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.2"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                          <div style="flex:1; min-width:0;">
+                            <div class="num" style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ b.name }}</div>
+                            <div style="font-size:12px; color:#9aa4b0;">{{ b.size }} · will be saved to Files</div>
+                          </div>
+                          <a onClick="{{ b.remove }}" href="javascript:void(0)" style="font-size:12.5px; font-weight:600; color:#c23b3b;">Remove</a>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <div style="height:1px; background:#eef1f5; margin:24px 0;"></div>
+
+                  <div style="display:flex; align-items:center; gap:9px; margin-bottom:6px;">
+                    <span style="font-size:15px; font-weight:800; color:#1a2530;">Receipts</span>
+                    <span style="background:#eef1f5; color:#6b7684; font-size:11px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; padding:3px 8px; border-radius:20px;">Optional</span>
+                  </div>
+                  <p style="margin:0 0 11px; font-size:13px; color:#8a94a1; line-height:1.5;">Photos or PDFs of receipts for the quarter. We'll read them with Smart Capture and match them to your transactions.</p>
+                  <div onClick="{{ addReceipt }}" style="border:2px dashed #bcd0e6; border-radius:12px; background:#f7fbff; padding:30px 20px; text-align:center; cursor:pointer;">
+                    <div style="width:48px; height:48px; border-radius:12px; background:#e6eff8; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="1.8"><path d="M12 16V4"></path><path d="m6 10 6-6 6 6"></path><path d="M4 20h16"></path></svg></div>
+                    <div style="font-size:15px; font-weight:700; color:#2a3644;">Drag &amp; drop receipts here</div>
+                    <div style="font-size:13px; color:#9aa4b0; margin-top:3px;">or click to browse · JPG, PNG, PDF · max 10MB each</div>
+                  </div>
+
+                  <sc-if value="{{ hasReceipts }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:14px;">
+                      <div style="font-size:13px; font-weight:700; color:#5f6b78; margin-bottom:9px;">{{ receiptCount }} added — these go to Files &amp; Smart Capture</div>
+                      <div style="display:flex; flex-direction:column; gap:9px;">
+                        <sc-for list="{{ receiptList }}" as="r" hint-placeholder-count="3">
+                          <div style="display:flex; align-items:center; gap:12px; border:1px solid #e6eaf0; border-radius:10px; padding:11px 14px;">
+                            <div style="width:38px; height:38px; border-radius:8px; background:#eaf6e8; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg></div>
+                            <div style="flex:1; min-width:0;">
+                              <div class="num" style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.name }}</div>
+                              <div style="font-size:12px; color:#9aa4b0;">{{ r.size }}</div>
+                            </div>
+                            <a onClick="{{ r.remove }}" href="javascript:void(0)" style="font-size:12.5px; font-weight:600; color:#c23b3b;">Remove</a>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="display:flex; align-items:center; gap:14px; padding:18px 26px; border-top:1px solid #eceff3; background:#f7f9fb;">
+                  <a onClick="{{ backToFigures }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:700;">‹ Back to figures</a>
+                  <div style="flex:1;"></div>
+                  <sc-if value="{{ notReadyToSend }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px; color:#b0781a; font-weight:600;">Upload a bank statement to continue</span></sc-if>
+                  <button onClick="{{ sendToPractice }}" style="background:{{ sendBtnBg }}; color:#fff; border:none; border-radius:9px; font-size:15px; font-weight:700; padding:13px 26px; cursor:{{ sendBtnCursor }};">{{ sendLabel }}</button>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ microDone }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; box-shadow:0 2px 10px rgba(20,40,70,.05); overflow:hidden; text-align:center; padding:40px 30px 34px;">
+                <div style="width:66px; height:66px; border-radius:50%; background:#e2f2e0; display:flex; align-items:center; justify-content:center; margin:0 auto 18px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                <h1 style="margin:0 0 8px; font-size:24px; font-weight:800;">Sent, thank you {{ client.contact }}</h1>
+                <p style="margin:0 auto 20px; max-width:520px; font-size:15px; color:#5f6b78; line-height:1.55;">{{ practice }} now have your {{ periodShort }} figures{{ evidenceSuffix }}. They'll review everything and prepare your quarterly update — nothing more for you to do.</p>
+                <div style="max-width:520px; margin:0 auto 18px; text-align:left; border:1px solid #d7e6f5; background:#f7fbff; border-radius:11px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start;">
+                  <svg style="flex-shrink:0; margin-top:1px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="1.9"><path d="M4 20V7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path></svg>
+                  <div style="font-size:13.5px; color:#3a4552; line-height:1.55;">Your bank statement has been saved to <strong>Files</strong> on the FreeAgent account, filed against {{ periodShort }}. It stays there as the evidence trail for this quarter — you and {{ practice }} can open it any time.</div>
+                </div>
+                <div style="max-width:440px; margin:0 auto; border:1px solid #eceff3; border-radius:11px; overflow:hidden; text-align:left;">
+                  <div style="display:flex; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #f2f4f7; font-size:13.5px;"><span style="color:#5f6b78;">Net profit submitted</span><span class="num" style="font-weight:700;">{{ netProfit }}</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #f2f4f7; font-size:13.5px;"><span style="color:#5f6b78;">Bank statement saved to Files</span><span class="num" style="font-weight:700;">{{ bankStmtSummary }}</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #f2f4f7; font-size:13.5px;"><span style="color:#5f6b78;">Receipts attached</span><span class="num" style="font-weight:700;">{{ receiptCount }}</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:12px 16px; font-size:13.5px;"><span style="color:#5f6b78;">Reference</span><span class="num" style="font-weight:700;">MTD-Q1-2026-27</span></div>
+                </div>
+                <button onClick="{{ goTracking }}" style="margin-top:22px; background:#4e9d3a; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; padding:13px 30px; cursor:pointer;">See it land in the practice ›</button>
+
+                <div style="max-width:520px; margin:28px auto 0; text-align:left; border:1px solid #e6eaf0; border-radius:12px; overflow:hidden;">
+                  <div style="background:#11223d; padding:13px 18px; display:flex; align-items:center; gap:10px;">
+                    <span style="color:#fff; font-size:14px; font-weight:800;">FreeAgent</span>
+                    <span style="color:#9fb2cc; font-size:12.5px; font-weight:600;">Make this automatic</span>
+                  </div>
+                  <div style="padding:16px 18px; background:#fff;">
+                    <div style="font-size:15px; font-weight:800; color:#1a2530; margin-bottom:5px;">Skip the statement upload next quarter</div>
+                    <p style="margin:0 0 13px; font-size:13.5px; color:#5f6b78; line-height:1.55;">Upgrade to FreeAgent and connect your bank feed. Transactions flow in automatically as they happen, so your evidence trail builds itself — no exporting or uploading each quarter.</p>
+                    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                      <button style="background:#4e9d3a; color:#fff; border:none; border-radius:9px; font-size:13.5px; font-weight:700; padding:10px 18px; cursor:pointer;">Connect a bank feed</button>
+                      <a href="javascript:void(0)" style="font-size:13.5px; font-weight:700; color:#1a6ec4;">See what's included ›</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="background:#11223d; padding:16px 26px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; flex-wrap:wrap; gap:10px;">
+        <span style="color:#fff; font-size:14px; font-weight:800;">FreeAgent</span>
+        <div style="display:flex; gap:18px; flex-wrap:wrap;">
+          <span style="color:#9fb2cc; font-size:12.5px;">Privacy Notice</span>
+          <span style="color:#9fb2cc; font-size:12.5px;">Terms of Service</span>
+          <span style="color:#9fb2cc; font-size:12.5px;">Support</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== EMAIL (client inbox) ===================== -->
+  <sc-if value="{{ isEmail }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 52px); display:flex; align-items:flex-start; justify-content:center; padding:40px 16px; background:linear-gradient(160deg,#eaf0f6,#e2eaf3);">
+      <div style="width:100%; max-width:1120px; height:calc(100vh - 132px); background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 10px 34px rgba(30,60,100,.14); display:grid; grid-template-columns:340px 1fr;">
+        <div style="border-right:1px solid #eceff3; display:flex; flex-direction:column; min-height:0; background:#fff;">
+          <div style="padding:16px 18px 12px; border-bottom:1px solid #eceff3;">
+            <div style="display:flex; align-items:center; gap:9px;">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 4h16v16H4z" fill="#ea4335"></path><path d="M4 6l8 6 8-6" stroke="#fff" fill="none" stroke-width="2"></path></svg>
+              <span style="font-size:16px; font-weight:700; color:#1f2a36;">Inbox</span>
+              <span style="background:#eef1f5; color:#5f6b78; font-size:12px; font-weight:700; padding:2px 8px; border-radius:10px;">4</span>
+            </div>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:9px; background:#f1f3f6; border-radius:9px; padding:9px 12px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a94a1" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+              <span style="font-size:13px; color:#9aa4b0;">Search mail</span>
+            </div>
+          </div>
+          <div style="flex:1; overflow:auto; min-height:0;">
+            <sc-for list="{{ inbox }}" as="m" hint-placeholder-count="5">
+              <div style="display:grid; grid-template-columns:30px 1fr; gap:10px; padding:13px 16px; border-bottom:1px solid #f4f6f8; cursor:pointer; background:{{ m.bg }}; border-left:3px solid {{ m.accent }};">
+                <div style="padding-top:2px;"><div style="width:9px; height:9px; border-radius:50%; background:{{ m.dot }};"></div></div>
+                <div style="min-width:0;">
+                  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px;">
+                    <span style="font-size:13.5px; font-weight:{{ m.weight }}; color:#1f2a36; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.from }}</span>
+                    <span style="font-size:11.5px; color:#9aa4b0; white-space:nowrap; flex-shrink:0;">{{ m.time }}</span>
+                  </div>
+                  <div style="font-size:13px; font-weight:{{ m.weight }}; color:#2a3644; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.subject }}</div>
+                  <div style="font-size:12.5px; color:#9aa4b0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.snippet }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; min-height:0;">
+          <div style="padding:18px 26px 14px; border-bottom:1px solid #eceff3;">
+            <h2 style="margin:0 0 12px; font-size:21px; font-weight:700; color:#1f2a36;">Your {{ periodShort }} figures for HMRC</h2>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:42px; height:42px; border-radius:50%; background:#2c6ca8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px;">JJ</div>
+              <div style="flex:1;">
+                <div style="font-size:14.5px; font-weight:700;">Jim Jones <span style="font-weight:400; color:#8a94a1;">· {{ practice }}</span></div>
+                <div style="font-size:12.5px; color:#8a94a1;">to {{ client.email }}</div>
+              </div>
+              <span style="font-size:12.5px; color:#9aa4b0;">10:24 AM</span>
+            </div>
+          </div>
+          <div style="flex:1; overflow:auto; min-height:0; padding:22px 26px 28px;">
+            <p style="margin:0 0 14px; font-size:15px; line-height:1.6; color:#3a4552;">Hi {{ client.contact }},</p>
+            <p style="margin:0 0 16px; font-size:15px; line-height:1.6; color:#3a4552;">It's time for your <strong>{{ periodRange }}</strong> Making Tax Digital update. Everything's done online — just open the secure link below, enter your income and expenses for the quarter, and add any receipts. No spreadsheet to fill in.</p>
+            <div style="border:1px solid #d7e6f5; background:#f7fbff; border-radius:10px; padding:14px 16px; margin-bottom:20px; display:flex; gap:12px; align-items:flex-start;">
+              <svg style="flex-shrink:0; margin-top:1px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l3 2"></path></svg>
+              <div style="font-size:13.5px; color:#3a4552; line-height:1.55;">This request was <strong>sent automatically</strong> a week after the quarter closed, in line with your MTD schedule. It's due by <strong>7 Aug 2026</strong>.</div>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <button onClick="{{ goFigures }}" style="background:#1c6fc4; color:#fff; border:none; border-radius:9px; font-size:16px; font-weight:700; padding:15px 26px; cursor:pointer;">Open the MTD upload site →</button>
+              <button onClick="{{ goMobile }}" style="background:#fff; color:#1c6fc4; border:2px solid #1c6fc4; border-radius:9px; font-size:16px; font-weight:700; padding:13px 24px; cursor:pointer; display:inline-flex; align-items:center; gap:9px;"><svg width="16" height="22" viewBox="0 0 16 22" fill="none" stroke="#1c6fc4" stroke-width="1.8"><rect x="1" y="1" width="14" height="20" rx="3"></rect><path d="M6.5 18h3"></path></svg>Submit via mobile app</button>
+            </div>
+            <p style="margin:18px 0 0; font-size:12.5px; color:#9aa4b0; line-height:1.5;">The secure link signs you in automatically. Prefer your phone? Submit through the FreeAgent mobile app instead.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== REQUEST (practice) ===================== -->
+  <sc-if value="{{ isRequest }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:1240px; margin:0 auto; min-height:calc(100vh - 52px);">
+      <div style="background:#3a6318; height:56px; display:flex; align-items:center; padding:0 26px;">
+        <span style="color:#fff; font-size:16px; font-weight:800; letter-spacing:-.01em;">FreeAgent <span style="font-weight:600; opacity:.85;">Practice Dashboard</span></span>
+      </div>
+      <div style="padding:34px 26px 60px; display:flex; justify-content:center;">
+        <div style="width:100%; max-width:640px; background:#fff; border:1px solid #e2e7f0; border-radius:14px; box-shadow:0 2px 10px rgba(20,40,70,.06); overflow:hidden;">
+          <div style="padding:20px 24px 16px; border-bottom:1px solid #eceff3;">
+            <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#b0781a; margin-bottom:5px;">Making Tax Digital · Quarterly update</div>
+            <div style="font-size:20px; font-weight:800;">Request quarterly data</div>
+            <div style="font-size:13.5px; color:#8a94a1; margin-top:3px;">{{ periodRange }} · {{ reqClientCount }} {{ reqClientWord }} · self-employment</div>
+          </div>
+
+          <div style="padding:20px 24px;">
+            <div style="font-size:13px; font-weight:700; color:#5f6b78; margin-bottom:9px;">Clients will complete on the MTD upload site</div>
+            <div style="border:1px solid #eceff3; border-radius:10px; overflow:hidden; margin-bottom:22px;">
+              <sc-for list="{{ requestItems }}" as="i" hint-placeholder-count="2">
+                <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; border-bottom:1px solid #f2f4f7;">
+                  <div style="width:40px; height:40px; border-radius:8px; background:{{ i.iconBg }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-size:19px;">{{ i.icon }}</span></div>
+                  <div style="flex:1;">
+                    <div style="font-size:14.5px; font-weight:700;">{{ i.title }}</div>
+                    <div style="font-size:13px; color:#8a94a1; margin-top:1px;">{{ i.sub }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="font-size:13px; font-weight:700; color:#5f6b78; margin-bottom:9px;">Sending to</div>
+            <div style="border:1px solid #eceff3; border-radius:10px; overflow:hidden; margin-bottom:22px;">
+              <sc-for list="{{ reqClients }}" as="c" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:1px solid #f2f4f7;">
+                  <div>
+                    <div style="font-size:14.5px; font-weight:700;">{{ c.name }}</div>
+                    <div class="num" style="font-size:12.5px; color:#8a94a1;">{{ c.contact }} · {{ c.email }}</div>
+                  </div>
+                  <span style="font-size:12px; font-weight:700; color:#3a8b3b; background:#e2f2e0; padding:3px 10px; border-radius:11px;">{{ c.tag }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="font-size:13px; font-weight:700; color:#5f6b78; margin-bottom:9px;">When to send</div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:6px;">
+              <sc-for list="{{ sendModes }}" as="m" hint-placeholder-count="2">
+                <div onClick="{{ m.select }}" style="display:flex; align-items:flex-start; gap:12px; padding:13px 15px; border:1px solid {{ m.border }}; background:{{ m.bg }}; border-radius:11px; cursor:pointer;">
+                  <span style="width:19px; height:19px; border-radius:50%; border:2px solid {{ m.ring }}; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;"><span style="width:9px; height:9px; border-radius:50%; background:{{ m.dot }};"></span></span>
+                  <div>
+                    <div style="font-size:14px; font-weight:700;">{{ m.title }}</div>
+                    <div style="font-size:12.5px; color:#8a94a1; margin-top:2px;">{{ m.sub }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; padding:16px 24px; border-top:1px solid #eceff3; background:#fbfcfe;">
+            <button onClick="{{ sendRequest }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:7px; font-size:14.5px; font-weight:700; padding:12px 22px; cursor:pointer;">{{ sendBtnLabel }}</button>
+            <div style="flex:1;"></div>
+            <a onClick="{{ returnToDashboard }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:600;">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== REQUESTS TRACKING (practice) ===================== -->
+  <sc-if value="{{ isTracking }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1240px; margin:0 auto; min-height:calc(100vh - 52px); background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.04);">
+      <div style="background:#3a6318; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 26px;">
+        <span style="color:#fff; font-size:16px; font-weight:800; letter-spacing:-.01em;">FreeAgent <span style="font-weight:600; opacity:.85;">Practice Dashboard</span></span>
+        <button onClick="{{ returnToDashboard }}" style="background:#fff; color:#3a6318; border:none; border-radius:5px; font-size:13px; font-weight:700; padding:8px 15px; cursor:pointer;">Your dashboard</button>
+      </div>
+      <div style="padding:26px 30px 60px;">
+        <h1 style="margin:0 0 4px; font-size:27px; font-weight:700;">Paperwork requests</h1>
+        <p style="margin:0 0 22px; font-size:14.5px; color:#5f6b78;">MTD quarterly updates · {{ periodShort }} · self-employment</p>
+
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px;">
+          <sc-for list="{{ trackStats }}" as="s" hint-placeholder-count="4">
+            <div style="border:1px solid #e6eaf0; border-radius:11px; padding:15px 17px;">
+              <div class="num" style="font-size:26px; font-weight:800; color:{{ s.color }};">{{ s.n }}</div>
+              <div style="font-size:13px; color:#5f6b78; margin-top:2px;">{{ s.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="border:1px solid #e6eaf0; border-radius:10px; overflow:hidden;">
+          <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr 150px; background:#f7f9fb; border-bottom:1px solid #e6eaf0; padding:12px 18px; font-size:12.5px; font-weight:700; color:#5f6b78;">
+            <div>Client</div><div>Sent</div><div>Due</div><div>Status</div><div style="text-align:right;">Action</div>
+          </div>
+          <sc-for list="{{ requests }}" as="r" hint-placeholder-count="3">
+            <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr 150px; align-items:center; padding:14px 18px; border-bottom:1px solid #f2f4f7; font-size:14px;">
+              <div><div style="font-weight:700;">{{ r.client }}</div><div class="num" style="font-size:12.5px; color:#8a94a1;">{{ r.ref }}</div></div>
+              <div class="num" style="color:#5f6b78;">{{ r.sent }}</div>
+              <div class="num" style="color:#5f6b78;">{{ r.due }}</div>
+              <div><span style="background:{{ r.stBg }}; color:{{ r.stColor }}; font-size:11.5px; font-weight:700; padding:3px 11px; border-radius:11px;">{{ r.status }}</span></div>
+              <div style="text-align:right;"><button onClick="{{ r.action }}" style="background:{{ r.actBg }}; color:{{ r.actColor }}; border:1px solid {{ r.actBorder }}; border-radius:7px; font-size:13px; font-weight:700; padding:8px 14px; cursor:pointer;">{{ r.actLabel }}</button></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== MOBILE APP (FreeAgent iOS) ===================== -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 52px); background:#dfe4ec; display:flex; align-items:center; justify-content:center; padding:26px 16px;">
+      <div class="ios" style="width:390px; height:800px; background:#eef1f7; border-radius:46px; box-shadow:0 24px 60px rgba(20,40,70,.3), 0 0 0 11px #0e131a, 0 0 0 13px #33383f; overflow:hidden; position:relative; display:flex; flex-direction:column;">
+        <div style="height:50px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 30px 7px; flex-shrink:0;">
+          <span style="font-size:16px; font-weight:700; color:#0d1117;">11:19</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#0d1117"></rect><rect x="5" y="4" width="3" height="8" rx="1" fill="#0d1117"></rect><rect x="10" y="2" width="3" height="10" rx="1" fill="#0d1117"></rect><rect x="15" y="0" width="3" height="12" rx="1" fill="#0d1117"></rect></svg>
+            <svg width="17" height="12" viewBox="0 0 24 18" fill="none" stroke="#0d1117" stroke-width="2"><path d="M2 6a15 15 0 0 1 20 0"></path><path d="M5.5 9.5a10 10 0 0 1 13 0"></path><path d="M9 13a5 5 0 0 1 6 0"></path><circle cx="12" cy="16" r="1" fill="#0d1117" stroke="none"></circle></svg>
+            <div style="display:flex; align-items:center; gap:2px;"><div style="width:23px; height:12px; border:1.5px solid #0d1117; border-radius:3px; padding:1.5px;"><div style="width:70%; height:100%; background:#4cc45a; border-radius:1px;"></div></div><div style="width:2px; height:5px; background:#0d1117; border-radius:0 1px 1px 0;"></div></div>
+          </div>
+        </div>
+
+        <div style="flex:1; overflow:auto; min-height:0;">
+          <!-- DOWNLOAD -->
+          <sc-if value="{{ isMDownload }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:30px 26px;">
+              <div style="text-align:center; margin-bottom:26px;">
+                <div style="width:96px; height:96px; border-radius:22px; background:linear-gradient(160deg,#5cbf4a,#3a9e2f); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(58,158,47,.35);"><span style="color:#fff; font-size:38px; font-weight:800; letter-spacing:-.03em;">fa</span></div>
+                <div style="font-size:24px; font-weight:800;">FreeAgent</div>
+                <div style="font-size:15px; color:#6b7280;">Accounting on the go</div>
+              </div>
+              <div style="background:#fff; border-radius:16px; padding:18px; margin-bottom:20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                  <div><div style="font-size:13px; color:#6b7280;">Invited by</div><div style="font-size:15px; font-weight:700;">Riverside &amp; Co Accountants</div></div>
+                  <button onClick="{{ goMDownloadNext }}" style="background:#1a6ec4; color:#fff; border:none; border-radius:20px; font-size:15px; font-weight:700; padding:9px 24px; cursor:pointer;">GET</button>
+                </div>
+                <div style="display:flex; gap:22px; border-top:1px solid #eef1f5; padding-top:12px; font-size:11.5px; color:#8a94a1;">
+                  <div><div style="font-weight:700; color:#3a4552; font-size:14px;">4.7 ★</div>12k ratings</div>
+                  <div><div style="font-weight:700; color:#3a4552; font-size:14px;">Age 4+</div>Finance</div>
+                  <div><div style="font-weight:700; color:#3a4552; font-size:14px;">#3</div>Business</div>
+                </div>
+              </div>
+              <p style="margin:0; font-size:13px; color:#8a94a1; text-align:center; line-height:1.55;">Download the app, then sign in with the email your accountant used to invite you.</p>
+            </div>
+          </sc-if>
+
+          <!-- SIGN IN -->
+          <sc-if value="{{ isMSignin }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:24px;">
+              <div style="width:70px; height:70px; border-radius:17px; background:linear-gradient(160deg,#5cbf4a,#3a9e2f); margin:6px auto 18px; display:flex; align-items:center; justify-content:center;"><span style="color:#fff; font-size:28px; font-weight:800; letter-spacing:-.03em;">fa</span></div>
+              <h1 style="margin:0 0 4px; font-size:24px; font-weight:800; text-align:center;">Welcome</h1>
+              <p style="margin:0 0 22px; font-size:14px; color:#6b7280; text-align:center;">Sign in to submit your MTD figures</p>
+              <div style="background:#fff; border-radius:14px; overflow:hidden; margin-bottom:18px;">
+                <div style="padding:12px 16px; border-bottom:1px solid #eef1f5;"><div style="font-size:12px; color:#8a94a1;">Email</div><div style="font-size:16px; color:#1a1a1a; margin-top:2px;">{{ client.email }}</div></div>
+                <div style="padding:12px 16px;"><div style="font-size:12px; color:#8a94a1;">Set a password</div><input type="password" value="mtd2026!" class="iosf" style="text-align:left; font-size:18px; letter-spacing:3px; margin-top:2px; width:100%;" /></div>
+              </div>
+              <button onClick="{{ goMSigninNext }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:13px; font-size:17px; font-weight:700; padding:15px; cursor:pointer;">Sign in</button>
+              <p style="margin:16px 0 0; font-size:12px; color:#9aa4b0; text-align:center; line-height:1.5;">Your accountant gave you a Level 2 login — you can submit figures and see your requests.</p>
+            </div>
+          </sc-if>
+
+          <!-- HOME (Level 2) -->
+          <sc-if value="{{ isMHome }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:6px 18px 10px;">
+              <h1 style="margin:6px 0 18px; font-size:23px; font-weight:800; text-align:center;">{{ client.name }}</h1>
+              <div onClick="{{ mtdCard.open }}" style="background:#fff; border-radius:16px; padding:18px; margin-bottom:14px; cursor:pointer; box-shadow:0 2px 10px rgba(20,40,70,.07);">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <div>
+                    <div style="font-size:18px; font-weight:800;">MTD upload</div>
+                    <div style="font-size:14px; color:#6b7280; margin-top:2px;">{{ mtdCard.period }} · {{ mtdCard.due }}</div>
+                  </div>
+                  <svg width="11" height="19" viewBox="0 0 12 20" fill="none" stroke="#1a6ec4" stroke-width="2.5"><path d="M2 2l8 8-8 8"></path></svg>
+                </div>
+                <div style="margin-top:12px;"><span style="background:{{ mtdCard.statusBg }}; color:{{ mtdCard.statusColor }}; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px;">{{ mtdCard.statusLabel }}</span></div>
+              </div>
+              <div style="background:#fff; border-radius:16px; overflow:hidden; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 18px;">
+                  <div><div style="font-size:18px; font-weight:800;">Expenses</div><div style="font-size:14px; color:#6b7280;">{{ client.contact }}</div></div>
+                  <svg width="11" height="19" viewBox="0 0 12 20" fill="none" stroke="#1a6ec4" stroke-width="2.5"><path d="M2 2l8 8-8 8"></path></svg>
+                </div>
+                <div style="display:flex; border-top:1px solid #f0f2f6;">
+                  <div style="flex:1; padding:12px 18px; border-right:1px solid #f0f2f6;"><div style="font-size:12.5px; color:#8a94a1;">Last 3 months</div><div style="font-size:19px; font-weight:800;">£0.00</div></div>
+                  <div style="flex:1; padding:12px 18px;"><div style="font-size:12.5px; color:#8a94a1;">Balance owed</div><div style="font-size:19px; font-weight:800;">£0.00</div></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- FIGURES -->
+          <sc-if value="{{ isMFigures }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 18px 6px;">
+                <a onClick="{{ goMBackHome }}" href="javascript:void(0)" style="font-size:16px; font-weight:600; color:#1a6ec4;">‹ Home</a>
+                <span style="font-size:17px; font-weight:800;">MTD upload</span>
+                <span style="width:44px;"></span>
+              </div>
+              <div style="padding:0 18px 12px; text-align:center;"><span style="font-size:13px; color:#6b7280;">{{ periodShort }} · {{ periodRange }}</span></div>
+              <div style="padding:0 18px 14px;">
+                <div style="display:flex; background:#e2e7ee; border-radius:10px; padding:3px;">
+                  <button onClick="{{ setQuarter }}" style="flex:1; background:{{ tgQ.bg }}; color:{{ tgQ.color }}; border:none; border-radius:8px; font-size:14px; font-weight:700; padding:9px; cursor:pointer; box-shadow:{{ tgQ.shadow }};">Quarter</button>
+                  <button onClick="{{ setMonth }}" style="flex:1; background:{{ tgM.bg }}; color:{{ tgM.color }}; border:none; border-radius:8px; font-size:14px; font-weight:700; padding:9px; cursor:pointer; box-shadow:{{ tgM.shadow }};">Monthly</button>
+                </div>
+              </div>
+
+              <sc-if value="{{ isQuarter }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:0 18px;">
+                  <div style="font-size:12px; font-weight:700; color:#8a94a1; text-transform:uppercase; letter-spacing:.05em; margin:4px 4px 8px;">Income</div>
+                  <div style="background:#fff; border-radius:14px; overflow:hidden; margin-bottom:18px;">
+                    <sc-for list="{{ incQ }}" as="r" hint-placeholder-count="2">
+                      <div style="display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid #f0f2f6;">
+                        <div style="flex:1;"><div style="font-size:15.5px;">{{ r.label }}</div><div class="num" style="font-size:12px; color:#9aa4b0;">Last quarter {{ r.prev }}</div></div>
+                        <span style="font-size:16px; color:#8a94a1;">£</span>
+                        <input class="iosf" value="{{ r.val }}" onInput="{{ r.set }}" style="width:104px;" />
+                      </div>
+                    </sc-for>
+                    <div style="display:flex; justify-content:space-between; padding:12px 16px; background:#f7f9fb;"><span style="font-size:15px; font-weight:800;">Total income</span><span class="num" style="font-size:15px; font-weight:800;">{{ totalIncome }}</span></div>
+                  </div>
+                  <div style="font-size:12px; font-weight:700; color:#8a94a1; text-transform:uppercase; letter-spacing:.05em; margin:4px 4px 8px;">Expenses</div>
+                  <div style="background:#fff; border-radius:14px; overflow:hidden; margin-bottom:14px;">
+                    <sc-for list="{{ expQ }}" as="r" hint-placeholder-count="6">
+                      <div style="display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid #f0f2f6;">
+                        <div style="flex:1;"><div style="font-size:15.5px;">{{ r.label }}</div><div class="num" style="font-size:12px; color:#9aa4b0;">Last quarter {{ r.prev }}</div></div>
+                        <span style="font-size:16px; color:#8a94a1;">£</span>
+                        <input class="iosf" value="{{ r.val }}" onInput="{{ r.set }}" style="width:104px;" />
+                      </div>
+                    </sc-for>
+                    <div style="display:flex; justify-content:space-between; padding:12px 16px; background:#f7f9fb;"><span style="font-size:15px; font-weight:800;">Total expenses</span><span class="num" style="font-size:15px; font-weight:800;">{{ totalExp }}</span></div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isMonthView }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 18px;">
+                  <div style="font-size:12px; font-weight:700; color:#8a94a1; text-transform:uppercase; letter-spacing:.05em; margin:4px 4px 8px;">Income</div>
+                  <sc-for list="{{ incM }}" as="r" hint-placeholder-count="2">
+                    <div style="background:#fff; border-radius:14px; overflow:hidden; margin-bottom:12px;">
+                      <div style="display:flex; justify-content:space-between; padding:11px 16px; border-bottom:1px solid #f0f2f6;"><span style="font-size:15.5px; font-weight:700;">{{ r.label }}</span><span class="num" style="font-size:15px; font-weight:800; color:#2c6ca8;">{{ r.q }}</span></div>
+                      <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+                        <div style="display:flex; align-items:center; gap:10px; padding:9px 16px 9px 26px; border-bottom:1px solid #f6f7fa;"><span style="flex:1; font-size:14px; color:#6b7280;">{{ c.mlabel }}</span><span style="font-size:15px; color:#8a94a1;">£</span><input class="iosf" value="{{ c.val }}" onInput="{{ c.set }}" style="width:96px;" /></div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                  <div style="font-size:12px; font-weight:700; color:#8a94a1; text-transform:uppercase; letter-spacing:.05em; margin:10px 4px 8px;">Expenses</div>
+                  <sc-for list="{{ expM }}" as="r" hint-placeholder-count="6">
+                    <div style="background:#fff; border-radius:14px; overflow:hidden; margin-bottom:12px;">
+                      <div style="display:flex; justify-content:space-between; padding:11px 16px; border-bottom:1px solid #f0f2f6;"><span style="font-size:15.5px; font-weight:700;">{{ r.label }}</span><span class="num" style="font-size:15px; font-weight:800; color:#2c6ca8;">{{ r.q }}</span></div>
+                      <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+                        <div style="display:flex; align-items:center; gap:10px; padding:9px 16px 9px 26px; border-bottom:1px solid #f6f7fa;"><span style="flex:1; font-size:14px; color:#6b7280;">{{ c.mlabel }}</span><span style="font-size:15px; color:#8a94a1;">£</span><input class="iosf" value="{{ c.val }}" onInput="{{ c.set }}" style="width:96px;" /></div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <div style="padding:6px 18px 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#eaf3fb; border-radius:12px; padding:14px 16px; margin-bottom:14px;"><span style="font-size:15px; font-weight:700; color:#2c5d8c;">Net profit</span><span class="num" style="font-size:18px; font-weight:800; color:#1a2530;">{{ netProfit }}</span></div>
+                <button onClick="{{ goMFiguresNext }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:13px; font-size:17px; font-weight:700; padding:15px; cursor:pointer;">Continue to receipts</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- RECEIPTS -->
+          <sc-if value="{{ isMReceipts }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 18px 12px;">
+                <a onClick="{{ goMBackFigures }}" href="javascript:void(0)" style="font-size:16px; font-weight:600; color:#1a6ec4;">‹ Figures</a>
+                <span style="font-size:17px; font-weight:800;">Receipts</span>
+                <span style="width:56px;"></span>
+              </div>
+              <div style="padding:0 18px 20px;">
+                <p style="margin:0 0 16px; font-size:14px; color:#6b7280; line-height:1.5;">Add photos of receipts for this quarter (optional). We'll send them to your accountant.</p>
+                <div onClick="{{ addReceipt }}" style="background:#fff; border:2px dashed #bcd0e6; border-radius:16px; padding:26px; text-align:center; margin-bottom:16px; cursor:pointer;">
+                  <div style="width:52px; height:52px; border-radius:14px; background:#eaf3fb; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6ca8" stroke-width="1.8"><path d="M12 16V4"></path><path d="m6 10 6-6 6 6"></path><path d="M4 20h16"></path></svg></div>
+                  <div style="font-size:15px; font-weight:700;">Add from camera or photos</div>
+                  <div style="font-size:12.5px; color:#9aa4b0; margin-top:2px;">JPG, PNG or PDF</div>
+                </div>
+                <sc-if value="{{ hasReceipts }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#fff; border-radius:14px; overflow:hidden; margin-bottom:18px;">
+                    <sc-for list="{{ receiptList }}" as="r" hint-placeholder-count="3">
+                      <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #f0f2f6;">
+                        <div style="width:34px; height:34px; border-radius:8px; background:#eaf6e8; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg></div>
+                        <div style="flex:1; min-width:0;"><div class="num" style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.name }}</div><div style="font-size:12px; color:#9aa4b0;">{{ r.size }}</div></div>
+                        <a onClick="{{ r.remove }}" href="javascript:void(0)" style="font-size:13px; font-weight:600; color:#c23b3b;">Remove</a>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <button onClick="{{ goMSubmit }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:13px; font-size:17px; font-weight:700; padding:15px; cursor:pointer;">Submit to Riverside &amp; Co</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- SUBMITTED -->
+          <sc-if value="{{ isMDone }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:50px 28px; text-align:center;">
+              <div style="width:88px; height:88px; border-radius:50%; background:#e2f2e0; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg></div>
+              <h1 style="margin:0 0 8px; font-size:24px; font-weight:800;">Submitted</h1>
+              <p style="margin:0 0 24px; font-size:15px; color:#6b7280; line-height:1.55;">Your {{ periodShort }} figures are with Riverside &amp; Co. They'll prepare and file your quarterly update.</p>
+              <div style="background:#fff; border-radius:14px; overflow:hidden; text-align:left; margin-bottom:22px;">
+                <div style="display:flex; justify-content:space-between; padding:13px 16px; border-bottom:1px solid #f0f2f6; font-size:14px;"><span style="color:#6b7280;">Net profit</span><span class="num" style="font-weight:700;">{{ netProfit }}</span></div>
+                <div style="display:flex; justify-content:space-between; padding:13px 16px; border-bottom:1px solid #f0f2f6; font-size:14px;"><span style="color:#6b7280;">Receipts</span><span class="num" style="font-weight:700;">{{ receiptCount }}</span></div>
+                <div style="display:flex; justify-content:space-between; padding:13px 16px; font-size:14px;"><span style="color:#6b7280;">Reference</span><span class="num" style="font-weight:700;">MTD-Q1-2026-27</span></div>
+              </div>
+              <button onClick="{{ goMViewRequests }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:13px; font-size:17px; font-weight:700; padding:15px; cursor:pointer;">View my submissions</button>
+            </div>
+          </sc-if>
+
+          <!-- SUBMISSIONS LIST -->
+          <sc-if value="{{ isMRequests }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:6px 18px 10px;">
+              <h1 style="margin:6px 0 16px; font-size:23px; font-weight:800; text-align:center;">Your MTD updates</h1>
+              <div style="background:#fff; border-radius:16px; overflow:hidden;">
+                <sc-for list="{{ mRequestsList }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:15px 16px; border-bottom:1px solid #f0f2f6;">
+                    <div><div style="font-size:16px; font-weight:700;">{{ r.period }}</div><div style="font-size:13px; color:#8a94a1; margin-top:1px;">{{ r.sub }}</div></div>
+                    <span style="background:{{ r.bg }}; color:{{ r.color }}; font-size:12px; font-weight:700; padding:4px 11px; border-radius:20px;">{{ r.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ mHasTabs }}" hint-placeholder-val="{{ false }}">
+          <div style="flex-shrink:0; padding:6px 8px 4px;">
+            <div style="display:flex; background:#fff; border-radius:28px; box-shadow:0 4px 16px rgba(20,40,70,.14); padding:9px 10px;">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:5px; background:#e9eef5; border-radius:22px;">
+                <svg width="22" height="16" viewBox="0 0 24 18" fill="none" stroke="#1a6ec4" stroke-width="2.2" stroke-linecap="round"><path d="M3 4h11M3 9h8M3 14h11"></path><path d="M17 6l4 3-4 3"></path></svg>
+                <span style="font-size:11.5px; font-weight:700; color:#1a6ec4;">Money Out</span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:5px;">
+                <svg width="22" height="16" viewBox="0 0 24 18" fill="none" stroke="#3a4552" stroke-width="2.2" stroke-linecap="round"><path d="M21 4H10M21 9h-8M21 14H10"></path><path d="M7 6l-4 3 4 3"></path></svg>
+                <span style="font-size:11.5px; color:#3a4552;">Money In</span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:5px;">
+                <svg width="22" height="16" viewBox="0 0 24 18" fill="none" stroke="#3a4552" stroke-width="2.2" stroke-linecap="round"><path d="M3 4h18M3 9h18M3 14h18"></path></svg>
+                <span style="font-size:11.5px; color:#3a4552;">Menu</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><div style="width:130px; height:5px; border-radius:3px; background:#0d1117;"></div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== SUBMIT MODAL ===================== -->
+  <sc-if value="{{ submitOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(20,32,48,.5); display:flex; align-items:flex-start; justify-content:center; padding:60px 16px; z-index:50; overflow:auto;">
+      <div style="width:100%; max-width:520px; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 60px rgba(10,25,45,.4);">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; padding:20px 24px 14px; border-bottom:1px solid #eceff3;">
+          <div>
+            <div style="font-size:18px; font-weight:800;">Send update for {{ taxYearLong }}</div>
+            <div style="font-size:13px; color:#8a94a1; margin-top:2px;">Choose the period to report up to</div>
+          </div>
+          <a onClick="{{ closeSubmit }}" href="javascript:void(0)" style="font-size:22px; color:#8a94a1; line-height:1;">×</a>
+        </div>
+        <div style="padding:18px 24px;">
+          <sc-for list="{{ periodOptions }}" as="p" hint-placeholder-count="2">
+            <div onClick="{{ p.select }}" style="display:flex; align-items:center; gap:13px; padding:14px 16px; border:1px solid {{ p.border }}; background:{{ p.bg }}; border-radius:10px; margin-bottom:11px; cursor:pointer;">
+              <span style="width:20px; height:20px; border-radius:50%; border:2px solid {{ p.ring }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="width:10px; height:10px; border-radius:50%; background:{{ p.dot }};"></span></span>
+              <div style="flex:1;">
+                <div style="font-size:14.5px; font-weight:700;">{{ p.title }}</div>
+                <div class="num" style="font-size:12.5px; color:#8a94a1;">{{ p.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+          <p style="margin:8px 2px 0; font-size:12.5px; color:#8a94a1; line-height:1.5;">FreeAgent sends the income and expense category totals shown on the previous screen. Individual transactions are not sent to HMRC.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; padding:16px 24px; border-top:1px solid #eceff3; background:#fbfcfe;">
+          <button onClick="{{ confirmSubmit }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:7px; font-size:14.5px; font-weight:700; padding:12px 22px; cursor:pointer;">Send update to HMRC</button>
+          <div style="flex:1;"></div>
+          <a onClick="{{ closeSubmit }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:600;">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== PROTOTYPE NAV ===================== -->
+  <div style="position:fixed; left:0; right:0; bottom:0; height:52px; background:#1b2530; display:flex; align-items:center; gap:5px; padding:0 14px; z-index:60; overflow-x:auto;">
+    <span style="font-size:11px; font-weight:700; color:#79879a; text-transform:uppercase; letter-spacing:.06em; margin-right:8px; white-space:nowrap;">MTD journey</span>
+    <sc-for list="{{ protoNav }}" as="p" hint-placeholder-count="7">
+      <button onClick="{{ p.go }}" style="background:{{ p.bg }}; color:{{ p.color }}; border:none; border-radius:6px; font-size:12.5px; font-weight:600; padding:7px 12px; cursor:pointer; white-space:nowrap;">{{ p.label }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { screen:'request', authed:true, view:'quarter', qedits:{}, medits:{},
+            receipts:['fuel-receipt-may.jpg','screwfix-19may.jpg','rsm-invoice.pdf'],
+            bankStmts:[],
+            microSent:false, sendMode:'auto', mSubmitted:false,
+            submitOpen:false, submitted:false, period:'q1' };
+
+  DEFAULT_CLIENTS = [
+    { name:'Marsden Farms', contact:'Alan Marsden', email:'alan@marsdenfarms.co.uk', tag:'Sole trader' },
+    { name:'Oakfield Joinery', contact:'Dave Oak', email:'dave@oakfieldjoinery.co.uk', tag:'Sole trader' },
+    { name:'Copper & Reed Design', contact:'Sara Reed', email:'sara@copperreed.co.uk', tag:'Sole trader' },
+  ];
+
+  INCOME = [
+    { key:'inc0', label:'Turnover',     amt:13920.00, coa:'Sales' },
+    { key:'inc1', label:'Other income', amt:10273.36, coa:'Other Income' },
+  ];
+  EXPENSES = [
+    { key:'e0',  label:'Cost of goods bought',            amt:15.98,   dis:1.60,   coa:'Cost of Sales' },
+    { key:'e1',  label:'CIS payments to sub-contractors', amt:0.00,    dis:0.00,   coa:'Subcontractors' },
+    { key:'e2',  label:'Staff costs',                      amt:20.00,   dis:2.00,   coa:'Salaries' },
+    { key:'e3',  label:'Travel costs',                     amt:0.00,    dis:0.00,   coa:'Travel' },
+    { key:'e4',  label:"Premises' running costs",          amt:0.00,    dis:0.00,   coa:'Premises Costs' },
+    { key:'e5',  label:'Maintenance costs',                amt:34.98,   dis:3.50,   coa:'Repairs & Maintenance' },
+    { key:'e6',  label:'Administration costs',             amt:0.00,    dis:0.00,   coa:'Office Costs' },
+    { key:'e7',  label:'Advertising costs',                amt:0.00,    dis:0.00,   coa:'Advertising' },
+    { key:'e8',  label:'Business entertainment costs',     amt:0.00,    dis:0.00,   coa:'Entertaining' },
+    { key:'e9',  label:'Interest',                         amt:0.00,    dis:0.00,   coa:'Interest Payable' },
+    { key:'e10', label:'Financial charges',                amt:0.00,    dis:0.00,   coa:'Bank Charges' },
+    { key:'e11', label:'Bad debt',                         amt:14.99,   dis:1.50,   coa:'Bad Debts' },
+    { key:'e12', label:'Professional fees',                amt:1299.60, dis:129.96, coa:'Accountancy Fees' },
+    { key:'e13', label:'Depreciation',                     amt:0.00,    dis:0.00,   coa:'Depreciation' },
+    { key:'e14', label:'Other business expenses',          amt:788.46,  dis:78.85,  coa:'Sundry Expenses' },
+  ];
+
+  MONTHS = ['6 Apr–5 May','6 May–5 Jun','6 Jun–5 Jul'];
+
+  gbp(n){ return '£'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  gp(n){ return Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  parseNum(v){ const n=parseFloat(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(n)?0:n; }
+  r2(n){ return Math.round(n*100)/100; }
+  split(amt){ const a=this.r2(amt*0.32), b=this.r2(amt*0.33); return [a,b,this.r2(amt-a-b)]; }
+
+  componentDidMount(){
+    const p=new URLSearchParams(location.search);
+    const scr=p.get('screen'); if(scr) this.setState({ screen:scr });
+    try{ const raw=localStorage.getItem('omMtdReq'); if(raw){ const arr=JSON.parse(raw); if(arr&&arr.length) this.reqClientsData=arr; } }catch(e){}
+  }
+  reqClientsData=null;
+
+  clientsList(){ return (this.reqClientsData&&this.reqClientsData.length)?this.reqClientsData:this.DEFAULT_CLIENTS; }
+  featured(){ const l=this.clientsList(); const c=l[0]; const contact=c.contact||c.name.split(/[ &]/)[0];
+    return { name:c.name, contact, email:c.email||('accounts@'+c.name.toLowerCase().replace(/[^a-z0-9]+/g,'')+'.co.uk'),
+      initials:contact.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase() }; }
+
+  go(screen){ const reset=(screen==='figures'||screen==='receipts')?{microSent:false}:{}; this.setState({ screen, submitOpen:false, ...reset }); window.scrollTo(0,0); }
+  returnToDashboard(){ window.location.href='Business%20Health%20Dashboard.dc.html'; }
+
+  incVal(k){ const d=this.INCOME.find(x=>x.key===k); const e=this.state.qedits[k]; return e!==undefined?this.parseNum(e):d.amt; }
+  expAmt(k){ const d=this.EXPENSES.find(x=>x.key===k); const e=this.state.qedits[k+'a']; return e!==undefined?this.parseNum(e):d.amt; }
+  expDis(k){ const d=this.EXPENSES.find(x=>x.key===k); const e=this.state.qedits[k+'d']; return e!==undefined?this.parseNum(e):d.dis; }
+  setQ(k,v){ this.setState(s=>({ qedits:{...s.qedits,[k]:v} })); }
+  mVal(k,i,amt){ const e=this.state.medits[k+'_'+i]; return e!==undefined?this.parseNum(e):this.split(amt)[i]; }
+  setM(k,i,v){ this.setState(s=>({ medits:{...s.medits,[k+'_'+i]:v} })); }
+
+  totals(){
+    const ti=this.INCOME.reduce((s,r)=>s+this.incVal(r.key),0);
+    const te=this.EXPENSES.reduce((s,r)=>s+this.expAmt(r.key),0);
+    const td=this.EXPENSES.reduce((s,r)=>s+this.expDis(r.key),0);
+    return { ti, te, td, net:ti-te, taxable:(ti-te)+td };
+  }
+  estimate(){
+    const t=this.totals(); const annual=t.taxable*4; const PA=12570;
+    const taxable=Math.max(0,annual-PA);
+    const incomeTax=Math.min(taxable,37700)*0.20 + Math.max(0,taxable-37700)*0.40;
+    const c4=Math.max(0,Math.min(annual,50270)-12570)*0.06 + Math.max(0,annual-50270)*0.02;
+    return { incomeTax, class4:c4, total:incomeTax+c4, annual };
+  }
+
+  addReceipt(){ const pool=['bq-newcastle-jun.jpg','farm-supplies.pdf','parking-may.jpg','sundry-jun.jpg'];
+    this.setState(s=>({ receipts:[...s.receipts, pool[s.receipts.length%pool.length]] })); }
+  removeReceipt(i){ this.setState(s=>({ receipts:s.receipts.filter((_,x)=>x!==i) })); }
+
+  addBankStatement(){ const pool=['natwest-statement-q1-2026.pdf','natwest-transactions-q1.csv'];
+    this.setState(s=>({ bankStmts:[...s.bankStmts, pool[s.bankStmts.length%pool.length]] })); }
+  removeBankStatement(i){ this.setState(s=>({ bankStmts:s.bankStmts.filter((_,x)=>x!==i) })); }
+
+  renderVals(){
+    const S=this.state, screen=S.screen;
+    const isRequest=screen==='request', isEmail=screen==='email';
+    const isFigures=screen==='figures', isReceipts=screen==='receipts';
+    const isMicro=isFigures||isReceipts;
+    const isTracking=screen==='tracking', isBank=screen==='bank', isIncomeTax=screen==='incometax';
+    const isAcctChrome=isBank||isIncomeTax;
+    const isMDownload=screen==='mDownload', isMSignin=screen==='mSignin', isMHome=screen==='mHome',
+          isMFigures=screen==='mFigures', isMReceipts=screen==='mReceipts', isMDone=screen==='mDone', isMRequests=screen==='mRequests';
+    const isMobile=isMDownload||isMSignin||isMHome||isMFigures||isMReceipts||isMDone||isMRequests;
+    const mHasTabs=isMHome||isMRequests;
+
+    const client=this.featured();
+    const practice='Riverside & Co Accountants';
+    const periodRange='6 Apr – 5 Jul 2026';
+    const periodShort='Q1 2026-27';
+    const taxYear='2026-27';
+    const taxYearLong='2026/27';
+
+    const NAVY='#0a55a4';
+    const navHi=isIncomeTax?'Taxes ▾':'Banking ▾';
+    const nav=[['Overview'],['Contacts'],['Work ▾'],['Bills'],['My Money ▾'],['Banking ▾'],['Taxes ▾'],['Accounting ▾']]
+      .map(([label])=>({ label, bg:(label===navHi)?NAVY:'transparent' }));
+
+    const protoDefs=[['request','1 · Request'],['email','2 · Email'],['figures','3 · Site: figures'],['receipts','4 · Site: evidence'],['tracking','5 · Requests'],['bank','6 · Bank account'],['incometax','7 · Income Tax'],
+      ['mDownload','App · Download'],['mSignin','App · Sign in'],['mHome','App · Home'],['mFigures','App · Figures'],['mReceipts','App · Receipts'],['mRequests','App · Submissions']];
+    const protoNav=protoDefs.map(([k,label])=>{ const on=k===screen; const mob=k[0]==='m'; return { label, bg:on?'#4e9d3a':(mob?'#22303f':'#2c3947'), color:on?'#fff':(mob?'#8fb4d8':'#c3ccd6'), go:()=>this.go(k) }; });
+
+    // request
+    const requestItems=[
+      { icon:'📝', title:'Quarterly income & expenses', sub:'Entered on the MTD upload site — no spreadsheet needed', iconBg:'#e6eff8' },
+      { icon:'📎', title:'Receipts (optional)', sub:'Drag-and-drop photos or PDFs — sent to Files & Smart Capture', iconBg:'#eaf6e8' },
+    ];
+    const reqClients=this.clientsList().map(c=>({ name:c.name, contact:c.contact||c.name.split(/[ &]/)[0], email:c.email||('accounts@'+c.name.toLowerCase().replace(/[^a-z0-9]+/g,'')+'.co.uk'), tag:c.tag||'Sole trader' }));
+    const reqClientCount=reqClients.length;
+    const sendModeDefs=[
+      { key:'auto', title:'Automate to MTD schedule', sub:'Send automatically one week after each quarter ends, every quarter' },
+      { key:'now', title:'Send once, now', sub:'Email this request immediately for '+periodShort+' only' },
+    ];
+    const sendModes=sendModeDefs.map(m=>{ const on=S.sendMode===m.key; return { title:m.title, sub:m.sub, select:()=>this.setState({sendMode:m.key}),
+      border:on?'#4e9d3a':'#e2e7ee', bg:on?'#f5fbf2':'#fff', ring:on?'#4e9d3a':'#c3ccd6', dot:on?'#4e9d3a':'transparent' }; });
+    const sendBtnLabel=(S.sendMode==='auto'?'Schedule for ':'Send to ')+reqClientCount+' '+(reqClientCount===1?'client':'clients');
+
+    // email inbox
+    const inbox=[
+      { from:'Jim Jones', subject:'Your '+periodShort+' figures for HMRC', snippet:'It\u2019s time for your Making Tax Digital update\u2026', time:'10:24', unread:true, selected:true },
+      { from:'HMRC', subject:'Making Tax Digital: Q1 update due soon', snippet:'Your first quarterly update deadline is 7 Aug\u2026', time:'09:02', unread:true, selected:false },
+      { from:'NatWest', subject:'Your June statement is ready', snippet:'You can now download your statement as a CSV\u2026', time:'Mon', unread:false, selected:false },
+      { from:'Wilson & Sons', subject:'Remittance advice', snippet:'Payment of \u00a32,340.00 has been sent to your\u2026', time:'Sun', unread:false, selected:false },
+    ].map(m=>({ ...m, weight:m.unread?'700':'500', bg:m.selected?'#eaf1fb':'#fff', accent:m.selected?'#1a6ec4':'transparent', dot:m.unread?'#1a6ec4':'transparent' }));
+
+    // micro-site figures
+    const t=this.totals();
+    const isQuarter=S.view==='quarter', isMonthView=S.view==='month';
+    const tgActive={ bg:'#fff', color:'#1a2530', shadow:'0 1px 2px rgba(0,0,0,.12)' };
+    const tgIdle={ bg:'transparent', color:'#5f6b78', shadow:'none' };
+    const tgQ=isQuarter?tgActive:tgIdle, tgM=isMonthView?tgActive:tgIdle;
+    const microSteps=[
+      { n:'1', text:'Your figures', done:isReceipts, active:isFigures },
+      { n:'2', text:'Evidence', done:false, active:isReceipts },
+    ].map(s=>({ n:s.done?'✓':s.n, text:s.text, bg:s.done?'#4e9d3a':(s.active?'#1c6fc4':'#d3dae3'), color:(s.done||s.active)?'#fff':'#6b7684', label:(s.done||s.active)?'#1a2530':'#9aa4b0' }));
+
+    const incQ=this.INCOME.map(r=>({ label:r.label, prev:this.gbp(this.r2(r.amt*0.88)), val:this.gp(this.incVal(r.key)), set:(e)=>this.setQ(r.key,e.target.value) }));
+    const expQ=this.EXPENSES.map(r=>({ label:r.label, prev:this.gbp(this.r2(r.amt*0.88)), val:this.gp(this.expAmt(r.key)), set:(e)=>this.setQ(r.key+'a',e.target.value) }));
+    const incM=this.INCOME.map(r=>({ label:r.label, q:this.gp([0,1,2].reduce((s,i)=>s+this.mVal(r.key,i,r.amt),0)),
+      cells:[0,1,2].map(i=>({ val:this.gp(this.mVal(r.key,i,r.amt)), mlabel:this.MONTHS[i], set:(e)=>this.setM(r.key,i,e.target.value) })) }));
+    const expM=this.EXPENSES.map(r=>({ label:r.label, q:this.gp([0,1,2].reduce((s,i)=>s+this.mVal(r.key,i,r.amt),0)),
+      cells:[0,1,2].map(i=>({ val:this.gp(this.mVal(r.key,i,r.amt)), mlabel:this.MONTHS[i], set:(e)=>this.setM(r.key,i,e.target.value) })) }));
+
+    // receipts
+    const receiptList=S.receipts.map((name,i)=>({ name, size:(Math.round((0.3+i*0.4)*10)/10)+' MB', remove:()=>this.removeReceipt(i) }));
+    const receiptCount=S.receipts.length;
+    const bankStmtList=S.bankStmts.map((name,i)=>({ name, size:(name.endsWith('.csv')?'0.1':'0.8')+' MB', remove:()=>this.removeBankStatement(i) }));
+    const bankStmtCount=S.bankStmts.length;
+    const hasBankStmt=bankStmtCount>0;
+    const canSend=hasBankStmt;
+    const bankStmtSummary=bankStmtCount+(bankStmtCount===1?' file':' files');
+    const evidenceSuffix=', your bank statement'+(receiptCount>0?(' and '+receiptCount+' receipts'):'');
+
+    // tracking
+    const stBadge={ received:['#e6eff8','#2c6ca8'], loaded:['#e2f2e0','#3a8b3b'], awaiting:['#fdf0dc','#b0781a'] };
+    const requests=[
+      { client:client.name, ref:'MTD-Q1-2026-27', sent:'6 Jul 2026', due:'7 Aug 2026', status:'Data received', st:'received', actLabel:'Open account', action:()=>this.go('bank') },
+      { client:'Oakfield Joinery', ref:'MTD-Q1-2026-27', sent:'6 Jul 2026', due:'7 Aug 2026', status:'Awaiting client', st:'awaiting', actLabel:'Chase', action:()=>{} },
+      { client:'Copper & Reed Design', ref:'MTD-Q1-2026-27', sent:'6 Jul 2026', due:'7 Aug 2026', status:'Loaded', st:'loaded', actLabel:'View', action:()=>this.go('bank') },
+    ].map(r=>{ const c=stBadge[r.st]; const primary=r.st==='received';
+      return { ...r, stBg:c[0], stColor:c[1], actBg:primary?'#4e9d3a':'#fff', actColor:primary?'#fff':'#3a4552', actBorder:primary?'#4e9d3a':'#cdd5df' }; });
+    const trackStats=[
+      { n:'3', label:'Requests sent', color:'#1a2530' },
+      { n:'1', label:'Data received', color:'#2c6ca8' },
+      { n:'1', label:'Loaded', color:'#3a8b3b' },
+      { n:'1', label:'Awaiting client', color:'#b0781a' },
+    ];
+
+    // ---- BANK ACCOUNT (MTD Import transactions) ----
+    const dates=['08/04/2026','19/04/2026','06/05/2026','19/05/2026','24/05/2026','02/06/2026','18/06/2026','28/06/2026','30/06/2026'];
+    let di=0, firstExp=true, running=0;
+    const txns=[];
+    this.INCOME.forEach(r=>{ const v=this.incVal(r.key); if(v>0){ running+=v; txns.push({ date:dates[di++%dates.length], name:r.label, coa:r.coa, inV:v, outV:0, hasReceipt:false, bal:running }); } });
+    this.EXPENSES.forEach(r=>{ const v=this.expAmt(r.key); if(v>0){ running-=v; const hr=firstExp; firstExp=false; txns.push({ date:dates[di++%dates.length], name:r.label, coa:r.coa, inV:0, outV:v, hasReceipt:hr, bal:running }); } });
+    const bankRows=txns.map(x=>({ date:x.date, name:x.name, explain:'Explained as '+x.coa+' · MTD Import rule', hasReceipt:x.hasReceipt,
+      mIn:x.inV?this.gp(x.inV):'', mOut:x.outV?this.gp(x.outV):'', bal:this.gbp(x.bal) }));
+    const txnCount=txns.length;
+    const bankBalance=this.gbp(running);
+    const bankTabs=[
+      { label:'All transactions', active:true },
+      { label:'Unexplained', active:false, count:'0', hasCount:true, badgeBg:'#d64545' },
+      { label:'For approval', active:false, count:'0', hasCount:true, badgeBg:'#e0891a' },
+      { label:'Manually added', active:false },
+    ].map(t=>({ label:t.label, weight:t.active?'700':'500', color:t.active?'#1a2530':'#5f6b78', underline:t.active?'#1a6ec4':'transparent',
+      hasCount:!!t.hasCount, count:t.count, badgeBg:t.badgeBg }));
+
+    // ---- INCOME TAX (FreeAgent MTD cumulative table) ----
+    const itTabs=[
+      { label:'Self employment', active:true },
+      { label:'Annual summary' },{ label:'Employment' },{ label:'Individual information' },{ label:'Losses' },{ label:'Tax breakdown' },
+    ].map(t=>({ label:t.label, weight:t.active?'700':'500', color:t.active?'#1a2530':'#5f6b78', underline:t.active?'#1a6ec4':'transparent' }));
+    const mtdCols=[
+      { name:'Q1', covers:'06 Apr – 05 Jul 26', due:'Due by 05 Aug 26' },
+      { name:'Q2', covers:'06 Apr – 05 Oct 26', due:'Due by 05 Nov 26' },
+      { name:'Q3', covers:'06 Apr – 05 Jan 27', due:'Due by 05 Feb 27' },
+      { name:'Q4', covers:'06 Apr – 05 Apr 27', due:'Due by 05 May 27' },
+      { name:'End of Year', covers:'06 Apr – 05 Apr 27', due:'Due by 31 Jan 28' },
+      { name:'Final Declaration', covers:'06 Apr – 05 Apr 27', due:'Due by 31 Jan 28' },
+    ];
+    const blanks5=['','','','','']; // Q2..Final
+    const q1only=(s)=>[s,'','','','',''];
+    const mkRow=(o)=>({ label:o.label, vals:o.vals, indent:o.indent||'16px', pad:o.pad||'10px', fs:o.fs||'13.5px',
+      labelWeight:o.labelWeight||'400', labelColor:o.labelColor||'#3a4552', valWeight:o.valWeight||'400', valColor:o.valColor||'#3a4552',
+      bg:o.bg||'#fff', borderColor:o.borderColor||'#f2f4f7' });
+    const mtdRows=[];
+    mtdRows.push(mkRow({ label:'Income', vals:q1only(this.gp(t.ti)), labelWeight:'800', labelColor:'#1a6ec4', valWeight:'800', valColor:'#1a2530', bg:'#f7f9fb', borderColor:'#e6eaf0', fs:'14px' }));
+    this.INCOME.forEach(r=>{ const v=this.incVal(r.key); mtdRows.push(mkRow({ label:r.label, vals:q1only(this.gp(v)), indent:'34px', labelColor:'#1a6ec4' })); });
+    mtdRows.push(mkRow({ label:'Expenses', vals:q1only('-'+this.gp(t.te)), labelWeight:'800', labelColor:'#1a6ec4', valWeight:'800', valColor:'#1a2530', bg:'#f7f9fb', borderColor:'#e6eaf0', fs:'14px' }));
+    this.EXPENSES.filter(r=>this.expAmt(r.key)>0).forEach(r=>{ const v=this.expAmt(r.key); mtdRows.push(mkRow({ label:r.label, vals:q1only('-'+this.gp(v)), indent:'34px', labelColor:'#1a6ec4' })); });
+    mtdRows.push(mkRow({ label:'Net Profit', vals:q1only(this.gp(t.net)), labelWeight:'800', valWeight:'800', valColor:'#1a2530', fs:'14px', bg:'#fbfcfe' }));
+    mtdRows.push(mkRow({ label:'Disallowable Expenses', vals:q1only(this.gp(t.td)), labelWeight:'800', labelColor:'#1a6ec4', valWeight:'800', valColor:'#1a2530', bg:'#f7f9fb', borderColor:'#e6eaf0', fs:'14px' }));
+    this.EXPENSES.filter(r=>this.expDis(r.key)>0).forEach(r=>{ const v=this.expDis(r.key); mtdRows.push(mkRow({ label:r.label, vals:q1only(this.gp(v)), indent:'34px', labelColor:'#1a6ec4' })); });
+    mtdRows.push(mkRow({ label:'Allowances', vals:['','','','','',''], labelWeight:'800', labelColor:'#1a6ec4', valWeight:'800', bg:'#f7f9fb', borderColor:'#e6eaf0', fs:'14px' }));
+    mtdRows.push(mkRow({ label:'Annual Investment Allowance', vals:['','','','','',''], indent:'34px', labelColor:'#1a6ec4' }));
+    mtdRows.push(mkRow({ label:'Taxable Profit', vals:['','','','','',''], labelWeight:'800', valWeight:'800', valColor:'#1a2530', fs:'14px', bg:'#fbfcfe', borderColor:'transparent' }));
+
+    // ---- MOBILE APP ----
+    const mtdCard={ period:periodShort, due:'Due 7 Aug 2026',
+      statusLabel:S.mSubmitted?'Submitted':'Action needed',
+      statusBg:S.mSubmitted?'#e2f2e0':'#fdecec', statusColor:S.mSubmitted?'#2a5d2c':'#c23b3b',
+      open:()=>this.go(S.mSubmitted?'mRequests':'mFigures') };
+    const mRequestsList=[
+      { period:'Q1 2026-27', sub:S.mSubmitted?'Submitted 31 Jul 2026':'Due 7 Aug 2026', label:S.mSubmitted?'Submitted':'Due', bg:S.mSubmitted?'#e2f2e0':'#fdf0dc', color:S.mSubmitted?'#2a5d2c':'#b0781a' },
+      { period:'Q4 2025-26', sub:'Submitted 2 May 2026', label:'Submitted', bg:'#e2f2e0', color:'#2a5d2c' },
+      { period:'Q3 2025-26', sub:'Submitted 4 Feb 2026', label:'Submitted', bg:'#e2f2e0', color:'#2a5d2c' },
+    ];
+
+    const est=this.estimate();
+    const periodDefs=[
+      { key:'q1', title:'Up to Q1', sub:'6 Apr 2026 to 5 Jul 2026' },
+      { key:'ytd', title:'Year to date', sub:'6 Apr 2026 to 5 Jul 2026 (all periods so far)' },
+    ];
+    const periodOptions=periodDefs.map(p=>{ const on=S.period===p.key; return { title:p.title, sub:p.sub, select:()=>this.setState({period:p.key}),
+      border:on?'#4e9d3a':'#e2e7ee', bg:on?'#f5fbf2':'#fff', ring:on?'#4e9d3a':'#c3ccd6', dot:on?'#4e9d3a':'transparent' }; });
+
+    return {
+      isRequest, isEmail, isMicro, isFigures, isReceipts, isTracking, isBank, isIncomeTax, isAcctChrome,
+      client, practice, periodRange, periodShort, taxYear, taxYearLong, nav, bellCount:S.submitted?'2':'3', protoNav,
+      authed:S.authed, returnToDashboard:()=>this.returnToDashboard(),
+      // request
+      requestItems, reqClients, reqClientCount, reqClientWord:reqClientCount===1?'client':'clients', sendModes, sendBtnLabel,
+      sendRequest:()=>this.go('email'),
+      // email
+      inbox, goFigures:()=>this.go('figures'), goMobile:()=>this.go('mDownload'),
+      // micro figures
+      microSteps, tgQ, tgM, isQuarter, isMonthView, months:this.MONTHS,
+      setQuarter:()=>this.setState({view:'quarter'}), setMonth:()=>this.setState({view:'month'}),
+      incQ, expQ, incM, expM, totalIncome:this.gbp(t.ti), totalExp:this.gbp(t.te), netProfit:this.gbp(t.net),
+      goReceipts:()=>this.go('receipts'),
+      // micro receipts
+      microOpen:!S.microSent, microDone:S.microSent, addReceipt:()=>this.addReceipt(),
+      hasReceipts:receiptCount>0, receiptList, receiptCount, evidenceSuffix,
+      addBankStatement:()=>this.addBankStatement(), bankStmtList, bankStmtCount, hasBankStmt, bankStmtSummary,
+      stmtBorder:hasBankStmt?'#bcd0e6':'#e3b7b7', stmtBg:hasBankStmt?'#f7fbff':'#fdf7f7',
+      notReadyToSend:!canSend, sendBtnBg:canSend?'#4e9d3a':'#b7c4b3', sendBtnCursor:canSend?'pointer':'not-allowed',
+      sendLabel:'Send to '+practice.split(' ')[0]+' & Co', backToFigures:()=>this.go('figures'),
+      sendToPractice:()=>{ if(this.state.bankStmts.length>0) this.setState({microSent:true}); }, goTracking:()=>this.go('tracking'),
+      // mobile app
+      isMobile, isMDownload, isMSignin, isMHome, isMFigures, isMReceipts, isMDone, isMRequests, mHasTabs,
+      mtdCard, mRequestsList,
+      goMDownloadNext:()=>this.go('mSignin'), goMSigninNext:()=>this.go('mHome'),
+      goMOpenUpload:()=>this.go('mFigures'), goMFiguresNext:()=>this.go('mReceipts'), goMBackFigures:()=>this.go('mFigures'),
+      goMSubmit:()=>{ this.setState({mSubmitted:true}); this.go('mDone'); }, goMViewRequests:()=>this.go('mRequests'), goMBackHome:()=>this.go('mHome'),
+      // tracking
+      requests, trackStats,
+      // bank account
+      bankTabs, bankRows, txnCount, bankBalance, goIncomeTax:()=>this.go('incometax'),
+      // income tax
+      itTabs, mtdCols, mtdRows, submitted:S.submitted, notSubmitted:!S.submitted,
+      openSubmit:()=>this.setState({submitOpen:true}),
+      submitOpen:S.submitOpen, closeSubmit:()=>this.setState({submitOpen:false}), periodOptions,
+      confirmSubmit:()=>this.setState({submitOpen:false, submitted:true}),
+      est:{ total:this.gbp(est.total), incomeTax:this.gbp(est.incomeTax), class4:this.gbp(est.class4), annual:this.gbp(est.annual) },
+    };
+  }
+}
+</script>
+</body>
+</html>

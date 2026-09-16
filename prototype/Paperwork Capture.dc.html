@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; }
+  .fa{ font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  a{ color:#1a6ec4; text-decoration:none; }
+  a:hover{ color:#12508f; }
+  select.fa-sel{ font-family:inherit; font-size:13.5px; padding:8px 10px; border:1px solid #cdd5df; border-radius:6px; background:#fff; color:#1f2a36; }
+  textarea,input.fa-in{ font-family:inherit; }
+</style>
+</helmet>
+<div class="fa" style="min-height:100vh; background:#eef1f5; color:#1f2a36; padding-bottom:52px;">
+
+  <!-- ===================== ACCOUNTANT CHROME ===================== -->
+  <sc-if value="{{ isAcct }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:1240px; margin:0 auto; background:#fff; min-height:calc(100vh - 52px); box-shadow:0 0 0 1px rgba(0,0,0,.04);">
+      <div style="background:#2b333c; height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 22px;">
+        <div style="font-size:13.5px; color:#c8d0d8;">Hi, Jim. You are currently viewing the <strong style="color:#fff;">Riverside Studio Ltd</strong> account.</div>
+        <button onClick="{{ returnToDashboard }}" style="background:#fff; color:#1a6ec4; border:none; border-radius:5px; font-size:13px; font-weight:700; padding:8px 15px; cursor:pointer;">Return to your dashboard</button>
+      </div>
+      <div style="background:#1069c4; display:flex; align-items:stretch; height:52px;">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8">
+          <div style="display:flex; align-items:center; padding:0 17px; color:#fff; font-size:14.5px; font-weight:500; cursor:pointer; background:{{ n.bg }};">{{ n.label }}</div>
+        </sc-for>
+        <div style="flex:1;"></div>
+        <div style="display:flex; align-items:center; padding:0 16px; position:relative; cursor:pointer;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+          <span style="position:absolute; top:9px; right:9px; background:#f2c744; color:#3a2f00; font-size:10px; font-weight:800; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px;">{{ bellCount }}</span>
+        </div>
+        <div style="display:flex; align-items:center; padding:0 18px 0 6px; color:#fff; font-size:14.5px; font-weight:600; cursor:pointer;">Riverside Studio Ltd ▾</div>
+      </div>
+
+      <!-- ---------- BANKING / NOTIFY body ---------- -->
+      <sc-if value="{{ isBanking }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:26px 30px 60px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <h1 style="margin:0; font-size:27px; font-weight:700;">Business Current Account</h1>
+              <span style="font-size:20px; color:#8a94a1;">▾</span>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <sc-for list="{{ headerBtns }}" as="b" hint-placeholder-count="4">
+                <button style="background:#fff; color:#1a6ec4; border:1px solid #bcd6ef; border-radius:5px; font-size:13.5px; font-weight:600; padding:9px 14px; cursor:pointer;">{{ b }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 320px; gap:26px; align-items:start;">
+            <div>
+              <div style="display:flex; gap:26px; border-bottom:1px solid #e2e7ee;">
+                <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+                  <div onClick="{{ t.select }}" style="display:flex; align-items:center; gap:8px; padding:0 2px 12px; cursor:pointer; font-size:15px; font-weight:{{ t.weight }}; color:{{ t.color }}; border-bottom:3px solid {{ t.border }}; margin-bottom:-1px;">
+                    {{ t.label }}
+                    <sc-if value="{{ t.showPill }}" hint-placeholder-val="{{ false }}"><span style="background:#e88a1a; color:#fff; font-size:12px; font-weight:700; min-width:20px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;">{{ t.count }}</span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding:16px 0;">
+                <div style="display:inline-flex; align-items:center; gap:10px; border:1px solid #cdd5df; border-radius:6px; padding:8px 14px; font-size:14px; font-weight:600; color:#3a4552; cursor:pointer;">July 2026 <span style="color:#8a94a1;">▾</span></div>
+              </div>
+              <div style="border:1px solid #e6eaf0; border-radius:8px; overflow:hidden;">
+                <div style="display:grid; grid-template-columns:44px 108px 1fr 118px 118px 130px; align-items:center; background:#f7f9fb; border-bottom:1px solid #e6eaf0; padding:11px 14px; font-size:13px;">
+                  <div><input type="checkbox" checked="{{ allChecked }}" onChange="{{ toggleAll }}" style="width:16px; height:16px; cursor:pointer;" /></div>
+                  <div style="color:#1a6ec4; font-weight:700; cursor:pointer;">Date ▲</div>
+                  <div style="color:#1a6ec4; font-weight:700; cursor:pointer;">Description</div>
+                  <div style="text-align:right; color:#5f6b78; font-weight:700;">Money in</div>
+                  <div style="text-align:right; color:#5f6b78; font-weight:700;">Money out</div>
+                  <div style="text-align:right; color:#5f6b78; font-weight:700;">Balance</div>
+                </div>
+                <div style="display:grid; grid-template-columns:44px 108px 1fr 118px 118px 130px; align-items:center; padding:11px 14px; border-bottom:1px solid #f0f2f6; font-size:14px; font-style:italic; color:#8a94a1;">
+                  <div></div><div></div><div>Balance brought forward</div><div></div><div></div>
+                  <div class="num" style="text-align:right; font-style:normal; color:#5f6b78;">{{ broughtFwd }}</div>
+                </div>
+                <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+                  <div style="display:grid; grid-template-columns:44px 108px 1fr 118px 118px 130px; align-items:start; padding:12px 14px; border-bottom:1px solid #f0f2f6; font-size:14px; background:{{ r.rowBg }};">
+                    <div style="padding-top:1px;"><input type="checkbox" checked="{{ r.checked }}" onChange="{{ r.toggle }}" style="width:16px; height:16px; cursor:pointer;" /></div>
+                    <div class="num" style="color:#3a4552;">{{ r.date }}</div>
+                    <div>
+                      <div style="display:flex; align-items:center; gap:9px;">
+                        <sc-if value="{{ r.isUnex }}" hint-placeholder-val="{{ true }}"><span style="flex-shrink:0; width:19px; height:19px; border-radius:50%; background:#fbe4e4; color:#c23b3b; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center;">?</span></sc-if>
+                        <sc-if value="{{ r.isApp }}" hint-placeholder-val="{{ false }}"><svg style="flex-shrink:0;" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e0891a" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></sc-if>
+                        <sc-if value="{{ r.isExp }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0; width:19px; height:19px; border-radius:50%; background:#e2f2e0; color:#3a9b3b; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center;">✓</span></sc-if>
+                        <sc-if value="{{ r.isMan }}" hint-placeholder-val="{{ false }}"><svg style="flex-shrink:0;" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8a4fc4" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></sc-if>
+                        <span style="font-weight:{{ r.nameWeight }}; color:{{ r.nameColor }};">{{ r.name }}</span>
+                        <sc-if value="{{ r.hasCat }}" hint-placeholder-val="{{ false }}"><span style="color:#3a4552;">{{ r.cat }}</span></sc-if>
+                      </div>
+                      <div class="num" style="margin-top:4px; font-size:12px; color:#9aa4b0; letter-spacing:.02em;">{{ r.raw }}</div>
+                    </div>
+                    <div class="num" style="text-align:right; color:#1f2a36;">{{ r.mIn }}</div>
+                    <div class="num" style="text-align:right; color:#3a4552;">{{ r.mOut }}</div>
+                    <div class="num" style="text-align:right; color:#3a4552;">{{ r.bal }}</div>
+                  </div>
+                </sc-for>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#f7f9fb;">
+                  <div style="display:inline-flex; align-items:center; gap:8px; border:1px solid #cdd5df; border-radius:6px; padding:5px 10px; font-size:13px; font-weight:600; color:#3a4552;">25 <span style="color:#8a94a1;">▾</span></div>
+                  <div style="display:flex; gap:18px; font-size:12.5px; color:#7a8695;">
+                    <span>✓ Explained</span><span>? Unexplained</span><span>👤 Manually added</span><span>👁 Marked for approval</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- right panel -->
+            <div>
+              <sc-if value="{{ notifyMode }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px solid #cfe0d0; border-radius:9px; overflow:hidden; box-shadow:0 1px 3px rgba(20,50,90,.06);">
+                  <div style="background:#eaf6e8; padding:15px 18px; border-bottom:1px solid #cfe0d0;"><div style="font-size:16px; font-weight:700;">Request paperwork</div></div>
+                  <div style="padding:16px 18px;">
+                    <p style="margin:0 0 15px; font-size:13.5px; line-height:1.55; color:#4a5560;"><strong>3 paperwork requests</strong> have been uploaded to this account.</p>
+                    <button onClick="{{ goReview }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:6px; font-size:14.5px; font-weight:700; padding:12px; cursor:pointer;">Review</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px solid #d7e3ee; border-radius:9px; overflow:hidden; box-shadow:0 1px 3px rgba(20,50,90,.06);">
+                  <div style="background:#eaf3fb; padding:15px 18px; border-bottom:1px solid #d7e3ee;"><div style="font-size:16px; font-weight:700;">Request paperwork</div></div>
+                  <div style="padding:16px 18px;">
+                    <p style="margin:0 0 15px; font-size:13.5px; line-height:1.55; color:#5f6b78;">We'll send an email to your client from which they can upload the right paperwork. We'll then explain the transaction for you.</p>
+                    <button onClick="{{ openComposer }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:6px; font-size:14.5px; font-weight:700; padding:12px; cursor:pointer;">Request paperwork for {{ selCount }} {{ txWord }}</button>
+                    <div style="text-align:center; margin-top:11px;"><a onClick="{{ clearSel }}" href="javascript:void(0)" style="font-size:13px; font-weight:600;">Clear selection</a></div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ defaultPanel }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                  <div style="border:1px solid #e6eaf0; border-radius:9px; padding:16px 18px;">
+                    <div style="display:inline-flex; align-items:center; gap:7px; background:#e2f2e0; color:#3a8b3b; font-size:12.5px; font-weight:700; padding:5px 11px; border-radius:14px; margin-bottom:12px;">✓ Good job. Now relax.</div>
+                    <div style="font-size:15px; font-weight:700; margin-bottom:5px;">Statement upload</div>
+                    <p style="margin:0; font-size:13px; line-height:1.5; color:#7a8695;">Your bank feed is up to date. There's nothing to upload right now.</p>
+                  </div>
+                  <div style="border:1px solid #e6eaf0; border-radius:9px; padding:16px 18px;">
+                    <div style="font-size:15px; font-weight:700; margin-bottom:12px;">For approval</div>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                      <sc-for list="{{ approvalGroups }}" as="g" hint-placeholder-count="3">
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                          <a href="javascript:void(0)" style="font-size:13.5px;">{{ g.label }}</a>
+                          <span style="background:#eef1f5; color:#5f6b78; font-size:12px; font-weight:700; min-width:22px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;">{{ g.count }}</span>
+                        </div>
+                      </sc-for>
+                      <div style="display:flex; align-items:center; justify-content:space-between; border-top:1px solid #f0f2f6; padding-top:11px; margin-top:2px;">
+                        <span style="font-size:13.5px; font-weight:700;">Total for approval</span>
+                        <span style="background:#e88a1a; color:#fff; font-size:12px; font-weight:700; min-width:22px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;">{{ approvalTotal }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="border:1px solid #e6eaf0; border-radius:9px; padding:16px 18px;">
+                    <div style="font-size:15px; font-weight:700; margin-bottom:12px;">Bank details</div>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                      <span style="font-size:13.5px; color:#5f6b78;">Total balance</span>
+                      <span class="num" style="font-size:16px; font-weight:700;">{{ totalBalance }}</span>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ---------- REVIEW (Screen 6) ---------- -->
+      <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px 30px 60px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:22px;">
+            <h1 style="margin:0; font-size:27px; font-weight:700;">Smart Collect</h1>
+            <span style="font-size:20px; color:#8a94a1;">▾</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 320px; gap:26px; align-items:start;">
+            <div>
+              <div style="display:flex; gap:26px; border-bottom:1px solid #e2e7ee; margin-bottom:18px;">
+                <div style="display:flex; align-items:center; gap:8px; padding:0 2px 12px; font-size:15px; font-weight:700; color:#1f2a36; border-bottom:3px solid #1a6ec4; margin-bottom:-1px;">For review <span style="background:#e88a1a; color:#fff; font-size:12px; font-weight:700; min-width:20px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;">{{ reviewCount }}</span></div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:13px; color:#5f6b78;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#e0891a"><path d="M13 2L3 14h7l-1 8 10-12h-7z"></path></svg>
+                Smart Capture matched paperwork to these transactions and drafted an explanation. Nothing is saved to the books until you approve.
+              </div>
+
+              <div style="border:1px solid #e6eaf0; border-radius:8px; overflow:hidden;">
+                <div style="display:grid; grid-template-columns:44px 108px 1fr 130px 44px; align-items:center; background:#f7f9fb; border-bottom:1px solid #e6eaf0; padding:11px 14px; font-size:13px; color:#5f6b78; font-weight:700;">
+                  <div><input type="checkbox" checked="{{ revAllChecked }}" onChange="{{ revToggleAll }}" style="width:16px; height:16px; cursor:pointer;" /></div>
+                  <div>Date</div><div>Description</div><div style="text-align:right;">Money out</div><div></div>
+                </div>
+                <sc-for list="{{ reviewRows }}" as="r" hint-placeholder-count="6">
+                  <div style="border-bottom:1px solid #f0f2f6;">
+                    <div onClick="{{ r.expand }}" style="display:grid; grid-template-columns:44px 108px 1fr 130px 44px; align-items:center; padding:12px 14px; font-size:14px; cursor:pointer; background:{{ r.rowBg }};">
+                      <div onClick="{{ r.stop }}"><input type="checkbox" checked="{{ r.checked }}" onChange="{{ r.toggle }}" style="width:16px; height:16px; cursor:pointer;" /></div>
+                      <div class="num" style="color:#3a4552;">{{ r.date }}</div>
+                      <div style="display:flex; align-items:center; gap:9px;">
+                        <svg style="flex-shrink:0;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e0891a" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <span style="font-weight:700; color:#d9820f;">{{ r.name }}</span>
+                        <span style="color:#3a4552;">{{ r.catNow }}</span>
+                        <sc-if value="{{ r.isLow }}" hint-placeholder-val="{{ false }}"><span style="background:#fdf0dc; color:#b0781a; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;">Low confidence</span></sc-if>
+                        <sc-if value="{{ r.isNoMatch }}" hint-placeholder-val="{{ false }}"><span style="background:#fbe4e4; color:#c23b3b; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;">No matching transaction</span></sc-if>
+                        <sc-if value="{{ r.isApproved }}" hint-placeholder-val="{{ false }}"><span style="background:#e2f2e0; color:#3a8b3b; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;">✓ Approved</span></sc-if>
+                      </div>
+                      <div class="num" style="text-align:right; color:#3a4552;">{{ r.amt }}</div>
+                      <div style="text-align:center; color:#8a94a1;">{{ r.chev }}</div>
+                    </div>
+
+                    <!-- inline form -->
+                    <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
+                      <div style="background:#fbfcfe; border-top:1px solid #eef1f5; padding:20px 22px;">
+                        <div style="display:grid; grid-template-columns:1fr 300px; gap:26px;">
+                          <div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px 20px; margin-bottom:16px;">
+                              <div>
+                                <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Type</label>
+                                <select class="fa-sel" style="width:100%;"><option>Payment</option></select>
+                              </div>
+                              <div>
+                                <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Amount <svg width="13" height="13" viewBox="0 0 24 24" fill="#e0891a"><path d="M13 2L3 14h7l-1 8 10-12h-7z"></path></svg></label>
+                                <input class="fa-in" value="{{ r.amt }}" readonly="true" style="width:100%; font-size:13.5px; padding:8px 10px; border:1px solid #cdd5df; border-radius:6px; background:#f4f7fa; color:#1f2a36;" />
+                              </div>
+                              <div>
+                                <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Date <svg width="13" height="13" viewBox="0 0 24 24" fill="#e0891a"><path d="M13 2L3 14h7l-1 8 10-12h-7z"></path></svg></label>
+                                <input class="fa-in" value="{{ r.date }}" readonly="true" style="width:100%; font-size:13.5px; padding:8px 10px; border:1px solid #cdd5df; border-radius:6px; background:#f4f7fa;" />
+                              </div>
+                              <div>
+                                <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Including VAT <svg width="13" height="13" viewBox="0 0 24 24" fill="#e0891a"><path d="M13 2L3 14h7l-1 8 10-12h-7z"></path></svg></label>
+                                <select class="fa-sel" style="width:100%;"><option>{{ r.vat }}</option></select>
+                              </div>
+                            </div>
+                            <div style="margin-bottom:16px;">
+                              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Category</label>
+                              <select class="fa-sel" value="{{ r.catNow }}" onChange="{{ r.setCat }}" style="width:100%;">
+                                <sc-if value="{{ r.isLow }}" hint-placeholder-val="{{ false }}">
+                                  <optgroup label="Suggested">
+                                    <sc-for list="{{ r.alts }}" as="a" hint-placeholder-count="2"><option value="{{ a }}">{{ a }}</option></sc-for>
+                                  </optgroup>
+                                </sc-if>
+                                <optgroup label="All categories">
+                                  <sc-for list="{{ allCats }}" as="c" hint-placeholder-count="6"><option value="{{ c }}">{{ c }}</option></sc-for>
+                                </optgroup>
+                              </select>
+                              <div><a href="javascript:void(0)" style="display:inline-block; margin-top:6px; font-size:12.5px; font-weight:600;">View all transactions marked for approval as "{{ r.catNow }}"</a></div>
+                              <sc-if value="{{ r.isLow }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#b0781a; margin-top:6px;">Receipt was blurry — check the category and amount before approving.</div></sc-if>
+                            </div>
+                            <div style="margin-bottom:18px;">
+                              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Description</label>
+                              <input class="fa-in" value="{{ r.name }}" style="width:100%; font-size:13.5px; padding:8px 10px; border:1px solid #cdd5df; border-radius:6px;" />
+                            </div>
+                            <div style="margin-bottom:18px;">
+                              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:6px;">Add attachments</label>
+                              <div style="display:flex; align-items:center; gap:10px;">
+                                <button style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:6px; font-size:13px; font-weight:600; padding:8px 13px; cursor:pointer;">Upload files</button>
+                                <span style="font-size:13px; color:#8a94a1;">or</span>
+                                <button onClick="{{ openAttach }}" style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:6px; font-size:13px; font-weight:600; padding:8px 13px; cursor:pointer;">Choose from saved</button>
+                              </div>
+                              <div style="font-size:12px; color:#9aa4b0; margin-top:6px;">10 file max per upload, max file size per file 5MB</div>
+                            </div>
+                            <sc-if value="{{ r.isNoMatch }}" hint-placeholder-val="{{ false }}">
+                              <div style="background:#fdeede; border:1px solid #f2cdcd; border-radius:7px; padding:14px 16px; margin-bottom:16px;">
+                                <div style="font-size:13.5px; color:#a4402f; margin-bottom:12px;">This receipt didn't match any bank transaction. Turn it into an expense or a bill instead.</div>
+                                <div style="display:flex; gap:10px;">
+                                  <button style="background:#fff; color:#1a6ec4; border:1px solid #bcd6ef; border-radius:6px; font-size:13.5px; font-weight:600; padding:9px 15px; cursor:pointer;">Create expense</button>
+                                  <button style="background:#fff; color:#1a6ec4; border:1px solid #bcd6ef; border-radius:6px; font-size:13.5px; font-weight:600; padding:9px 15px; cursor:pointer;">Create bill</button>
+                                </div>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ r.canApprove }}" hint-placeholder-val="{{ true }}">
+                              <div style="display:flex; align-items:center; gap:12px;">
+                                <button onClick="{{ r.approve }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:700; padding:11px 20px; cursor:pointer;">Approve &amp; save changes</button>
+                                <a onClick="{{ r.expand }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:600;">Cancel</a>
+                                <div style="flex:1;"></div>
+                                <button style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:6px; font-size:13px; font-weight:600; padding:9px 13px; cursor:pointer;">Adjustments ▾</button>
+                              </div>
+                            </sc-if>
+                          </div>
+
+                          <!-- attachment -->
+                          <div>
+                            <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:8px;">Attached paperwork</label>
+                            <div style="border:1px solid #e2e7ee; border-radius:8px; overflow:hidden; background:#fff;">
+                              <div style="height:120px; background:#eef1f5; display:flex; align-items:center; justify-content:center;">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9aa4b0" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+                              </div>
+                              <div style="padding:10px 12px;">
+                                <div class="num" style="font-size:12.5px; color:#3a4552; margin-bottom:8px; word-break:break-all;">{{ r.file }}</div>
+                                <div style="display:flex; gap:14px;"><a href="javascript:void(0)" style="font-size:12.5px; font-weight:600;">Download</a><a href="javascript:void(0)" style="font-size:12.5px; font-weight:600; color:#c23b3b;">Remove</a></div>
+                              </div>
+                            </div>
+                            <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin:14px 0 5px;">Attachment note</label>
+                            <textarea placeholder="Add a note…" style="width:100%; height:62px; font-size:13px; padding:8px 10px; border:1px solid #cdd5df; border-radius:6px; resize:none;"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- review right panel -->
+            <div>
+              <sc-if value="{{ revHasSel }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                  <div style="border:1px solid #cfe0d0; border-radius:9px; overflow:hidden;">
+                    <div style="background:#eaf6e8; padding:14px 18px; border-bottom:1px solid #cfe0d0; font-size:15px; font-weight:700;">Approve explanations</div>
+                    <div style="padding:16px 18px;">
+                      <p style="margin:0 0 14px; font-size:13px; color:#5f6b78; line-height:1.5;">Approve the selected explanations and save them to the books.</p>
+                      <button onClick="{{ approveBulk }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:700; padding:11px; cursor:pointer;">Approve {{ revSelCount }} explanations</button>
+                    </div>
+                  </div>
+                  <div style="border:1px solid #f0d4d4; border-radius:9px; overflow:hidden;">
+                    <div style="background:#fdeede; padding:14px 18px; border-bottom:1px solid #f0d4d4; font-size:15px; font-weight:700;">Remove explanations</div>
+                    <div style="padding:16px 18px;">
+                      <p style="margin:0 0 14px; font-size:13px; color:#5f6b78; line-height:1.5;">Discard the drafted explanations. The transactions stay unexplained.</p>
+                      <button style="width:100%; background:#fff; color:#c23b3b; border:1px solid #e2a3a3; border-radius:6px; font-size:14px; font-weight:700; padding:11px; cursor:pointer;">Remove {{ revSelCount }} explanations</button>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ revNoSel }}" hint-placeholder-val="{{ true }}">
+                <div style="border:1px solid #e6eaf0; border-radius:9px; padding:16px 18px;">
+                  <div style="font-size:15px; font-weight:700; margin-bottom:8px;">How this works</div>
+                  <p style="margin:0; font-size:13px; line-height:1.55; color:#7a8695;">Open a row to check the extracted details, or tick several to approve them together. Values marked with the <span style="color:#e0891a;">⚡</span> lightning icon were read by Smart Capture.</p>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ---------- TRACKER (Screen 7) ---------- -->
+      <sc-if value="{{ isTracker }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px 30px 60px;">
+          <h1 style="margin:0 0 22px; font-size:27px; font-weight:700;">Paperwork requests</h1>
+          <div style="display:grid; grid-template-columns:1fr 320px; gap:26px; align-items:start;">
+            <div>
+              <div style="display:flex; gap:26px; border-bottom:1px solid #e2e7ee; margin-bottom:18px;">
+                <sc-for list="{{ trackTabs }}" as="t" hint-placeholder-count="4">
+                  <div onClick="{{ t.select }}" style="display:flex; align-items:center; gap:8px; padding:0 2px 12px; cursor:pointer; font-size:15px; font-weight:{{ t.weight }}; color:{{ t.color }}; border-bottom:3px solid {{ t.border }}; margin-bottom:-1px;">
+                    {{ t.label }} <span style="background:{{ t.pillBg }}; color:{{ t.pillColor }}; font-size:12px; font-weight:700; min-width:20px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;">{{ t.count }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="border:1px solid #e6eaf0; border-radius:8px; overflow:hidden;">
+                <div style="display:grid; grid-template-columns:1.6fr .8fr .8fr 1fr .9fr 1.1fr; align-items:center; background:#f7f9fb; border-bottom:1px solid #e6eaf0; padding:11px 16px; font-size:12.5px; color:#5f6b78; font-weight:700;">
+                  <div>Client</div><div>Requested</div><div>Received</div><div>Status</div><div>Sent</div><div></div>
+                </div>
+                <sc-for list="{{ trackRows }}" as="r" hint-placeholder-count="5">
+                  <div style="display:grid; grid-template-columns:1.6fr .8fr .8fr 1fr .9fr 1.1fr; align-items:center; padding:14px 16px; border-bottom:1px solid #f0f2f6; font-size:13.5px;">
+                    <div style="font-weight:600;">{{ r.client }}</div>
+                    <div class="num" style="color:#3a4552;">{{ r.req }} items</div>
+                    <div class="num" style="color:#3a4552;">{{ r.rec }} of {{ r.req }}</div>
+                    <div><span style="background:{{ r.stBg }}; color:{{ r.stColor }}; font-size:12px; font-weight:700; padding:3px 10px; border-radius:11px;">{{ r.status }}</span></div>
+                    <div class="num" style="color:#5f6b78;">{{ r.sent }}<div style="font-size:11.5px; color:#9aa4b0;">{{ r.daysLabel }}</div></div>
+                    <div><a href="javascript:void(0)" style="font-size:13px; font-weight:600;">{{ r.action }}</a></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="border:1px solid #e6eaf0; border-radius:9px; padding:16px 18px;">
+              <div style="font-size:15px; font-weight:700; margin-bottom:12px;">Requests by status</div>
+              <div style="display:flex; flex-direction:column; gap:11px;">
+                <sc-for list="{{ trackGroups }}" as="g" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:13.5px; color:#3a4552;">{{ g.label }}</span>
+                    <span style="background:{{ g.bg }}; color:{{ g.color }}; font-size:12px; font-weight:700; min-width:22px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;">{{ g.count }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===================== CLIENT SCREENS ===================== -->
+  <sc-if value="{{ isClient }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 52px); display:flex; align-items:flex-start; justify-content:center; padding:40px 16px; background:linear-gradient(160deg,#eaf0f6,#e2eaf3);">
+
+      <!-- EMAIL (Screen 3) -->
+      <sc-if value="{{ isEmail }}" hint-placeholder-val="{{ false }}">
+        <div style="width:100%; max-width:1120px; height:calc(100vh - 132px); background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 10px 34px rgba(30,60,100,.14); display:grid; grid-template-columns:340px 1fr;">
+
+          <!-- inbox list -->
+          <div style="border-right:1px solid #eceff3; display:flex; flex-direction:column; min-height:0; background:#fff;">
+            <div style="padding:16px 18px 12px; border-bottom:1px solid #eceff3;">
+              <div style="display:flex; align-items:center; gap:9px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c23b3b" stroke-width="2"><path d="M4 4h16v16H4z" fill="#ea4335" stroke="none"></path><path d="M4 6l8 6 8-6" stroke="#fff"></path></svg>
+                <span style="font-size:16px; font-weight:700; color:#1f2a36;">Inbox</span>
+                <span style="background:#eef1f5; color:#5f6b78; font-size:12px; font-weight:700; padding:2px 8px; border-radius:10px;">{{ inboxUnread }}</span>
+              </div>
+              <div style="margin-top:12px; display:flex; align-items:center; gap:9px; background:#f1f3f6; border-radius:9px; padding:9px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a94a1" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+                <span style="font-size:13px; color:#9aa4b0;">Search mail</span>
+              </div>
+            </div>
+            <div style="flex:1; overflow:auto; min-height:0;">
+              <sc-for list="{{ inbox }}" as="m" hint-placeholder-count="6">
+                <div style="display:grid; grid-template-columns:30px 1fr; gap:10px; padding:13px 16px; border-bottom:1px solid #f4f6f8; cursor:pointer; background:{{ m.bg }}; border-left:3px solid {{ m.accent }};">
+                  <div style="padding-top:2px;"><div style="width:9px; height:9px; border-radius:50%; background:{{ m.dot }};"></div></div>
+                  <div style="min-width:0;">
+                    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px;">
+                      <span style="font-size:13.5px; font-weight:{{ m.weight }}; color:#1f2a36; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.from }}</span>
+                      <span style="font-size:11.5px; color:#9aa4b0; white-space:nowrap; flex-shrink:0;">{{ m.time }}</span>
+                    </div>
+                    <div style="font-size:13px; font-weight:{{ m.weight }}; color:#2a3644; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.subject }}</div>
+                    <div style="font-size:12.5px; color:#9aa4b0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.snippet }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- reading pane -->
+          <div style="display:flex; flex-direction:column; min-height:0;">
+            <div style="padding:18px 26px 14px; border-bottom:1px solid #eceff3;">
+              <h2 style="margin:0 0 12px; font-size:21px; font-weight:700; color:#1f2a36;">A few bits of paperwork, please</h2>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:42px; height:42px; border-radius:50%; background:#2c6ca8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px;">JJ</div>
+                <div style="flex:1;">
+                  <div style="font-size:14.5px; font-weight:700;">Jim Jones <span style="font-weight:400; color:#8a94a1;">· Riverside &amp; Co Accountants</span></div>
+                  <div style="font-size:12.5px; color:#8a94a1;">to sam@riversidestudio.co.uk</div>
+                </div>
+                <span style="font-size:12.5px; color:#9aa4b0;">10:24 AM</span>
+              </div>
+            </div>
+            <div style="flex:1; overflow:auto; min-height:0; padding:22px 26px 28px;">
+              <p style="margin:0 0 14px; font-size:15px; line-height:1.6; color:#3a4552;">Hi Sam,</p>
+              <p style="margin:0 0 18px; font-size:15px; line-height:1.6; color:#3a4552;">Your accountant, <strong>Jim Jones</strong>, has asked for the following paperwork to complete your bookkeeping. Upload the files here and we'll do the rest — no login needed.</p>
+              <div style="border:1px solid #eceff3; border-radius:9px; overflow:hidden; margin-bottom:22px;">
+                <sc-for list="{{ emailItems }}" as="i" hint-placeholder-count="6">
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #f2f4f7;">
+                    <div><span class="num" style="color:#8a94a1; font-size:13px;">{{ i.date }}</span> &nbsp; <span style="font-weight:600; font-size:14.5px;">{{ i.name }}</span></div>
+                    <div class="num" style="font-size:14px; color:#3a4552;">{{ i.amt }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <button onClick="{{ goUpload }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; padding:15px 30px; cursor:pointer;">Upload files</button>
+              <p style="margin:18px 0 0; font-size:12.5px; color:#9aa4b0; line-height:1.5;">This link is unique to you and doesn't require a FreeAgent account. If you weren't expecting this, you can ignore it.</p>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- UPLOAD (Screen 4) -->
+      <sc-if value="{{ isUpload }}" hint-placeholder-val="{{ false }}">
+        <div style="width:100%; max-width:440px;">
+          <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 10px 34px rgba(30,60,100,.14);">
+            <sc-if value="{{ uploadOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:24px 22px 28px;">
+                <div style="font-size:13px; color:#8a94a1; margin-bottom:4px;">Riverside Studio Ltd</div>
+                <h2 style="margin:0 0 6px; font-size:21px; font-weight:700;">Add your paperwork</h2>
+                <p style="margin:0 0 16px; font-size:14px; color:#5f6b78; line-height:1.5;">Match a receipt or invoice to each item below. Photos are fine.</p>
+
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+                  <div style="flex:1; height:8px; border-radius:4px; background:#eef1f5; overflow:hidden;"><div style="height:100%; width:{{ provPct }}%; background:#4e9d3a; transition:width .25s;"></div></div>
+                  <span style="font-size:13px; font-weight:700; color:#3a4552; white-space:nowrap;">{{ provCount }} of {{ reqTotal }} provided</span>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:11px; margin-bottom:18px;">
+                  <sc-for list="{{ uploadItems }}" as="i" hint-placeholder-count="6">
+                    <div style="border:1px solid {{ i.border }}; background:{{ i.bg }}; border-radius:11px; padding:13px 14px; display:flex; align-items:center; gap:13px;">
+                      <div style="flex:1;">
+                        <div style="font-size:15px; font-weight:700;">{{ i.name }}</div>
+                        <div class="num" style="font-size:12.5px; color:#8a94a1;">{{ i.date }} · {{ i.amt }}</div>
+                      </div>
+                      <sc-if value="{{ i.done }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                          <div style="width:38px; height:38px; border-radius:7px; background:#dff0da; display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                          <a onClick="{{ i.remove }}" href="javascript:void(0)" style="font-size:12.5px; font-weight:600; color:#c23b3b;">Remove</a>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ i.todo }}" hint-placeholder-val="{{ true }}">
+                        <button onClick="{{ i.add }}" style="background:#eaf3fb; color:#1a6ec4; border:1px solid #bcd6ef; border-radius:7px; font-size:13px; font-weight:700; padding:9px 13px; cursor:pointer; white-space:nowrap;">Add file</button>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div onClick="{{ addAny }}" style="border:2px dashed #c3cfdb; border-radius:12px; padding:22px; text-align:center; cursor:pointer; margin-bottom:14px;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8a94a1" stroke-width="1.8" style="margin-bottom:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5"></path><path d="M12 3v12"></path></svg>
+                  <div style="font-size:14px; font-weight:700; color:#3a4552;">Drag &amp; drop files here</div>
+                  <div style="font-size:12.5px; color:#9aa4b0; margin-top:2px;">or browse to choose</div>
+                </div>
+                <button onClick="{{ addAny }}" style="width:100%; background:#fff; color:#1a6ec4; border:1px solid #bcd6ef; border-radius:9px; font-size:14.5px; font-weight:700; padding:13px; cursor:pointer; margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a6ec4" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  Take a photo
+                </button>
+
+                <div style="background:#f7f9fb; border-radius:10px; padding:14px 16px; margin-bottom:18px;">
+                  <div style="font-size:13px; font-weight:700; margin-bottom:8px;">📸 Tips for a clear photo</div>
+                  <ul style="margin:0; padding-left:18px; font-size:12.5px; color:#5f6b78; line-height:1.7;">
+                    <li>Snap it promptly, before the receipt fades</li>
+                    <li>Flatten any creases and shoot straight on</li>
+                    <li>Check focus, flash off, on a dark background</li>
+                  </ul>
+                </div>
+
+                <button onClick="{{ submitUpload }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; padding:15px; cursor:pointer;">Upload files</button>
+                <p style="margin:12px 0 0; text-align:center; font-size:12px; color:#9aa4b0;">Images or PDFs · max 5MB per file · up to 10 files</p>
+              </div>
+            </sc-if>
+
+            <!-- confirmation -->
+            <sc-if value="{{ uploadDone }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:34px 26px 30px; text-align:center;">
+                <div style="width:66px; height:66px; border-radius:50%; background:#e2f2e0; display:flex; align-items:center; justify-content:center; margin:0 auto 18px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                <h2 style="margin:0 0 8px; font-size:22px; font-weight:700;">Thank you, Sam</h2>
+                <p style="margin:0 0 22px; font-size:14.5px; color:#5f6b78; line-height:1.55;">We've sent your paperwork to Jim. You'll only hear from us again if anything else is needed.</p>
+                <div style="border:1px solid #eceff3; border-radius:10px; overflow:hidden; text-align:left; margin-bottom:12px;">
+                  <div style="background:#f2f9f0; padding:10px 15px; font-size:13px; font-weight:700; color:#3a8b3b;">Received · {{ provCount }} items</div>
+                  <sc-for list="{{ receivedItems }}" as="i" hint-placeholder-count="4">
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 15px; border-top:1px solid #f2f4f7; font-size:13.5px;"><span style="font-weight:600;">{{ i.name }}</span><span class="num" style="color:#8a94a1;">{{ i.amt }}</span></div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ hasOutstanding }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #f5e2c8; border-radius:10px; overflow:hidden; text-align:left;">
+                    <div style="background:#fdf4e6; padding:10px 15px; font-size:13px; font-weight:700; color:#b0781a;">Still outstanding · {{ outstandingCount }} items</div>
+                    <sc-for list="{{ outstandingItems }}" as="i" hint-placeholder-count="2">
+                      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 15px; border-top:1px solid #f2f4f7; font-size:13.5px;"><span style="font-weight:600;">{{ i.name }}</span><span class="num" style="color:#8a94a1;">{{ i.amt }}</span></div>
+                    </sc-for>
+                    <div style="padding:12px 15px;"><a onClick="{{ reopenUpload }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:700;">Add the rest →</a></div>
+                  </div>
+                </sc-if>
+                <button onClick="{{ goNotified }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; padding:15px; cursor:pointer; margin-top:16px;">Complete</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- BANK FEED (Screen 8) -->
+      <sc-if value="{{ isFeed }}" hint-placeholder-val="{{ false }}">
+        <div style="width:100%; max-width:460px;">
+          <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 10px 34px rgba(30,60,100,.14);">
+            <sc-if value="{{ feedEmail }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:26px 24px 28px;">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px;">
+                  <div style="width:42px; height:42px; border-radius:50%; background:#2c6ca8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700;">JJ</div>
+                  <div><div style="font-size:14.5px; font-weight:700;">Jim Jones</div><div style="font-size:12.5px; color:#8a94a1;">to sam@riversidestudio.co.uk</div></div>
+                </div>
+                <h2 style="margin:0 0 14px; font-size:20px; font-weight:700;">Connect your bank to save us both time</h2>
+                <p style="margin:0 0 20px; font-size:14.5px; color:#3a4552; line-height:1.6;">Right now I enter your transactions by hand. If you connect your bank account, they'll flow into FreeAgent automatically — securely, and read-only.</p>
+                <button onClick="{{ feedNext }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:9px; font-size:15.5px; font-weight:700; padding:14px; cursor:pointer;">Connect bank account</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ feedSelect }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:24px;">
+                <h2 style="margin:0 0 6px; font-size:20px; font-weight:700;">Choose your bank</h2>
+                <p style="margin:0 0 18px; font-size:13.5px; color:#5f6b78;">Select where your business account is held.</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:11px;">
+                  <sc-for list="{{ banks }}" as="b" hint-placeholder-count="6">
+                    <div onClick="{{ feedNext }}" style="border:1px solid #e2e7ee; border-radius:10px; padding:16px; text-align:center; cursor:pointer; font-size:14px; font-weight:700; color:#3a4552;">{{ b }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ feedConsent }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:24px;">
+                <h2 style="margin:0 0 6px; font-size:20px; font-weight:700;">What FreeAgent will access</h2>
+                <p style="margin:0 0 16px; font-size:13.5px; color:#5f6b78;">Read-only. You can disconnect at any time.</p>
+                <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                  <sc-for list="{{ consentItems }}" as="c" hint-placeholder-count="4">
+                    <div style="display:flex; align-items:center; gap:11px; font-size:14px; color:#3a4552;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg>{{ c }}</div>
+                  </sc-for>
+                </div>
+                <button onClick="{{ feedNext }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:9px; font-size:15.5px; font-weight:700; padding:14px; cursor:pointer;">Allow &amp; connect</button>
+                <div style="text-align:center; margin-top:12px;"><a href="javascript:void(0)" style="font-size:13px; font-weight:600; color:#8a94a1;">Cancel</a></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ feedDone }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:36px 26px; text-align:center;">
+                <div style="width:66px; height:66px; border-radius:50%; background:#e2f2e0; display:flex; align-items:center; justify-content:center; margin:0 auto 18px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                <h2 style="margin:0 0 8px; font-size:22px; font-weight:700;">Bank feed connected</h2>
+                <p style="margin:0; font-size:14.5px; color:#5f6b78; line-height:1.55;">Your transactions will start appearing in FreeAgent within a few hours. Nothing more to do — thanks, Sam.</p>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===================== COMPOSER MODAL (Screen 2) ===================== -->
+  <sc-if value="{{ composerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(20,32,48,.5); display:flex; align-items:flex-start; justify-content:center; padding:44px 16px; z-index:50; overflow:auto;">
+      <div style="width:100%; max-width:560px; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 60px rgba(10,25,45,.4);">
+
+        <!-- WIZARD / SINGLE -->
+        <sc-if value="{{ compEditing }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; padding:18px 22px 14px; border-bottom:1px solid #eceff3;">
+          <div>
+            <div style="font-size:18px; font-weight:700;">Request paperwork</div>
+            <sc-if value="{{ comp.multi }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px; color:#8a94a1; margin-top:2px;">Client {{ comp.humanIdx }} of {{ comp.total }} · {{ comp.sentCount }} sent</div></sc-if>
+          </div>
+          <a onClick="{{ closeComposer }}" href="javascript:void(0)" style="font-size:22px; color:#8a94a1; line-height:1;">×</a>
+        </div>
+
+        <!-- stepper -->
+        <sc-if value="{{ comp.multi }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:8px; padding:12px 22px; border-bottom:1px solid #f2f4f7; overflow-x:auto;">
+            <sc-for list="{{ comp.steps }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.goto }}" style="display:flex; align-items:center; gap:7px; padding:6px 11px 6px 7px; border-radius:20px; background:{{ s.bg }}; cursor:pointer; white-space:nowrap; flex-shrink:0;">
+                <span style="width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,.45); color:{{ s.color }}; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;">{{ s.n }}</span>
+                <span style="font-size:12.5px; font-weight:700; color:{{ s.color }};">{{ s.client }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="padding:20px 22px; max-height:56vh; overflow:auto;">
+          <sc-if value="{{ comp.curSent }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:9px; background:#eaf6e8; border:1px solid #cfe0d0; border-radius:8px; padding:11px 14px; margin-bottom:16px; font-size:13.5px; font-weight:700; color:#3a8b3b;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Request already sent to this client
+            </div>
+          </sc-if>
+          <div style="font-size:12px; font-weight:700; color:#5f6b78; text-transform:uppercase; letter-spacing:.04em; margin-bottom:9px;">{{ comp.count }} transactions · {{ comp.totalLabel }}</div>
+          <div style="border:1px solid #eceff3; border-radius:9px; overflow:hidden; margin-bottom:20px;">
+            <sc-for list="{{ comp.items }}" as="i" hint-placeholder-count="6">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:11px 14px; border-bottom:1px solid #f2f4f7;">
+                <div><span class="num" style="color:#8a94a1; font-size:12.5px;">{{ i.date }}</span> &nbsp; <span style="font-weight:600; font-size:14px;">{{ i.name }}</span></div>
+                <div style="display:flex; align-items:center; gap:14px;"><span class="num" style="font-size:13.5px; color:#3a4552;">{{ i.amt }}</span><a onClick="{{ i.remove }}" href="javascript:void(0)" style="font-size:17px; color:#b3bcc7; line-height:1;">×</a></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+            <div>
+              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Send to</label>
+              <input class="fa-in" value="{{ comp.contact }}" style="width:100%; font-size:13.5px; padding:9px 11px; border:1px solid #cdd5df; border-radius:6px;" />
+            </div>
+            <div>
+              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Email</label>
+              <input class="fa-in" value="{{ comp.email }}" style="width:100%; font-size:13.5px; padding:9px 11px; border:1px solid #cdd5df; border-radius:6px;" />
+            </div>
+            <div>
+              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Due date</label>
+              <input class="fa-in" value="05/08/2026" style="width:100%; font-size:13.5px; padding:9px 11px; border:1px solid #cdd5df; border-radius:6px;" />
+            </div>
+            <div>
+              <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Reference</label>
+              <input class="fa-in" value="Missing receipts" style="width:100%; font-size:13.5px; padding:9px 11px; border:1px solid #cdd5df; border-radius:6px;" />
+            </div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block; font-size:12px; font-weight:700; color:#5f6b78; margin-bottom:5px;">Message <span style="font-weight:400; color:#9aa4b0;">(optional)</span></label>
+            <textarea style="width:100%; height:70px; font-size:13.5px; padding:9px 11px; border:1px solid #cdd5df; border-radius:6px; resize:none;">Could you send these over when you get a moment? Thanks!</textarea>
+          </div>
+          <div style="display:flex; gap:22px; margin-bottom:4px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:#3a4552; cursor:pointer;"><input type="checkbox" checked="true" style="width:16px; height:16px;" /> Email</label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:#3a4552; cursor:pointer;"><input type="checkbox" checked="true" style="width:16px; height:16px;" /> App notification</label>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:14px; padding:16px 22px; border-top:1px solid #eceff3;">
+          <button onClick="{{ comp.send }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:7px; font-size:14.5px; font-weight:700; padding:12px 22px; cursor:pointer;">{{ comp.sendLabel }}</button>
+          <sc-if value="{{ comp.multi }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button onClick="{{ comp.prev }}" disabled="{{ comp.prevDisabled }}" style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:7px; font-size:13.5px; font-weight:700; padding:10px 14px; cursor:pointer; opacity:{{ comp.prevOpacity }};">‹ Prev</button>
+              <button onClick="{{ comp.next }}" disabled="{{ comp.nextDisabled }}" style="background:#fff; color:#3a4552; border:1px solid #cdd5df; border-radius:7px; font-size:13.5px; font-weight:700; padding:10px 14px; cursor:pointer; opacity:{{ comp.nextOpacity }};">Next ›</button>
+            </div>
+          </sc-if>
+          <div style="flex:1;"></div>
+          <a onClick="{{ closeComposer }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:600;">Cancel</a>
+        </div>
+        </sc-if>
+
+        <!-- ALL SENT SUMMARY -->
+        <sc-if value="{{ comp.done }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:30px 26px 26px; text-align:center;">
+            <div style="width:60px; height:60px; border-radius:50%; background:#e2f2e0; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg></div>
+            <h2 style="margin:0 0 6px; font-size:21px; font-weight:700;">Requests sent</h2>
+            <p style="margin:0 0 20px; font-size:14px; color:#5f6b78;"><span class="num" style="font-weight:700; color:#1a2530;">{{ comp.summaryClients }}</span> clients · <span class="num" style="font-weight:700; color:#1a2530;">{{ comp.summaryTx }}</span> transactions</p>
+            <div style="border:1px solid #eceff3; border-radius:10px; overflow:hidden; text-align:left; margin-bottom:20px;">
+              <sc-for list="{{ comp.summary }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 15px; border-bottom:1px solid #f2f4f7;">
+                  <div>
+                    <div style="font-size:14px; font-weight:700; color:#1a2530;">{{ s.client }}</div>
+                    <div class="num" style="font-size:12.5px; color:#8a94a1;">{{ s.email }} · {{ s.count }} items</div>
+                  </div>
+                  <span style="display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:700; color:#3a8b3b;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a8b3b" stroke-width="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Sent</span>
+                </div>
+              </sc-for>
+            </div>
+            <button onClick="{{ comp.finish }}" style="width:100%; background:#4e9d3a; color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:700; padding:13px; cursor:pointer;">Done</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== ATTACH FROM SAVED MODAL ===================== -->
+  <sc-if value="{{ attachOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(20,32,48,.5); display:flex; align-items:flex-start; justify-content:center; padding:60px 16px; z-index:55; overflow:auto;">
+      <div style="width:100%; max-width:640px; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 60px rgba(10,25,45,.4);">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; padding:20px 24px 12px;">
+          <div>
+            <div style="font-size:20px; font-weight:700; margin-bottom:6px;">Attach from saved files</div>
+            <p style="margin:0; font-size:13.5px; color:#5f6b78; line-height:1.5;">Files are stored with the bank account entry once saved. Private files will become visible to other users.</p>
+          </div>
+          <a onClick="{{ closeAttach }}" href="javascript:void(0)" style="font-size:22px; color:#8a94a1; line-height:1;">×</a>
+        </div>
+        <div style="padding:6px 24px 4px;">
+          <div style="display:grid; grid-template-columns:26px 90px 1fr 100px 90px; gap:12px; padding:8px 4px; font-size:12.5px; font-weight:700; color:#5f6b78; border-bottom:1px solid #eceff3;">
+            <div></div><div>Added</div><div>File name</div><div style="text-align:right;">Date</div><div style="text-align:right;">Total value</div>
+          </div>
+          <sc-for list="{{ savedFiles }}" as="s" hint-placeholder-count="4">
+            <div onClick="{{ s.pick }}" style="display:grid; grid-template-columns:26px 90px 1fr 100px 90px; gap:12px; align-items:center; padding:13px 4px; border-bottom:1px solid #f2f4f7; font-size:13.5px; cursor:pointer;">
+              <div><span style="display:inline-block; width:17px; height:17px; border-radius:50%; border:2px solid {{ s.ring }}; background:{{ s.dot }}; box-shadow:inset 0 0 0 3px #fff;"></span></div>
+              <div class="num" style="color:#8a94a1;">{{ s.added }}</div>
+              <div style="font-weight:600; color:#1a6ec4;">{{ s.file }}</div>
+              <div class="num" style="text-align:right; color:#3a4552;">{{ s.rdate }}</div>
+              <div class="num" style="text-align:right; color:#3a4552;">{{ s.val }}</div>
+            </div>
+          </sc-for>
+          <div style="display:flex; align-items:center; gap:8px; padding:14px 4px 4px; font-size:13px; color:#5f6b78;">Dates &amp; values via <svg width="15" height="15" viewBox="0 0 24 24" fill="#1a6ec4"><path d="M13 2L3 14h7l-1 8 10-12h-7z"></path></svg> Smart Capture</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:16px; padding:16px 24px; border-top:1px solid #eceff3;">
+          <button onClick="{{ closeAttach }}" style="background:#4e9d3a; color:#fff; border:none; border-radius:7px; font-size:14.5px; font-weight:700; padding:12px 22px; cursor:pointer;">Attach selected</button>
+          <a onClick="{{ closeAttach }}" href="javascript:void(0)" style="font-size:13.5px; font-weight:600;">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== PROTOTYPE NAV ===================== -->
+  <div style="position:fixed; left:0; right:0; bottom:0; height:52px; background:#1b2530; display:flex; align-items:center; gap:5px; padding:0 14px; z-index:60; overflow-x:auto;">
+    <span style="font-size:11px; font-weight:700; color:#79879a; text-transform:uppercase; letter-spacing:.06em; margin-right:8px; white-space:nowrap;">Journey</span>
+    <sc-for list="{{ protoNav }}" as="p" hint-placeholder-count="8">
+      <button onClick="{{ p.go }}" style="background:{{ p.bg }}; color:{{ p.color }}; border:none; border-radius:6px; font-size:12.5px; font-weight:600; padding:7px 12px; cursor:pointer; white-space:nowrap;">{{ p.label }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { screen:'banking', tab:'unexplained', sel:{}, composerOpen:false, removed:{},
+            provided:{}, uploadDone:false, expanded:null, reviewSel:{}, approved:{}, catSel:{},
+            trackerTab:'all', feedStep:'email', attachOpen:false, attachPick:0,
+            compIdx:0, compSent:{}, compRemoved:{}, compDone:false };
+
+  SAVED=[
+    { added:'16 Jul 26', file:'01-26 Taxi.pdf',    rdate:'27 Jan 26', val:'11.80' },
+    { added:'16 Apr 26', file:'Rent.jpg',          rdate:'15 Aug 24', val:'1,680.00' },
+    { added:'16 Apr 26', file:'Handy Humans.jpg',  rdate:'30 Jul 24', val:'1,560.00' },
+    { added:'16 Apr 26', file:'Argos.jpeg',        rdate:'04 May 24', val:'23.59' },
+  ];
+
+  TX = [
+    { id:1,  date:'02/07/2026', name:'Scotrail',        cat:'', raw:'SCOTRAIL.CO.UK//TRAVEL',        st:'unexplained', out:48.60,  bal:12401.40 },
+    { id:2,  date:'03/07/2026', name:'Sainsburys',      cat:'', raw:"SAINSBURY'S S/MKT//GROCERIES",   st:'unexplained', out:86.24,  bal:12315.16 },
+    { id:3,  date:'05/07/2026', name:'Community Fibre',  cat:'Broadband & telephone', raw:'COMMUNITY FIBRE LTD//DD', st:'approval', out:35.00, bal:12280.16 },
+    { id:4,  date:'07/07/2026', name:'Notting Hill Trust', cat:'Sales', raw:'NOTTING HILL TRUST//OTHER/£564.69', st:'explained', in:564.69, bal:12844.85 },
+    { id:5,  date:'09/07/2026', name:'B&Q Newcastle',   cat:'', raw:'B&Q 1234 NEWCASTLE//DIY',        st:'unexplained', out:152.30, bal:12692.55 },
+    { id:6,  date:'11/07/2026', name:'Virgin Mobile',    cat:'Broadband & telephone', raw:'VIRGIN MOBILE//DD', st:'approval', out:29.99, bal:12662.56 },
+    { id:7,  date:'14/07/2026', name:'Newcastle Council',cat:'', raw:'NEWCASTLE CITY COUNCIL//BACS',   st:'unexplained', out:310.00, bal:12352.56 },
+    { id:8,  date:'16/07/2026', name:'Stripe Payments',  cat:'Sales', raw:'STRIPE PAYMENTS UK//FPS',   st:'explained', in:1240.00, bal:13592.56 },
+    { id:9,  date:'18/07/2026', name:'Sainsburys',      cat:'', raw:'SAINSBURYS PETROL//FUEL',        st:'unexplained', out:64.10,  bal:13528.46 },
+    { id:10, date:'21/07/2026', name:'Amazon',           cat:'Office supplies', raw:'AMAZON.CO.UK*AB12CD//CARD', st:'approval', out:41.75, bal:13486.71 },
+    { id:11, date:'23/07/2026', name:'Scotrail',        cat:'', raw:'SCOTRAIL.CO.UK//TRAVEL',         st:'unexplained', out:72.40,  bal:13414.31 },
+    { id:12, date:'25/07/2026', name:'Uber',            cat:'', raw:'UBER *TRIP HELP.UBER//CARD',     st:'unexplained', out:18.90,  bal:13395.41 },
+    { id:13, date:'27/07/2026', name:'Cash deposit',     cat:'Money paid in', raw:'CASH DEPOSIT//BRANCH', st:'manual', in:200.00, bal:13595.41 },
+    { id:14, date:'28/07/2026', name:'Screwfix',         cat:'Tools & equipment', raw:'SCREWFIX 0987//DIY', st:'approval', out:96.55, bal:13498.86 },
+  ];
+
+  REQ = [
+    { id:1, date:'02/07/2026', name:'Scotrail',          amt:48.60,  cat:'Travel',              vat:'20% VAT (£8.10)',  conf:'high', file:'scotrail-02jul.jpg' },
+    { id:2, date:'03/07/2026', name:'Sainsburys',        amt:86.24,  cat:'Subsistence',         vat:'20% VAT (£14.37)', conf:'high', file:'sainsburys-receipt.jpg' },
+    { id:5, date:'09/07/2026', name:'B&Q Newcastle',     amt:152.30, cat:'Repairs & renewals',  vat:'20% VAT (£25.38)', conf:'high', file:'bandq-newcastle.pdf' },
+    { id:7, date:'14/07/2026', name:'Newcastle Council', amt:310.00, cat:'Business rates',      vat:'No VAT',           conf:'low',  file:'council-blurry.jpg', alts:['Business rates','Rent','Use of home'] },
+    { id:9, date:'18/07/2026', name:'Sainsburys',        amt:64.10,  cat:'Motoring',            vat:'20% VAT (£10.68)', conf:'high', file:'sainsburys-fuel.jpg' },
+    { id:11,date:'23/07/2026', name:'Scotrail',          amt:72.40,  cat:'Travel',              vat:'20% VAT (£12.07)', conf:'nomatch', file:'scotrail-23jul.jpg' },
+  ];
+
+  ALL_CATS = ['Travel','Subsistence','Motoring','Repairs & renewals','Business rates','Office supplies','Tools & equipment','Rent','Use of home','Sundry expenses'];
+  BANKS = ['Barclays','HSBC','Lloyds','NatWest','Santander','Monzo','Starling','Mettle','TSB'];
+  CONSENT = ['Account name, number and sort code','Account balance','Transactions and their dates','Explanations you or your accountant add'];
+
+  TRACK = [
+    { client:'Riverside Studio Ltd',       req:6, rec:3, status:'Partially fulfilled', sent:'28/07/2026', days:2 },
+    { client:'Dave Norwell – Sole trader', req:4, rec:4, status:'Complete',            sent:'24/07/2026', days:6 },
+    { client:'Keith Gray – Landlord',      req:5, rec:0, status:'Overdue',             sent:'12/07/2026', days:18 },
+    { client:'Death Star Properties',      req:3, rec:0, status:'Sent',                sent:'29/07/2026', days:1 },
+    { client:'Northside Joinery',          req:7, rec:2, status:'Partially fulfilled', sent:'27/07/2026', days:3 },
+    { client:'Bloom & Co',                 req:2, rec:0, status:'Overdue',             sent:'15/07/2026', days:15 },
+    { client:'Harbour Cafe Ltd',           req:5, rec:5, status:'Viewed',              sent:'30/07/2026', days:0 },
+  ];
+
+  gbp(n){ return '£'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  emailFor(name){ const slug=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); return 'accounts@'+slug+'.co.uk'; }
+  contactFor(name){ return name.split(/[ –-]/)[0]+' team'; }
+  buildGroups(arr){
+    const byClient={};
+    arr.forEach((t,i)=>{ const key=t.client||'Client'; (byClient[key]=byClient[key]||[]).push({ id:'i'+i, date:t.date, name:t.name, amt:t.amount, cat:t.category||'Uncategorised' }); });
+    return Object.keys(byClient).map((client,gi)=>({ clientId:gi, client, contact:this.contactFor(client), email:this.emailFor(client), items:byClient[client] }));
+  }
+  componentDidMount(){
+    const p=new URLSearchParams(location.search);
+    if(p.get('screen')==='review'){ this.setState({ screen:'review' }); return; }
+    if(p.get('compose')==='1'){
+      let groups=null, sel={};
+      try{ const raw=localStorage.getItem('omSmartCollectReq'); if(raw){ const arr=JSON.parse(raw); if(arr&&arr.length) groups=this.buildGroups(arr); } }catch(e){}
+      if(groups && groups.length){
+        const first=groups[0];
+        this.compGroups=groups;
+        this.REQ=first.items.map((it,i)=>({ id:i+1, date:it.date, name:it.name, amt:it.amt, cat:it.cat, vat:'Standard', conf:'high', file:(it.name||'receipt').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.jpg' }));
+        this.REQ.forEach(r=>sel[r.id]=true);
+      } else {
+        sel={1:true,2:true,5:true,7:true,9:true,11:true};
+      }
+      this.setState({ screen:'banking', composerOpen:true, sel, compIdx:0, compSent:{}, compRemoved:{}, compDone:false });
+    }
+  }
+  gp(n){ return Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  SD=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  shortDate(d){ const p=d.split('/'); return p[0]+' '+this.SD[+p[1]-1]+' '+p[2].slice(2); }
+  go(screen){ this.setState({ screen, composerOpen:false }); }
+  returnToDashboard(){ window.location.href = 'Business%20Health%20Dashboard.dc.html'; }
+
+  toggle(id){ this.setState(s=>({ sel:{...s.sel, [id]:!s.sel[id]} })); }
+  clearSel(){ this.setState({ sel:{} }); }
+  setTab(t){ this.setState({ tab:t, sel:{} }); }
+  filtered(){ const t=this.state.tab; return this.TX.filter(x=> t==='all'?true : t==='unexplained'?x.st==='unexplained' : t==='approval'?x.st==='approval' : x.st==='manual'); }
+  toggleAll(){ const rows=this.filtered(); const all=rows.length>0&&rows.every(r=>this.state.sel[r.id]); const sel={...this.state.sel}; rows.forEach(r=>sel[r.id]=!all); this.setState({ sel }); }
+
+  liveReq(){ return this.REQ.filter(r=>!this.state.removed[r.id]); }
+  removeReq(id){ this.setState(s=>({ removed:{...s.removed,[id]:true} })); }
+
+  compGroups=null;
+  compRemoveItem(itemId){ this.setState(s=>({ compRemoved:{...s.compRemoved,[itemId]:true} })); }
+  compGoto(i){ const g=this.compGroups||[]; if(i>=0 && i<g.length) this.setState({ compIdx:i }); }
+  compSendCurrent(){
+    const g=this.compGroups||[];
+    if(g.length<=1){ this.setState({ composerOpen:false, screen:'email' }); return; }
+    this.setState(s=>{
+      const sent={...s.compSent, [s.compIdx]:true};
+      let next=-1;
+      for(let k=1;k<=g.length;k++){ const cand=(s.compIdx+k)%g.length; if(!sent[cand]){ next=cand; break; } }
+      if(next===-1) return { compSent:sent, compDone:true };
+      return { compSent:sent, compIdx:next };
+    });
+  }
+  compFinish(){ this.setState({ composerOpen:false, compDone:false, screen:'notify' }); }
+
+  addFile(id){ this.setState(s=>({ provided:{...s.provided,[id]:true} })); }
+  removeFile(id){ this.setState(s=>{ const p={...s.provided}; delete p[id]; return { provided:p }; }); }
+  addAny(){ const next=this.REQ.find(r=>!this.state.provided[r.id]); if(next) this.addFile(next.id); }
+
+  revToggle(id){ this.setState(s=>({ reviewSel:{...s.reviewSel,[id]:!s.reviewSel[id]} })); }
+  revToggleAll(){ const rows=this.REQ; const all=rows.every(r=>this.state.reviewSel[r.id]); const sel={}; if(!all) rows.forEach(r=>sel[r.id]=true); this.setState({ reviewSel:sel }); }
+  expand(id){ this.setState(s=>({ expanded: s.expanded===id?null:id })); }
+  approveOne(id){ this.setState(s=>({ approved:{...s.approved,[id]:true}, expanded:null })); }
+  approveBulk(){ this.setState(s=>{ const a={...s.approved}; Object.keys(s.reviewSel).forEach(k=>{ if(s.reviewSel[k]) a[k]=true; }); return { approved:a, reviewSel:{} }; }); }
+  setCat(id,v){ this.setState(s=>({ catSel:{...s.catSel,[id]:v} })); }
+
+  feedNext(){ const order=['email','select','consent','done']; const i=order.indexOf(this.state.feedStep); this.setState({ feedStep: order[Math.min(i+1,3)] }); }
+
+  renderVals(){
+    const S=this.state, screen=S.screen;
+    const isBanking = screen==='banking'||screen==='notify';
+    const isReview = screen==='review';
+    const isTracker = screen==='tracker';
+    const isAcct = isBanking||isReview||isTracker;
+    const isEmail = screen==='email', isUpload = screen==='upload', isFeed = screen==='feed';
+    const isClient = isEmail||isUpload||isFeed;
+    const notifyMode = screen==='notify';
+
+    // nav + proto
+    const NAVY='#0a55a4';
+    const nav=[['Overview',0],['Contacts',0],['Work ▾',0],['Bills',0],['Expenses',0],['Banking ▾',1],['Taxes ▾',0],['Accounting ▾',0]]
+      .map(([label,a])=>({ label, bg:a?NAVY:'transparent' }));
+    const protoDefs=[['banking','1 · Banking'],['composer','2 · Composer'],['email','3 · Client email'],['upload','4 · Upload'],['notify','5 · Notified'],['review','6 · Review'],['feed','7 · Bank feed']];
+    const activeKey = S.composerOpen?'composer':screen;
+    const protoNav=protoDefs.map(([k,label])=>({ label, bg: k===activeKey?'#4e9d3a':'#2c3947', color: k===activeKey?'#fff':'#c3ccd6',
+      go:()=>{ if(k==='composer') { this.compGroups=null; this.setState({ screen:'banking', sel:{1:true,2:true,5:true,7:true,9:true,11:true}, composerOpen:true, compIdx:0, compSent:{}, compRemoved:{}, compDone:false }); } else this.go(k); } }));
+
+    // banking
+    const approvalCount=this.TX.filter(t=>t.st==='approval').length;
+    const tabDefs=[{key:'all',label:'All transactions'},{key:'unexplained',label:'Unexplained'},{key:'approval',label:'For approval',pill:true,count:approvalCount},{key:'manual',label:'Manually added'}];
+    const tabs=tabDefs.map(t=>{ const on=t.key===S.tab; return { label:t.label, showPill:!!t.pill, count:t.count, weight:on?'700':'500', color:on?'#1f2a36':'#5f6b78', border:on?'#1a6ec4':'transparent', select:()=>this.setTab(t.key) }; });
+    const rows=this.filtered().map(t=>{ const isExp=t.st==='explained',isApp=t.st==='approval',isMan=t.st==='manual',isUnex=t.st==='unexplained';
+      return { ...t, date:this.shortDate(t.date), checked:!!S.sel[t.id], toggle:()=>this.toggle(t.id), isExp,isApp,isMan,isUnex, hasCat:!!t.cat&&(isApp||isExp||isMan),
+        nameColor:isApp?'#d9820f':isExp?'#3a9b3b':'#1f2a36', nameWeight:(isApp||isExp)?'700':'600',
+        mIn:t.in?this.gp(t.in):'', mOut:t.out?this.gp(t.out):'', bal:this.gp(t.bal), rowBg:S.sel[t.id]?'#eef6fd':'#fff' }; });
+    const rowsF=this.filtered(); const allChecked=rowsF.length>0&&rowsF.every(r=>S.sel[r.id]);
+    const selCount=Object.keys(S.sel).filter(k=>S.sel[k]).length;
+
+    // composer (client-grouped wizard)
+    const cg = this.compGroups && this.compGroups.length
+      ? this.compGroups.map(g=>({ ...g, items: g.items.filter(it=>!S.compRemoved[it.id]) }))
+      : [{ clientId:null, client:'Riverside Studio Ltd', contact:'Sam Rivers', email:'sam@riversidestudio.co.uk',
+          items: this.liveReq().map(r=>({ id:'d'+r.id, date:r.date, name:r.name, amt:r.amt, srcId:r.id })) }];
+    const multi = cg.length>1;
+    const idx = Math.min(S.compIdx, cg.length-1);
+    const curG = cg[idx] || cg[0];
+    const compItems = curG.items.map(it=>({ date:it.date, name:it.name, amt:this.gbp(it.amt),
+      remove: multi ? ()=>this.compRemoveItem(it.id) : ()=>this.removeReq(it.srcId) }));
+    const sentCount = Object.keys(S.compSent).filter(k=>S.compSent[k]).length;
+    const isLastUnsent = multi && (sentCount>=cg.length-1);
+    const steps = cg.map((g,i)=>({ client:g.client, active:i===idx, sent:!!S.compSent[i],
+      n:String(i+1), goto:()=>this.compGoto(i),
+      bg: i===idx?'#4e9d3a':(S.compSent[i]?'#dff0da':'#eceff3'),
+      color: i===idx?'#fff':(S.compSent[i]?'#3a8b3b':'#5f6b78') }));
+    const comp = {
+      multi, single:!multi,
+      idx, total:cg.length, humanIdx:idx+1,
+      client:curG.client, contact:curG.contact, email:curG.email,
+      count:compItems.length, items:compItems,
+      totalLabel:this.gbp(curG.items.reduce((s,it)=>s+it.amt,0)),
+      curSent:!!S.compSent[idx], sentCount,
+      steps,
+      prevDisabled: idx===0, nextDisabled: idx>=cg.length-1,
+      prevOpacity: idx===0?'.45':'1', nextOpacity: idx>=cg.length-1?'.45':'1',
+      prev:()=>this.compGoto(idx-1), next:()=>this.compGoto(idx+1),
+      send:()=>this.compSendCurrent(),
+      sendLabel: multi ? (isLastUnsent ? 'Send & finish' : 'Send & next client →') : 'Send request',
+      // done summary
+      done:S.compDone,
+      summary: cg.map((g,i)=>({ client:g.client, email:g.email, count:g.items.length, sent:!!S.compSent[i] })),
+      summaryClients:cg.length,
+      summaryTx:cg.reduce((s,g)=>s+g.items.length,0),
+      finish:()=>this.compFinish(),
+    };
+
+    // upload
+    const reqTotal=this.REQ.length; const provCount=this.REQ.filter(r=>S.provided[r.id]).length;
+    const uploadItems=this.REQ.map(i=>{ const done=!!S.provided[i.id]; return { name:i.name, date:i.date, amt:this.gbp(i.amt), done, todo:!done, border:done?'#cfe8c6':'#e6eaf0', bg:done?'#f5fbf2':'#fff', add:()=>this.addFile(i.id), remove:()=>this.removeFile(i.id) }; });
+    const receivedItems=this.REQ.filter(r=>S.provided[r.id]).map(i=>({ name:i.name, amt:this.gbp(i.amt) }));
+    const outstandingItems=this.REQ.filter(r=>!S.provided[r.id]).map(i=>({ name:i.name, amt:this.gbp(i.amt) }));
+
+    // review — approved transactions become explained and drop off the For approval list
+    const reviewRows=this.REQ.filter(r=>!S.approved[r.id]).map(r=>{ const open=S.expanded===r.id; const approved=false; const isLow=r.conf==='low'; const isNoMatch=r.conf==='nomatch';
+      const catNow=S.catSel[r.id]||r.cat;
+      return { id:r.id, date:this.shortDate(r.date), name:r.name, amt:this.gp(r.amt), vat:r.vat, file:r.file, catNow, alts:r.alts||[],
+        checked:!!S.reviewSel[r.id], toggle:()=>this.revToggle(r.id), stop:(e)=>{ if(e&&e.stopPropagation)e.stopPropagation(); },
+        expand:()=>this.expand(r.id), open, isLow, isNoMatch, isApproved:approved, canApprove:!isNoMatch,
+        approve:()=>this.approveOne(r.id), setCat:(e)=>this.setCat(r.id, e.target.value),
+        chev: open?'▾':'▸', rowBg: open?'#f7fafd':(approved?'#f5fbf2':'#fff') }; });
+    const revSelCount=Object.keys(S.reviewSel).filter(k=>S.reviewSel[k] && !S.approved[k]).length;
+    const revAllChecked=this.REQ.filter(r=>!S.approved[r.id]).length>0 && this.REQ.filter(r=>!S.approved[r.id]).every(r=>S.reviewSel[r.id]);
+
+    // tracker
+    const catOf=(st)=> st==='Complete'?'complete' : st==='Overdue'?'overdue' : 'await';
+    const stColors={ 'Sent':['#eef1f5','#5f6b78'], 'Viewed':['#e6eff8','#2c6ca8'], 'Partially fulfilled':['#fdf0dc','#b0781a'], 'Complete':['#e2f2e0','#3a8b3b'], 'Overdue':['#fbe4e4','#c23b3b'] };
+    const trackTabDefs=[{key:'all',label:'All'},{key:'await',label:'Awaiting client'},{key:'overdue',label:'Overdue'},{key:'complete',label:'Complete'}];
+    const counts={ all:this.TRACK.length, await:this.TRACK.filter(r=>catOf(r.status)==='await').length, overdue:this.TRACK.filter(r=>catOf(r.status)==='overdue').length, complete:this.TRACK.filter(r=>catOf(r.status)==='complete').length };
+    const trackTabs=trackTabDefs.map(t=>{ const on=t.key===S.trackerTab; return { label:t.label, count:counts[t.key], weight:on?'700':'500', color:on?'#1f2a36':'#5f6b78', border:on?'#1a6ec4':'transparent', pillBg:on?'#1a6ec4':'#eef1f5', pillColor:on?'#fff':'#5f6b78', select:()=>this.setState({trackerTab:t.key}) }; });
+    const trackRows=this.TRACK.filter(r=> S.trackerTab==='all'?true:catOf(r.status)===S.trackerTab).map(r=>{ const c=stColors[r.status];
+      return { client:r.client, req:r.req, rec:r.rec, status:r.status, stBg:c[0], stColor:c[1], sent:r.sent,
+        daysLabel: r.days===0?'today':(r.days+' days ago'), action: r.status==='Complete'?'View':'Send reminder' }; });
+    const trackGroups=[{label:'Awaiting client',count:counts.await,bg:'#fdf0dc',color:'#b0781a'},{label:'Overdue',count:counts.overdue,bg:'#fbe4e4',color:'#c23b3b'},{label:'Complete',count:counts.complete,bg:'#e2f2e0',color:'#3a8b3b'}];
+
+    // attach modal
+    const savedFiles=this.SAVED.map((s,i)=>({ ...s, ring:i===S.attachPick?'#1a6ec4':'#c3ccd6', dot:i===S.attachPick?'#1a6ec4':'#fff', pick:()=>this.setState({attachPick:i}) }));
+
+    // feed
+    const fs=S.feedStep;
+
+    return {
+      isAcct, isBanking, isReview, isTracker, isClient, isEmail, isUpload, isFeed,
+      nav, protoNav, bellCount: screen==='notify'?'3':'3',
+      returnToDashboard:()=>this.returnToDashboard(),
+      headerBtns:['Upload statement','Enable bank feed','Edit details','More ▾'],
+      tabs, rows, allChecked, toggleAll:()=>this.toggleAll(), broughtFwd:this.gbp(12450.00),
+      notifyMode, hasSel: !notifyMode&&selCount>0, defaultPanel: !notifyMode&&selCount===0,
+      selCount, txWord: selCount===1?'transaction':'transactions',
+      openComposer:()=>this.setState({composerOpen:true}), clearSel:()=>this.clearSel(),
+      goReview:()=>this.go('review'),
+      approvalGroups:[{label:'Broadband & telephone',count:2},{label:'Office supplies',count:1},{label:'Tools & equipment',count:1}],
+      approvalTotal:approvalCount, totalBalance:this.gbp(13498.86),
+      // composer
+      composerOpen:S.composerOpen, comp, compEditing: S.composerOpen && !S.compDone,
+      closeComposer:()=>this.setState({composerOpen:false, compDone:false}),
+      sendRequest:()=>this.setState({composerOpen:false, screen:'email'}),
+      // email
+      emailItems:this.REQ.map(i=>({date:i.date,name:i.name,amt:this.gbp(i.amt)})),
+      inboxUnread: 3,
+      inbox: [
+        { from:'Jim Jones', subject:'A few bits of paperwork, please', snippet:'Your accountant has asked for the following…', time:'10:24', unread:true, selected:true },
+        { from:'HMRC', subject:'Your VAT return is due soon', snippet:'The deadline for your quarterly VAT return…', time:'09:02', unread:true, selected:false },
+        { from:'Stripe', subject:'Your payout of £1,240.00 is on the way', snippet:'We initiated a transfer to your bank account…', time:'Tue', unread:true, selected:false },
+        { from:'Community Fibre', subject:'Your invoice for July', snippet:'Thanks for being a customer. Your bill is ready…', time:'Mon', unread:false, selected:false },
+        { from:'Amazon Business', subject:'Your order has shipped', snippet:'Order #AB12CD is on its way and should arrive…', time:'Sun', unread:false, selected:false },
+        { from:'Screwfix', subject:'Order ready for collection', snippet:'Your click & collect order is ready at your…', time:'12 Jul', unread:false, selected:false },
+      ].map(m=>({ ...m, weight: m.unread?'700':'500',
+        bg: m.selected?'#eaf1fb':'#fff', accent: m.selected?'#1a6ec4':'transparent',
+        dot: m.unread?'#1a6ec4':'transparent' })),
+      goUpload:()=>this.go('upload'),
+      // upload
+      uploadOpen: !S.uploadDone, uploadDone:S.uploadDone, uploadItems, reqTotal, provCount,
+      provPct: Math.round(provCount/reqTotal*100), addAny:()=>this.addAny(),
+      submitUpload:()=>{ if(this.REQ.some(r=>this.state.provided[r.id])) this.setState({uploadDone:true}); },
+      reopenUpload:()=>this.setState({uploadDone:false}),
+      goNotified:()=>this.go('notify'),
+      receivedItems, outstandingItems, outstandingCount:outstandingItems.length, hasOutstanding:outstandingItems.length>0,
+      // review
+      reviewRows, reviewCount:this.REQ.filter(r=>!S.approved[r.id]).length, revAllChecked, revToggleAll:()=>this.revToggleAll(),
+      allCats:this.ALL_CATS, revHasSel:revSelCount>0, revNoSel:revSelCount===0, revSelCount, approveBulk:()=>this.approveBulk(),
+      attachOpen:S.attachOpen, savedFiles, openAttach:()=>this.setState({attachOpen:true}), closeAttach:()=>this.setState({attachOpen:false}),
+      // tracker
+      trackTabs, trackRows, trackGroups,
+      // feed
+      feedEmail:fs==='email', feedSelect:fs==='select', feedConsent:fs==='consent', feedDone:fs==='done',
+      banks:this.BANKS, consentItems:this.CONSENT, feedNext:()=>this.feedNext(),
+    };
+  }
+}
+</script>
+</body>
+</html>

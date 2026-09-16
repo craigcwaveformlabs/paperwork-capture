@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; }
+  .app{ font-family:'Mulish','Helvetica Neue',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  .num{ font-variant-numeric:tabular-nums; }
+  a{ color:#1a6ec4; text-decoration:none; }
+  a:hover{ color:#12508f; }
+</style>
+</helmet>
+<div class="app" style="min-height:100vh; background:#eef1f5; color:#1a2530; padding-bottom:40px;">
+  <div style="max-width:1240px; margin:0 auto; background:#fff; min-height:100vh; box-shadow:0 0 0 1px rgba(0,0,0,.04);">
+
+    <!-- utility bar -->
+    <div style="background:#2b333c; height:46px; display:flex; align-items:center; justify-content:flex-end; padding:0 20px;">
+      <button onClick="{{ returnToDashboard }}" style="background:transparent; color:#fff; border:1px solid rgba(255,255,255,.55); border-radius:5px; font-size:13px; font-weight:600; padding:7px 14px; cursor:pointer;">Return to practice dashboard</button>
+    </div>
+
+    <!-- primary nav -->
+    <div style="background:#2c6ca8; display:flex; align-items:stretch; height:52px;">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8">
+        <div style="display:flex; align-items:center; padding:0 17px; color:#fff; font-size:14.5px; font-weight:500; cursor:pointer; background:{{ n.bg }};">{{ n.label }}</div>
+      </sc-for>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; padding:0 16px; position:relative; cursor:pointer;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+      </div>
+      <div style="display:flex; align-items:center; padding:0 18px 0 6px; color:#fff; font-size:14.5px; font-weight:600; cursor:pointer;">Rowan &amp; Field ▾</div>
+    </div>
+
+    <!-- ============ OVERVIEW ============ -->
+    <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:26px 30px 60px;">
+
+      <!-- greeting -->
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:22px;">
+        <div>
+          <h1 style="margin:0; font-size:27px; font-weight:800; letter-spacing:-0.01em;">Good morning, Priya</h1>
+          <div style="font-size:14.5px; color:#5f6b78; margin-top:3px;">Here's where Rowan &amp; Field stands today.</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:14px; color:#5f6b78;">{{ today }}</span>
+          <div style="display:inline-flex; align-items:center; gap:8px; border:1px solid #cdd5df; border-radius:7px; padding:8px 13px; font-size:14px; font-weight:600; color:#3a4552; cursor:pointer;">This month <span style="color:#8a94a1;">▾</span></div>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; padding:26px 28px; margin-bottom:20px; box-shadow:0 1px 2px rgba(20,40,70,.04);">
+        <div style="display:grid; grid-template-columns:290px 1fr; gap:34px; align-items:center;">
+          <!-- gauge -->
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="position:relative; width:250px; height:145px;">
+              <svg width="250" height="145" viewBox="0 0 250 145">
+                <path d="M20 130 A105 105 0 0 1 230 130" fill="none" stroke="#edf0f4" stroke-width="20" stroke-linecap="round"></path>
+                <path d="M20 130 A105 105 0 0 1 230 130" fill="none" stroke="{{ scoreColor }}" stroke-width="20" stroke-linecap="round" stroke-dasharray="{{ scoreDash }}"></path>
+              </svg>
+              <div style="position:absolute; left:0; right:0; bottom:2px; text-align:center;">
+                <div class="num" style="font-size:52px; font-weight:800; color:{{ scoreColor }}; line-height:1;">{{ score }}</div>
+              </div>
+            </div>
+            <div style="margin-top:6px; font-size:16px; font-weight:800; color:{{ scoreColor }};">{{ band }}</div>
+            <div style="font-size:12.5px; color:#8a94a1; margin-top:2px;">Business Health · out of 100</div>
+            <button onClick="{{ openWeights }}" style="margin-top:14px; font-family:'Mulish',sans-serif; font-size:13px; font-weight:700; color:#1a6ec4; background:#eef4fb; border:1px solid #d3e2f2; border-radius:7px; padding:8px 13px; cursor:pointer;">Adjust what counts ▾</button>
+          </div>
+          <!-- drivers -->
+          <div>
+            <div style="font-size:12px; font-weight:700; color:#8a94a1; text-transform:uppercase; letter-spacing:.05em; margin-bottom:14px;">What's driving it</div>
+            <div style="display:flex; flex-direction:column; gap:15px;">
+              <sc-for list="{{ drivers }}" as="d" hint-placeholder-count="5">
+                <a href="javascript:void(0)" onClick="{{ d.open }}" style="display:block;">
+                  <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-size:14.5px; font-weight:700; color:#1a2530;">{{ d.label }}</span>
+                    <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:13px; color:#5f6b78;">{{ d.signal }}</span><span class="num" style="font-size:14px; font-weight:800; color:{{ d.color }}; width:26px; text-align:right;">{{ d.sub }}</span></span>
+                  </div>
+                  <div style="height:8px; border-radius:5px; background:#edf0f4; overflow:hidden;">
+                    <div style="height:100%; width:{{ d.pct }}; background:{{ d.color }};"></div>
+                  </div>
+                </a>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TODAY / TOMORROW -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
+
+        <!-- TODAY -->
+        <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; padding:22px 24px; box-shadow:0 1px 2px rgba(20,40,70,.04);">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:4px;">
+            <h2 style="margin:0; font-size:18px; font-weight:800;">Today</h2>
+            <span style="font-size:13px; color:#8a94a1;">· act now</span>
+            <span style="background:#c23b3b; color:#fff; font-size:12px; font-weight:700; min-width:22px; height:22px; border-radius:11px; display:inline-flex; align-items:center; justify-content:center; padding:0 7px;">{{ todayCount }}</span>
+          </div>
+          <div style="font-size:13px; color:#8a94a1; margin-bottom:16px;">Things worth handling before end of day.</div>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <sc-for list="{{ todayItems }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:13px; border:1px solid #eceff3; border-radius:10px; padding:14px 16px;">
+                <span style="width:9px; height:9px; border-radius:50%; background:{{ t.accent }}; flex-shrink:0;"></span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:14.5px; font-weight:700; color:#1a2530;">{{ t.title }}</div>
+                  <div style="font-size:13px; color:#5f6b78; margin-top:1px;">{{ t.detail }}</div>
+                </div>
+                <button onClick="{{ t.act }}" style="font-family:'Mulish',sans-serif; font-size:13.5px; font-weight:700; color:#14310a; background:#6fbf5a; border:1px solid #5aa843; border-radius:7px; padding:9px 15px; cursor:pointer; white-space:nowrap;">{{ t.action }}</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ todayEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center; padding:30px 10px; color:#3a8b3b;">
+                <div style="font-size:34px; margin-bottom:6px;">✓</div>
+                <div style="font-size:15px; font-weight:700;">All clear for today</div>
+                <div style="font-size:13px; color:#8a94a1; margin-top:3px;">Nothing needs your attention right now.</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <!-- TOMORROW -->
+        <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; padding:22px 24px; box-shadow:0 1px 2px rgba(20,40,70,.04);">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:4px;">
+            <h2 style="margin:0; font-size:18px; font-weight:800;">Tomorrow</h2>
+            <span style="font-size:13px; color:#8a94a1;">· see ahead</span>
+          </div>
+          <div style="font-size:13px; color:#8a94a1; margin-bottom:16px;">Your next 90 days, from everything that's connected.</div>
+
+          <!-- projection headline -->
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px;">
+            <div>
+              <div style="font-size:16px; font-weight:800; color:#c23b3b;">Projected {{ shortfallLabel }} short on {{ shortfallDate }}</div>
+              <div style="font-size:12.5px; color:#8a94a1; margin-top:1px;">You've got time to act — here's what's driving it.</div>
+            </div>
+          </div>
+
+          <!-- chart -->
+          <div style="border:1px solid #eff2f6; border-radius:10px; padding:14px 14px 8px; margin-bottom:16px;">
+            <svg width="100%" viewBox="0 0 520 210" style="display:block; overflow:visible;">
+              <line x1="0" y1="{{ zeroY }}" x2="520" y2="{{ zeroY }}" stroke="#c8d0da" stroke-width="1.5"></line>
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="9">
+                <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="3" fill="{{ b.fill }}"></rect>
+                <text x="{{ b.cx }}" y="{{ b.labelY }}" text-anchor="middle" font-family="Mulish, sans-serif" font-size="10" font-weight="700" fill="{{ b.labelColor }}">{{ b.label }}</text>
+                <text x="{{ b.cx }}" y="205" text-anchor="middle" font-family="Mulish, sans-serif" font-size="10" fill="#9aa4b0">{{ b.month }}</text>
+              </sc-for>
+            </svg>
+          </div>
+
+          <!-- source-tagged inputs -->
+          <div style="display:flex; flex-direction:column; gap:9px; margin-bottom:14px;">
+            <sc-for list="{{ cashInputs }}" as="c" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:9px;">
+                  <span style="font-size:14px; color:#1a2530;">{{ c.label }}</span>
+                  <span style="font-size:11px; font-weight:700; color:#5f7fa8; background:#eef3fa; border:1px solid #dce7f4; border-radius:20px; padding:2px 9px;">{{ c.src }}</span>
+                </div>
+                <span class="num" style="font-size:14px; font-weight:700; color:{{ c.color }};">{{ c.amt }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <a href="javascript:void(0)" onClick="{{ openForecast }}" style="font-size:13.5px; font-weight:700;">See full forecast →</a>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ PLACEHOLDER DESTINATIONS ============ -->
+    <sc-if value="{{ isPlaceholder }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:26px 30px 60px;">
+      <a href="javascript:void(0)" onClick="{{ backToOverview }}" style="display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:#1a6ec4; margin-bottom:20px;">‹ Back to Overview</a>
+      <div style="background:#fff; border:1px solid #e2e7f0; border-radius:14px; padding:48px 40px; text-align:center;">
+        <div style="width:60px; height:60px; border-radius:14px; background:#eef4fb; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:26px;">{{ ph.icon }}</div>
+        <h1 style="margin:0 0 8px; font-size:24px; font-weight:800;">{{ ph.title }}</h1>
+        <p style="margin:0 auto; max-width:440px; font-size:15px; color:#5f6b78; line-height:1.55;">{{ ph.body }}</p>
+        <div style="display:inline-block; margin-top:18px; font-size:12px; font-weight:700; color:#b0781a; background:#fdf4e6; border:1px solid #f5e2c8; border-radius:20px; padding:6px 14px;">Placeholder · not built in this prototype</div>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { screen:'overview', ph:null,
+    weights:{ paid:25, cash:25, tax:20, profit:15, growth:15 },
+    resolved:{} };
+
+  BIZ = {
+    name:'Rowan & Field', owner:'Priya',
+    gettingPaid:{ overdueCount:3, overdueValue:4200, oldestDays:21, debtorDays:41 },
+    cashflow:{ balance:12480, projShortfall:-549, shortfallDate:'1 Jan',
+      inputs:[ {label:'Invoices due', src:'Your invoices', v:12300},
+               {label:'Bills & payroll', src:'Your bills', v:-15760},
+               {label:'VAT due 22nd', src:'Tax', v:-5260},
+               {label:'Loan repayment', src:'Funding', v:-1400} ] },
+    tax:{ setAside:9140, upcomingLiability:11700 },
+    profit:{ netMargin:0.18, trendPts:3 },
+    growth:{ benchPercentile:70, peerMargin:0.12, facilityUnused:15000 },
+  };
+
+  TODAY = [
+    { id:'ar',   sev:'high', icon:'£', title:'Chase overdue invoices', detail:'3 invoices overdue · £4,200 · oldest 21 days', action:'Chase all', dest:'chase' },
+    { id:'bills',sev:'med',  icon:'🧾', title:'Approve the bill run', detail:'5 bills due this week · £6,120', action:'Review & pay', dest:'bills' },
+    { id:'pay',  sev:'med',  icon:'👥', title:'Run payroll', detail:'Due Friday · 6 staff · £11,420 · PAYE £3,180 set aside', action:'Run payroll', dest:'payroll' },
+    { id:'vat',  sev:'low',  icon:'%',  title:'VAT payment coming', detail:'£5,260 due in 9 days · covered by tax pot', action:'Review VAT', dest:'vat' },
+  ];
+
+  PH = {
+    chase:{ icon:'£', title:'Chase overdue invoices', body:'This is where you\u2019d send payment reminders for your overdue sales invoices — the owner-side echo of Smart Collect, but for money owed to you.' },
+    bills:{ icon:'🧾', title:'Bill run', body:'Review and pay the bills due this week in one approved batch.' },
+    payroll:{ icon:'👥', title:'Run payroll', body:'Approve and submit this month\u2019s payroll for your 6 staff, with PAYE already set aside.' },
+    vat:{ icon:'%', title:'VAT return', body:'Check and file your upcoming VAT return, paid from the tax pot that\u2019s already provisioned.' },
+    paid:{ icon:'£', title:'Getting paid', body:'Your accounts-receivable view — who owes you, how overdue, and debtor-day trend.' },
+    cash:{ icon:'📈', title:'Cashflow forecast', body:'The full 90-day projection built from your invoices, bills, tax and funding.' },
+    tax:{ icon:'%', title:'Taxes', body:'What\u2019s owed, what\u2019s set aside, and when each liability falls due.' },
+    profit:{ icon:'📊', title:'Profitability', body:'Margin and trend over time, with the P&L behind it.' },
+    growth:{ icon:'🌱', title:'Growth & funding', body:'How you compare to peers and the funding headroom available to you.' },
+    forecast:{ icon:'📈', title:'Full cashflow forecast', body:'The complete forward view with every projected inflow and outflow.' },
+    weights:{ icon:'⚖️', title:'Adjust what counts', body:'This is where you\u2019ll drag the weight of each driver — Getting paid, Cashflow, Tax readiness, Profitability, Growth & funding — and watch the headline score recompute live. Coming in the next build pass.' },
+  };
+
+  gbp(n){ const s=Math.abs(n)>=1000 ? '£'+Math.round(Math.abs(n)).toLocaleString('en-GB') : '£'+Math.abs(n).toLocaleString('en-GB'); return (n<0?'−':'')+s; }
+  clamp(n){ return Math.max(0, Math.min(100, Math.round(n))); }
+
+  subScores(){
+    const b=this.BIZ;
+    const paid = this.clamp(100 - 8*b.gettingPaid.overdueCount - Math.max(0, b.gettingPaid.debtorDays-30));
+    const cash = this.clamp(b.cashflow.projShortfall>=0 ? 100 : 100 - (Math.abs(b.cashflow.projShortfall)/Math.abs(b.cashflow.inputs[1].v))*100*3 - 18);
+    const tax = this.clamp(b.tax.setAside / b.tax.upcomingLiability * 100);
+    const m=b.profit.netMargin; const pb = m>=0.15?100 : m>=0.10?80 : m>=0.05?60 : m>0?40 : 15;
+    const profit = this.clamp(pb + (b.profit.trendPts>0?0:-5));
+    const growth = this.clamp(b.growth.benchPercentile*0.6 + (b.growth.facilityUnused>0?40:0)*(b.growth.facilityUnused>=15000?0.9:0.5));
+    return { paid, cash, tax, profit, growth };
+  }
+
+  bandOf(s){ return s>=80?{label:'Healthy',c:'#1f8a3b'} : s>=60?{label:'Watch',c:'#b0781a'} : s>=40?{label:'Strained',c:'#c2571f'} : {label:'At risk',c:'#c23b3b'}; }
+
+  goPlaceholder(key){ this.setState({ screen:'placeholder', ph:key }); window.scrollTo(0,0); }
+  returnToDashboard(){ window.location.href = 'Business%20Health%20Dashboard.dc.html'; }
+
+  renderVals(){
+    const S=this.state, NAVY='#245a8d';
+    const nav=[['Overview',1],['Invoicing',0],['Banking',0],['Bills',0],['Payroll',0],['Taxes',0],['Reports',0],['Accountant',0]]
+      .map(([label,a])=>({ label, bg:a?NAVY:'transparent' }));
+
+    const subs=this.subScores();
+    const w=S.weights;
+    const wsum=w.paid+w.cash+w.tax+w.profit+w.growth;
+    const score=Math.round((w.paid*subs.paid + w.cash*subs.cash + w.tax*subs.tax + w.profit*subs.profit + w.growth*subs.growth)/wsum);
+    const bnd=this.bandOf(score);
+    // semicircle dash: arc length = π * R (R=105)
+    const arc=Math.PI*105;
+    const scoreDash=`${(score/100*arc).toFixed(1)} ${arc.toFixed(1)}`;
+
+    const b=this.BIZ;
+    const driverDefs=[
+      { key:'paid', label:'Getting paid', sub:subs.paid, signal:`${b.gettingPaid.overdueCount} overdue · £4.2k · ${b.gettingPaid.debtorDays}d debtors` },
+      { key:'cash', label:'Cashflow', sub:subs.cash, signal:`Tight · projected −£549 on 1 Jan` },
+      { key:'tax', label:'Tax readiness', sub:subs.tax, signal:`£9.1k set aside · covers 78%` },
+      { key:'profit', label:'Profitability', sub:subs.profit, signal:`Net margin 18% · up 3pts` },
+      { key:'growth', label:'Growth & funding', sub:subs.growth, signal:`Top 30% · £15k facility unused` },
+    ];
+    const drivers=driverDefs.map(d=>{ const c=this.bandOf(d.sub).c; return { ...d, color:c, pct:d.sub+'%', open:()=>this.goPlaceholder(d.key) }; });
+
+    const sevAccent={ high:'#c23b3b', med:'#e0891a', low:'#b0781a' };
+    const sevIconBg={ high:'#fbe4e4', med:'#fdeede', low:'#fdf4e6' };
+    const todayItems=this.TODAY.filter(t=>!S.resolved[t.id]).map(t=>({
+      title:t.title, detail:t.detail, action:t.action, icon:t.icon,
+      accent:sevAccent[t.sev], iconBg:sevIconBg[t.sev], act:()=>this.goPlaceholder(t.dest) }));
+
+    // cashflow chart — projected end-of-month total balance, as bars
+    const series=[
+      {month:'Sep', v:12480, actual:true}, {month:'Oct', v:11020, actual:true}, {month:'Nov', v:9600, actual:true},
+      {month:'Dec', v:4200}, {month:'Jan', v:-549}, {month:'Feb', v:2100},
+      {month:'Mar', v:5400}, {month:'Apr', v:8200}, {month:'May', v:10600},
+    ];
+    const W=520,H=210,padT=18,padB=26;
+    const vals=series.map(s=>s.v);
+    const maxV=Math.max(...vals,0), minV=Math.min(...vals,0);
+    const range=(maxV-minV)||1;
+    const zeroYn=padT + (maxV/range)*(H-padT-padB);
+    const zeroY=zeroYn.toFixed(1);
+    const n=series.length, slot=W/n, bw=slot*0.56;
+    const bars=series.map((s,i)=>{
+      const cx=slot*i + slot/2;
+      const vy=padT + ((maxV-s.v)/range)*(H-padT-padB);
+      const pos=s.v>=0;
+      const y=pos?vy:zeroYn, h=Math.max(2,Math.abs(vy-zeroYn));
+      const fill = s.v<0 ? '#c23b3b' : (s.actual ? '#2c6ca8' : '#9cc2e2');
+      return { x:(cx-bw/2).toFixed(1), y:y.toFixed(1), w:bw.toFixed(1), h:h.toFixed(1), cx:cx.toFixed(1), fill,
+        month:s.month, label:(s.v<0?'−£':'£')+Math.round(Math.abs(s.v)/100)/10+'k',
+        labelY:(pos?y-5:y+h+12).toFixed(1), labelColor:s.v<0?'#c23b3b':'#5f6b78' };
+    });
+
+    const cashInputs=b.cashflow.inputs.map(c=>({ label:c.label, src:c.src, amt:(c.v>0?'+':'')+this.gbp(c.v), color:c.v<0?'#c23b3b':'#1f8a3b' }));
+
+    const ph=S.ph?this.PH[S.ph]:null;
+
+    return {
+      nav, returnToDashboard:()=>this.returnToDashboard(),
+      isOverview:S.screen==='overview', isPlaceholder:S.screen==='placeholder', ph,
+      backToOverview:()=>this.setState({screen:'overview', ph:null}),
+      today:'Fri 9 Aug 2026',
+      score, scoreColor:bnd.c, band:bnd.label, scoreDash,
+      openWeights:()=>this.goPlaceholder('weights'),
+      drivers,
+      todayItems, todayCount:todayItems.length, todayEmpty:todayItems.length===0,
+      shortfallLabel:this.gbp(b.cashflow.projShortfall), shortfallDate:b.cashflow.shortfallDate,
+      zeroY, bars, cashInputs,
+      openForecast:()=>this.goPlaceholder('forecast'),
+    };
+  }
+}
+</script>
+</body>
+</html>
