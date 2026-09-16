@@ -1,48 +1,53 @@
 # paperwork-capture
 
-A working prototype of an accountant→client paperwork request loop for FreeAgent.
+A minimal app that connects to a real FreeAgent account (via OAuth) and posts MTD bridging
+transactions into it from a CSV — no simulation, no local database.
 
 ## Run locally
 
 ```bash
 npm install
-npm run seed:reset
+cp .env.local.example .env.local   # fill in your FreeAgent Developer Dashboard app credentials
 npm run dev
 ```
 
-Open:
-- `/banking/1` accountant transactions and request/approve workflow
-- `/requests` request tracker
-- `/smart-capture` uploaded documents and metrics
-- `/outbox` simulated email outbox
-- `/p/<token>` client upload page (no auth token link)
+Open `/` and connect. Once connected:
+
+- `/categories` — create the fixed set of MTD bridging categories in your account
+- `/mtd-csv` — download a CSV template, fill it in, then upload it (with optional evidence
+  files) to create real bank transactions, categorise them, and attach evidence
+
+## How it works
+
+1. **Connect** (`/api/oauth/connect`, `/api/oauth/callback`) — standard OAuth2
+   authorization-code flow against FreeAgent's sandbox or production API. Tokens are stored
+   in `data/freeagent-tokens.json` (gitignored) — this app is single-tenant, for the
+   developer's own account, not a multi-client portal.
+2. **Categories** (`/api/categories`) — creates a fixed list of `bridging-*` categories
+   (`lib/freeagent/bridgingCategories.ts`), skipping any nominal code already in use.
+3. **CSV upload** (`/api/mtd-csv/upload`) — parses `date,description,amount,category,
+   receipt_filename` rows, posts them via FreeAgent's bulk statement endpoint, re-fetches
+   the created transactions to match them back (the statement endpoint replies with an
+   empty body), then explains each one against its resolved category. If a row names an
+   evidence file, it's base64-attached inline on that row's explanation — FreeAgent has no
+   standalone "create file" endpoint, so this is the only way to attach evidence.
 
 ## Stack
 
-- Next.js App Router + TypeScript
-- SQLite via `better-sqlite3`
-- Tailwind CSS (FreeAgent tokens in `tailwind.config.ts`)
-- Anthropic SDK server-side in `lib/extraction.ts`
-- Vitest tests for matching + safe-zone invariants
+- Next.js App Router + TypeScript, Tailwind CSS
+- No database — FreeAgent's API is the only source of truth; OAuth tokens are the only
+  local state
 
-## Scripts
+## Setup note
 
-- `npm run seed` seed once if DB empty
-- `npm run seed:reset` reset DB and reseed demo data
-- `npm run test` run unit tests
-- `npm run lint`
-- `npm run build`
+FreeAgent OAuth requires the redirect URI to exactly match one registered on your app in
+the Developer Dashboard. This app defaults to `http://localhost:3000/api/oauth/callback` —
+register that (or override `FREEAGENT_REDIRECT_URI` in `.env.local` to match what you've
+registered).
 
-## Important prototype constraints
+## Also in this repo
 
-- One document maps to one source item and one transaction.
-- Bank statements are flagged unsupported and left unmatched.
-- Client uploads consume client Smart Capture allowance.
-- Documents inherit privacy from request settings.
-- Auto-explanations always go to `for_approval`; only `/api/approve` can set `explained`.
-
-## Open decision to revisit
-
-Tokenised no-login upload links are currently long random tokens with due-date context only. A production decision is still needed on expiry, single-use/reusable behaviour, and whether a second factor is required.
-
-MTD quarterly capture requires a bank statement or MTD-format CSV upload before a period can be posted to the ledger — this is what satisfies the underlying transaction-level compliance requirement. Manual category-figure entry exists only as a fallback layered on top of a posted period; it never substitutes for the mandatory statement/CSV. Whether practices will actually get clients to upload real statements every quarter, versus reverting to a bridging-spreadsheet-style summary, is a real open product question this prototype doesn't resolve.
+- `html-prototype/` — a static, no-backend click-through mockup of the wider
+  accountant/client paperwork journey (not connected to this app).
+- `freeagent-import/` — the original standalone Node CLI this app's FreeAgent logic was
+  ported from.

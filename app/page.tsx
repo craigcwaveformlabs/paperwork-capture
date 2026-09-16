@@ -1,64 +1,62 @@
 import Link from 'next/link';
-import { StatusPill } from '@/components/StatusPill';
-import { ensureSeeded } from '@/lib/repo';
-import type { RequestStatus } from '@/lib/types';
+import { isConnected, apiRequest } from '@/lib/freeagent/client';
 
-export default function PracticeDashboard() {
-  const db = ensureSeeded();
+type Company = { name: string; subdomain: string; type: string };
 
-  const clients = db
-    .prepare(
-      `SELECT c.id, c.name, c.businessType,
-        (SELECT a.id FROM bank_accounts a WHERE a.clientId = c.id AND a.kind = 'client' ORDER BY a.id LIMIT 1) as accountId,
-        (SELECT status FROM paperwork_requests r WHERE r.clientId = c.id AND r.kind = 'transaction' ORDER BY r.createdAt DESC LIMIT 1) as paperworkStatus,
-        (SELECT status FROM paperwork_requests r WHERE r.clientId = c.id AND r.kind = 'mtd_quarterly' ORDER BY r.createdAt DESC LIMIT 1) as mtdStatus
-       FROM clients c
-       ORDER BY c.name`,
-    )
-    .all() as Array<{
-    id: number;
-    name: string;
-    businessType: string;
-    accountId: number | null;
-    paperworkStatus: RequestStatus | null;
-    mtdStatus: RequestStatus | null;
-  }>;
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+  const connected = isConnected();
+
+  let company: Company | null = null;
+  if (connected) {
+    try {
+      const data = await apiRequest<{ company: Company }>('/company');
+      company = data.company;
+    } catch {
+      company = null;
+    }
+  }
 
   return (
     <section className="bg-white border border-line rounded-lg overflow-hidden">
       <header className="p-4 border-b border-line">
-        <h2 className="font-semibold text-lg">Practice dashboard</h2>
+        <h2 className="font-semibold text-lg">Live FreeAgent connection</h2>
         <p className="text-sm text-slate-600 mt-1">
-          Every client, with their Paperwork Request and MTD Quarterly Capture journeys side by side.
+          A real, OAuth-authenticated connection to your FreeAgent sandbox account — not a simulation.
         </p>
       </header>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-line text-left">
-              <th className="p-3">Client</th>
-              <th className="p-3">Business type</th>
-              <th className="p-3">Paperwork Request</th>
-              <th className="p-3">MTD Capture</th>
-              <th className="p-3">Open</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client.id} className="border-b border-line/60">
-                <td className="p-3 font-medium">{client.name}</td>
-                <td className="p-3">{client.businessType}</td>
-                <td className="p-3">{client.paperworkStatus ? <StatusPill value={client.paperworkStatus} /> : '—'}</td>
-                <td className="p-3">{client.mtdStatus ? <StatusPill value={client.mtdStatus} /> : '—'}</td>
-                <td className="p-3 flex gap-3">
-                  {client.accountId ? <Link href={`/banking/${client.accountId}`}>Banking</Link> : null}
-                  <Link href={`/mtd/${client.id}`}>MTD</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="p-4 space-y-4">
+        {error ? (
+          <p className="text-sm text-red bg-orangeBg border border-orange rounded p-3">Connection failed: {error}</p>
+        ) : null}
+
+        {!connected ? (
+          <a
+            href="/api/oauth/connect"
+            className="inline-block bg-blue text-white text-sm font-medium px-4 py-2 rounded"
+          >
+            Connect to FreeAgent
+          </a>
+        ) : (
+          <>
+            <p className="text-sm">
+              Connected{company ? <> to <span className="font-medium">{company.name}</span></> : null}.
+            </p>
+            <div className="flex gap-4 text-sm">
+              <Link href="/categories" className="text-link underline">
+                Bridging categories
+              </Link>
+              <Link href="/mtd-csv" className="text-link underline">
+                MTD CSV upload
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

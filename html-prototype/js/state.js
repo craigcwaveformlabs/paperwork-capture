@@ -12,9 +12,6 @@ const state = {
   groupFilter: 'all',
   editingClientId: null,
   authed: true,
-  view: 'quarter', // 'quarter' | 'month'
-  qedits: {},      // quarter-view overrides, keyed by income/expense key
-  medits: {},      // month-view overrides, keyed by `${key}_${monthIndex}`
   receipts: ['fuel-receipt-may.jpg', 'screwfix-19may.jpg', 'rsm-invoice.pdf'],
   pathway: null,      // null | 'paper' | 'spreadsheet' — chosen on the step 3 pathway screen
   shoeboxFiles: [],
@@ -37,34 +34,15 @@ function go(screen) {
 }
 
 function incVal(key) {
-  const d = INCOME.find(x => x.key === key);
-  const e = state.qedits[key];
-  return e !== undefined ? parseNum(e) : d.amt;
+  return INCOME.find(x => x.key === key).amt;
 }
 
 function expAmt(key) {
-  const d = EXPENSES.find(x => x.key === key);
-  const e = state.qedits[key + 'a'];
-  return e !== undefined ? parseNum(e) : d.amt;
+  return EXPENSES.find(x => x.key === key).amt;
 }
 
 function expDis(key) {
-  const d = EXPENSES.find(x => x.key === key);
-  const e = state.qedits[key + 'd'];
-  return e !== undefined ? parseNum(e) : d.dis;
-}
-
-function setQ(key, value) {
-  state.qedits[key] = value;
-}
-
-function mVal(key, i, amt) {
-  const e = state.medits[key + '_' + i];
-  return e !== undefined ? parseNum(e) : splitQuarter(amt)[i];
-}
-
-function setM(key, i, value) {
-  state.medits[key + '_' + i] = value;
+  return EXPENSES.find(x => x.key === key).dis;
 }
 
 function totals() {
@@ -135,11 +113,6 @@ function sendMtdSheet() {
     state.mtdSent = true;
     rerender();
   }
-}
-
-function setView(view) {
-  state.view = view;
-  rerender();
 }
 
 function setSendMode(mode) {

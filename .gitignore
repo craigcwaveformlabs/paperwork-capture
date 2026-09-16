@@ -16,9 +16,9 @@
 # next.js
 /.next/
 /out/
-/uploads/*
-!/uploads/.gitkeep
-/data/*.sqlite*
+/data/freeagent-tokens.json
+/data/bridging-category-ids.json
+/data/mtd-last-upload.json
 
 # production
 /build
@@ -35,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.local.example
 
 # vercel
 .vercel

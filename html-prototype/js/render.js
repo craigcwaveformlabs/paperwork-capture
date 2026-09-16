@@ -26,45 +26,12 @@ function renderApp() {
     case 'mDownload':
     case 'mSignin':
     case 'mHome':
-    case 'mFigures':
-    case 'mReceipts':
+    case 'mUpload':
     case 'mDone':
     case 'mRequests':
       return renderMobile(state.screen);
     default: return renderClientList();
   }
-}
-
-// ============================================
-// EDITABLE FIGURES — targeted DOM patches
-// ============================================
-// These screens have live text inputs. A full rerender() on every keystroke
-// would steal focus/cursor position, so input handlers only touch state +
-// patch the specific derived output elements below (tagged with a shared
-// class/data-attribute), and never touch the <input> elements themselves.
-
-function patchFigureTotals() {
-  const t = totals();
-  document.querySelectorAll('.js-total-income').forEach(el => { el.textContent = gbp(t.ti); });
-  document.querySelectorAll('.js-total-expenses').forEach(el => { el.textContent = gbp(t.te); });
-  document.querySelectorAll('.js-net-profit').forEach(el => { el.textContent = gbp(t.net); });
-}
-
-function patchRowQuarter(key) {
-  const def = INCOME.find(x => x.key === key) || EXPENSES.find(x => x.key === key);
-  const q = [0, 1, 2].reduce((s, i) => s + mVal(key, i, def.amt), 0);
-  document.querySelectorAll(`[data-row-quarter="${key}"]`).forEach(el => { el.textContent = gp(q); });
-}
-
-function onQuarterFigureInput(key, value) {
-  setQ(key, value);
-  patchFigureTotals();
-}
-
-function onMonthFigureInput(key, i, value) {
-  setM(key, i, value);
-  patchRowQuarter(key);
-  patchFigureTotals();
 }
 
 // ============================================
@@ -85,8 +52,7 @@ const PROTO_NAV = [
   ['mDownload', 'App · Download'],
   ['mSignin', 'App · Sign in'],
   ['mHome', 'App · Home'],
-  ['mFigures', 'App · Figures'],
-  ['mReceipts', 'App · Receipts'],
+  ['mUpload', 'App · Upload paperwork'],
   ['mRequests', 'App · Submissions'],
 ];
 

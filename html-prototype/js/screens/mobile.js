@@ -1,5 +1,5 @@
 /**
- * Mobile app screens (all 7), rendered inside the phone-frame chrome.
+ * Mobile app screens (all 6), rendered inside the phone-frame chrome.
  */
 
 function renderMobile(screen) {
@@ -10,8 +10,7 @@ function renderMobile(screen) {
     case 'mDownload': content = renderMDownload(); break;
     case 'mSignin': content = renderMSignin(); break;
     case 'mHome': content = renderMHome(); showTabs = true; break;
-    case 'mFigures': content = renderMFigures(); break;
-    case 'mReceipts': content = renderMReceipts(); break;
+    case 'mUpload': content = renderMUpload(); break;
     case 'mDone': content = renderMDone(); break;
     case 'mRequests': content = renderMRequests(); showTabs = true; break;
   }
@@ -51,7 +50,7 @@ function renderMSignin() {
     <div class="m-pad">
       <div class="m-app-icon m-app-icon-small">fa</div>
       <h1 class="m-h1 text-center">Welcome</h1>
-      <p class="text-center text-muted mb-lg">Sign in to submit your MTD figures</p>
+      <p class="text-center text-muted mb-lg">Sign in to send your MTD paperwork</p>
       <div class="m-card" style="padding:0; overflow:hidden;">
         <div class="m-field-row">
           <div class="text-small text-muted">Email</div>
@@ -63,7 +62,7 @@ function renderMSignin() {
         </div>
       </div>
       <button class="btn-cta btn-full mt-lg" onclick="go('mHome')">Sign in</button>
-      <p class="text-small text-muted text-center mt-md">Your accountant gave you a Level 2 login — you can submit figures and see your requests.</p>
+      <p class="text-small text-muted text-center mt-md">Your accountant gave you a Level 2 login — you can send paperwork and see your requests.</p>
     </div>
   `;
 }
@@ -73,10 +72,10 @@ function renderMHome() {
   return `
     <div class="m-pad-tight">
       <h1 class="m-h1 text-center">${FEATURED_CLIENT.name}</h1>
-      <div class="m-card m-card-clickable" onclick="go('${state.mSubmitted ? 'mRequests' : 'mFigures'}')">
+      <div class="m-card m-card-clickable" onclick="go('${state.mSubmitted ? 'mRequests' : 'mUpload'}')">
         <div class="flex-between">
           <div>
-            <div class="m-card-title">MTD upload</div>
+            <div class="m-card-title">Send your paperwork</div>
             <div class="text-muted">${PERIOD.short} · Due 7 Aug 2026</div>
           </div>
           <span class="m-chevron">›</span>
@@ -106,87 +105,13 @@ function renderMHome() {
   `;
 }
 
-function renderMFigures() {
-  const t = totals();
-  const isQuarter = state.view === 'quarter';
+function renderMUpload() {
+  const hasFiles = state.receipts.length > 0;
+  const fileIcon = (name) => name.match(/statement/) ? '🏦' : name.match(/invoice/) ? '🧾' : '📄';
 
-  const quarterListRow = (r, inputKey, val) => `
-    <div class="m-list-row">
-      <div class="flex-1">
-        <div>${r.label}</div>
-        <div class="text-small text-muted">Last quarter ${gbp(r2(r.amt * 0.88))}</div>
-      </div>
-      <span class="text-muted">£</span>
-      <input class="iosf m-iosf" value="${gp(val)}" oninput="onQuarterFigureInput('${inputKey}', this.value)" />
-    </div>
-  `;
-
-  const monthCard = (r) => `
-    <div class="m-card mb-sm" style="overflow:hidden;">
-      <div class="flex-between" style="padding:11px 16px; border-bottom:1px solid var(--color-border-light);">
-        <span class="text-bold">${r.label}</span>
-        <span class="text-bold" style="color:var(--color-primary);" data-row-quarter="${r.key}">${gp([0, 1, 2].reduce((s, i) => s + mVal(r.key, i, r.amt), 0))}</span>
-      </div>
-      ${[0, 1, 2].map(i => `
-        <div class="flex-center gap-sm" style="padding:9px 16px 9px 26px; border-bottom:1px solid var(--color-border-light);">
-          <span class="flex-1 text-small text-muted">${MONTHS[i]}</span>
-          <span class="text-muted">£</span>
-          <input class="iosf m-iosf" value="${gp(mVal(r.key, i, r.amt))}" oninput="onMonthFigureInput('${r.key}', ${i}, this.value)" />
-        </div>
-      `).join('')}
-    </div>
-  `;
-
-  return `
-    <div>
-      <div class="m-topbar">
-        <a href="javascript:void(0)" class="link-primary" onclick="go('mHome')">‹ Home</a>
-        <span class="text-bold">MTD upload</span>
-        <span style="width:44px;"></span>
-      </div>
-      <div class="text-center text-small text-muted mb-md">${PERIOD.short} · ${PERIOD.range}</div>
-      <div class="m-pad-tight">
-        <div class="toggle-group mb-md">
-          <button class="toggle-btn flex-1 ${isQuarter ? 'active' : ''}" onclick="setView('quarter')">Quarter</button>
-          <button class="toggle-btn flex-1 ${!isQuarter ? 'active' : ''}" onclick="setView('month')">Monthly</button>
-        </div>
-
-        ${isQuarter ? `
-          <div class="section-label">Income</div>
-          <div class="m-card" style="padding:0; overflow:hidden;">
-            ${INCOME.map(r => quarterListRow(r, r.key, incVal(r.key))).join('')}
-            <div class="flex-between" style="padding:12px 16px; background:var(--color-surface-alt);">
-              <span class="text-bold">Total income</span><span class="text-bold js-total-income">${gbp(t.ti)}</span>
-            </div>
-          </div>
-          <div class="section-label mt-md">Expenses</div>
-          <div class="m-card" style="padding:0; overflow:hidden;">
-            ${EXPENSES.map(r => quarterListRow(r, r.key + 'a', expAmt(r.key))).join('')}
-            <div class="flex-between" style="padding:12px 16px; background:var(--color-surface-alt);">
-              <span class="text-bold">Total expenses</span><span class="text-bold js-total-expenses">${gbp(t.te)}</span>
-            </div>
-          </div>
-        ` : `
-          <div class="section-label">Income</div>
-          ${INCOME.map(monthCard).join('')}
-          <div class="section-label mt-md">Expenses</div>
-          ${EXPENSES.map(monthCard).join('')}
-        `}
-
-        <div class="flex-between m-net-banner mt-md">
-          <span class="text-bold" style="color:#2c5d8c;">Net profit</span>
-          <span class="text-bold js-net-profit">${gbp(t.net)}</span>
-        </div>
-        <button class="btn-cta btn-full" onclick="go('mReceipts')">Continue to receipts</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderMReceipts() {
   const rows = state.receipts.map((name, i) => `
     <div class="flex-center gap-sm" style="padding:12px 16px; border-bottom:1px solid var(--color-border-light);">
-      <div class="file-icon">📄</div>
+      <div class="file-icon">${fileIcon(name)}</div>
       <div class="flex-1">
         <div class="text-bold">${name}</div>
         <div class="text-small text-muted">${Math.round((0.3 + i * 0.4) * 10) / 10} MB</div>
@@ -198,34 +123,34 @@ function renderMReceipts() {
   return `
     <div>
       <div class="m-topbar">
-        <a href="javascript:void(0)" class="link-primary" onclick="go('mFigures')">‹ Figures</a>
-        <span class="text-bold">Receipts</span>
-        <span style="width:56px;"></span>
+        <a href="javascript:void(0)" class="link-primary" onclick="go('mHome')">‹ Home</a>
+        <span class="text-bold">Send paperwork</span>
+        <span style="width:44px;"></span>
       </div>
+      <div class="text-center text-small text-muted mb-md">${PERIOD.short} · ${PERIOD.range}</div>
       <div class="m-pad-tight">
-        <p class="text-muted mb-md">Add photos of receipts for this quarter (optional). We'll send them to your accountant.</p>
-        <div class="dropzone mb-md" onclick="addReceipt()">
+        <p class="text-muted mb-md">Add photos or files of your bank statements, receipts and invoices. Riverside &amp; Co will go through everything and work out your figures — no need to add anything up yourself.</p>
+        <div class="dropzone ${hasFiles ? 'has-file' : 'needs-file'} mb-md" onclick="addReceipt()">
           <div class="dropzone-icon">📎</div>
           <div class="dropzone-title">Add from camera or photos</div>
-          <div class="dropzone-sub">JPG, PNG or PDF</div>
+          <div class="dropzone-sub">or choose a file · JPG, PNG or PDF</div>
         </div>
-        ${state.receipts.length > 0 ? `<div class="m-card mb-md" style="padding:0;">${rows}</div>` : ''}
-        <button class="btn-cta btn-full" onclick="submitMobile()">Submit to Riverside &amp; Co</button>
+        ${hasFiles ? `<div class="m-card mb-md" style="padding:0;">${rows}</div>` : ''}
+        ${!hasFiles ? `<p class="text-small text-warning text-center mb-md">Add at least one file to continue</p>` : ''}
+        <button class="btn-cta btn-full" ${!hasFiles ? 'disabled' : ''} onclick="submitMobile()">Send to Riverside &amp; Co</button>
       </div>
     </div>
   `;
 }
 
 function renderMDone() {
-  const t = totals();
   return `
     <div class="m-pad text-center">
       <div class="done-icon" style="width:88px; height:88px; font-size:34px;">✓</div>
-      <h1 class="m-h1">Submitted</h1>
-      <p class="text-muted mb-lg">Your ${PERIOD.short} figures are with Riverside &amp; Co. They'll prepare and file your quarterly update.</p>
+      <h1 class="m-h1">Sent, thank you</h1>
+      <p class="text-muted mb-lg">Riverside &amp; Co now have your paperwork for ${PERIOD.short}. They'll go through everything and work out your figures — nothing more for you to do right now.</p>
       <div class="m-card" style="padding:0; text-align:left;">
-        <div class="flex-between" style="padding:13px 16px; border-bottom:1px solid var(--color-border-light);"><span class="text-muted">Net profit</span><span class="text-bold">${gbp(t.net)}</span></div>
-        <div class="flex-between" style="padding:13px 16px; border-bottom:1px solid var(--color-border-light);"><span class="text-muted">Receipts</span><span class="text-bold">${state.receipts.length}</span></div>
+        <div class="flex-between" style="padding:13px 16px; border-bottom:1px solid var(--color-border-light);"><span class="text-muted">Files sent</span><span class="text-bold">${state.receipts.length}</span></div>
         <div class="flex-between" style="padding:13px 16px;"><span class="text-muted">Reference</span><span class="text-bold">MTD-Q1-2026-27</span></div>
       </div>
       <button class="btn-cta btn-full mt-lg" onclick="go('mRequests')">View my submissions</button>

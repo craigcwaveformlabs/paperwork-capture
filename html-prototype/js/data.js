@@ -50,8 +50,6 @@ const EXPENSES = [
   { key: 'e14', label: 'Other business expenses', amt: 788.46, dis: 78.85, coa: 'Sundry Expenses' },
 ];
 
-const MONTHS = ['6 Apr–5 May', '6 May–5 Jun', '6 Jun–5 Jul'];
-
 const PRACTICE = 'Riverside & Co Accountants';
 
 const PERIOD = {
@@ -78,19 +76,4 @@ function gbp(n) {
 
 function gp(n) {
   return Number(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function parseNum(v) {
-  const n = parseFloat(String(v).replace(/[^0-9.-]/g, ''));
-  return isNaN(n) ? 0 : n;
-}
-
-function r2(n) {
-  return Math.round(n * 100) / 100;
-}
-
-function splitQuarter(amt) {
-  const a = r2(amt * 0.32);
-  const b = r2(amt * 0.33);
-  return [a, b, r2(amt - a - b)];
 }
