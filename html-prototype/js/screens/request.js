@@ -3,7 +3,9 @@
  */
 
 function renderRequest() {
-  const clients = CLIENTS;
+  const clients = state.selectedClientIds.length
+    ? CLIENTS.filter(c => state.selectedClientIds.includes(c.id))
+    : CLIENTS;
   const requestItems = [
     { icon: '📝', title: 'Quarterly income & expenses', sub: 'Entered on the MTD upload site — no spreadsheet needed' },
     { icon: '📎', title: 'Receipts (optional)', sub: 'Drag-and-drop photos or PDFs — sent to Files & Smart Capture' },

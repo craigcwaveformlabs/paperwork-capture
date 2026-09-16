@@ -5,9 +5,26 @@
  */
 
 const CLIENTS = [
-  { name: 'Marsden Farms', contact: 'Alan Marsden', email: 'alan@marsdenfarms.co.uk', tag: 'Sole trader' },
-  { name: 'Oakfield Joinery', contact: 'Dave Oak', email: 'dave@oakfieldjoinery.co.uk', tag: 'Sole trader' },
-  { name: 'Copper & Reed Design', contact: 'Sara Reed', email: 'sara@copperreed.co.uk', tag: 'Sole trader' },
+  { id: 'marsden-farms', name: 'Marsden Farms', contact: 'Alan Marsden', email: 'alan@marsdenfarms.co.uk',
+    tag: 'Sole trader', accountType: 'Sole Trader', accountManager: 'James Okafor',
+    bookkeeping: { count: 22, level: 'attention' }, compliance: 'attention', businessHealth: 'strained',
+    bridgingMode: false, emailSettings: { quarterlyReminders: true, chaseOverdue: true, ccAccountManager: false } },
+  { id: 'oakfield-joinery', name: 'Oakfield Joinery', contact: 'Dave Oak', email: 'dave@oakfieldjoinery.co.uk',
+    tag: 'Sole trader', accountType: 'Sole Trader', accountManager: 'Priya Nair',
+    bookkeeping: { count: 30, level: 'attention' }, compliance: 'on-track', businessHealth: 'strained',
+    bridgingMode: false, emailSettings: { quarterlyReminders: true, chaseOverdue: false, ccAccountManager: false } },
+  { id: 'copper-reed', name: 'Copper & Reed Design', contact: 'Sara Reed', email: 'sara@copperreed.co.uk',
+    tag: 'Sole trader', accountType: 'Sole Trader', accountManager: 'James Okafor',
+    bookkeeping: { count: 12, level: 'on-track' }, compliance: 'on-track', businessHealth: 'on-track',
+    bridgingMode: false, emailSettings: { quarterlyReminders: true, chaseOverdue: true, ccAccountManager: true } },
+  { id: 'kestrel-fitness', name: 'Kestrel Fitness', contact: 'Tom Fairweather', email: 'tom@kestrelfitness.co.uk',
+    tag: 'Limited company', accountType: 'Limited Company', accountManager: 'James Okafor',
+    bookkeeping: { count: 48, level: 'attention' }, compliance: 'attention', businessHealth: 'strained',
+    bridgingMode: false, emailSettings: { quarterlyReminders: true, chaseOverdue: true, ccAccountManager: false } },
+  { id: 'meridian-studios', name: 'Meridian Studios', contact: 'Priya Chandra', email: 'priya@meridianstudios.co.uk',
+    tag: 'Limited company', accountType: 'Limited Company', accountManager: 'Priya Nair',
+    bookkeeping: { count: 54, level: 'attention' }, compliance: 'on-track', businessHealth: 'strained',
+    bridgingMode: false, emailSettings: { quarterlyReminders: true, chaseOverdue: false, ccAccountManager: true } },
 ];
 
 const INCOME = [

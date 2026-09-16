@@ -7,14 +7,20 @@
  */
 
 const state = {
-  screen: 'request',
+  screen: 'clientList',
+  selectedClientIds: [],
+  groupFilter: 'all',
+  editingClientId: null,
   authed: true,
   view: 'quarter', // 'quarter' | 'month'
   qedits: {},      // quarter-view overrides, keyed by income/expense key
   medits: {},      // month-view overrides, keyed by `${key}_${monthIndex}`
   receipts: ['fuel-receipt-may.jpg', 'screwfix-19may.jpg', 'rsm-invoice.pdf'],
-  bankStmts: [],
-  microSent: false,
+  pathway: null,      // null | 'paper' | 'spreadsheet' — chosen on the step 3 pathway screen
+  shoeboxFiles: [],
+  paperSent: false,
+  mtdFile: null,
+  mtdSent: false,
   sendMode: 'auto',
   mSubmitted: false,
   submitOpen: false,
@@ -23,7 +29,7 @@ const state = {
 };
 
 function go(screen) {
-  if (screen === 'figures' || screen === 'receipts') state.microSent = false;
+  if (screen === 'figures') { state.paperSent = false; state.mtdSent = false; }
   state.screen = screen;
   state.submitOpen = false;
   rerender();
@@ -91,15 +97,44 @@ function removeReceipt(i) {
   rerender();
 }
 
-function addBankStatement() {
-  const pool = ['natwest-statement-q1-2026.pdf', 'natwest-transactions-q1.csv'];
-  state.bankStmts.push(pool[state.bankStmts.length % pool.length]);
+function choosePathway(p) {
+  state.pathway = p;
+  go(p === 'paper' ? 'paper' : 'mtdSheet');
+}
+
+function addShoeboxFile() {
+  const pool = ['natwest-statement-q1.pdf', 'fuel-receipt.jpg', 'sales-invoice-1042.pdf', 'purchase-invoice-887.pdf'];
+  state.shoeboxFiles.push(pool[state.shoeboxFiles.length % pool.length]);
   rerender();
 }
 
-function removeBankStatement(i) {
-  state.bankStmts.splice(i, 1);
+function removeShoeboxFile(i) {
+  state.shoeboxFiles.splice(i, 1);
   rerender();
+}
+
+function sendShoebox() {
+  if (state.shoeboxFiles.length > 0) {
+    state.paperSent = true;
+    rerender();
+  }
+}
+
+function uploadMtdSheet() {
+  state.mtdFile = 'q1-2026-27-mtd-figures.xlsx';
+  rerender();
+}
+
+function removeMtdSheet() {
+  state.mtdFile = null;
+  rerender();
+}
+
+function sendMtdSheet() {
+  if (state.mtdFile) {
+    state.mtdSent = true;
+    rerender();
+  }
 }
 
 function setView(view) {
@@ -117,11 +152,38 @@ function setPeriod(period) {
   rerender();
 }
 
-function sendToPractice() {
-  if (state.bankStmts.length > 0) {
-    state.microSent = true;
-    rerender();
-  }
+function toggleClientSelected(id) {
+  const i = state.selectedClientIds.indexOf(id);
+  if (i === -1) state.selectedClientIds.push(id);
+  else state.selectedClientIds.splice(i, 1);
+  rerender();
+}
+
+function clearClientSelection() {
+  state.selectedClientIds = [];
+  rerender();
+}
+
+function setGroupFilter(v) {
+  state.groupFilter = v;
+  rerender();
+}
+
+function goToClientEdit(id) {
+  state.editingClientId = id;
+  go('clientEdit');
+}
+
+function toggleBridgingMode(id) {
+  const client = CLIENTS.find(c => c.id === id);
+  client.bridgingMode = !client.bridgingMode;
+  rerender();
+}
+
+function toggleEmailSetting(id, key) {
+  const client = CLIENTS.find(c => c.id === id);
+  client.emailSettings[key] = !client.emailSettings[key];
+  rerender();
 }
 
 function openSubmitModal() {

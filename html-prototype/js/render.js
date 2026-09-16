@@ -13,10 +13,13 @@ function rerender() {
 
 function renderApp() {
   switch (state.screen) {
+    case 'clientList': return renderClientList();
+    case 'clientEdit': return renderClientEdit();
     case 'request': return renderRequest();
     case 'email': return renderEmail();
-    case 'figures': return renderFigures();
-    case 'receipts': return renderReceipts();
+    case 'figures': return renderPathwayChoice();
+    case 'paper': return renderPaperUpload();
+    case 'mtdSheet': return renderMtdSpreadsheet();
     case 'tracking': return renderTracking();
     case 'bank': return renderBank();
     case 'incometax': return renderIncomeTax();
@@ -28,7 +31,7 @@ function renderApp() {
     case 'mDone':
     case 'mRequests':
       return renderMobile(state.screen);
-    default: return renderRequest();
+    default: return renderClientList();
   }
 }
 
@@ -69,13 +72,16 @@ function onMonthFigureInput(key, i, value) {
 // ============================================
 
 const PROTO_NAV = [
-  ['request', '1 · Request'],
-  ['email', '2 · Email'],
-  ['figures', '3 · Site: figures'],
-  ['receipts', '4 · Site: evidence'],
-  ['tracking', '5 · Requests'],
-  ['bank', '6 · Bank account'],
-  ['incometax', '7 · Income Tax'],
+  ['clientList', '1 · Clients'],
+  ['clientEdit', '2 · Client settings'],
+  ['request', '3 · Request'],
+  ['email', '4 · Email'],
+  ['figures', '5 · Site: choose path'],
+  ['paper', '5a · Site: paper upload'],
+  ['mtdSheet', '5b · Site: MTD spreadsheet'],
+  ['tracking', '6 · Requests'],
+  ['bank', '7 · Bank account'],
+  ['incometax', '8 · Income Tax'],
   ['mDownload', 'App · Download'],
   ['mSignin', 'App · Sign in'],
   ['mHome', 'App · Home'],
@@ -120,7 +126,7 @@ function renderAcctChrome(inner, navHighlight) {
     <div class="acct-shell">
       <div class="acct-topbar">
         <div>Hi, Jim. You are currently viewing the <strong>${FEATURED_CLIENT.name} - Sole Trader</strong> account.</div>
-        <button class="btn-secondary btn-small" onclick="go('tracking')">Return to your dashboard</button>
+        <button class="btn-secondary btn-small" onclick="go('clientList')">Return to your dashboard</button>
       </div>
       <div class="acct-nav">
         ${navItems.map(label => `<div class="acct-nav-item ${label === navHighlight ? 'active' : ''}">${label}</div>`).join('')}
@@ -144,7 +150,7 @@ function renderPracticeChrome(inner, showDashboardLink) {
     <div class="practice-shell">
       <div class="practice-topbar">
         <span class="practice-brand">FreeAgent <span class="practice-brand-sub">Practice Dashboard</span></span>
-        ${showDashboardLink ? `<button class="btn-secondary btn-small" onclick="go('tracking')">Your dashboard</button>` : ''}
+        ${showDashboardLink ? `<button class="btn-secondary btn-small" onclick="go('clientList')">Your dashboard</button>` : ''}
       </div>
       ${inner}
     </div>
@@ -191,9 +197,10 @@ function renderMicroChrome(inner) {
 }
 
 function renderStepIndicator(activeStep) {
+  const stepTwoText = state.pathway === 'spreadsheet' ? 'Spreadsheet' : 'Evidence';
   const steps = [
-    { n: 1, text: 'Your figures' },
-    { n: 2, text: 'Evidence' },
+    { n: 1, text: 'Choose a way' },
+    { n: 2, text: stepTwoText },
   ];
   return `
     <div class="step-indicator">
