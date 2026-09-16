@@ -1,0 +1,15 @@
+{
+  "name": "freeagent-import",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "authorize": "node bin/authorize.js",
+    "categories": "node bin/categories.js",
+    "bank-accounts": "node bin/bank-accounts.js",
+    "import": "node bin/import.js"
+  }
+}
