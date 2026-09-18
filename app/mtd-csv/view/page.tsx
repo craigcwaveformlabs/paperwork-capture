@@ -1,83 +1,39 @@
 import Link from 'next/link';
 import { generateMtdWorkbookTemplate, parseMtdWorkbook, type PurchaseRow, type SalesRow } from '@/lib/freeagent/xlsx';
-import { BRIDGING_CATEGORIES } from '@/lib/freeagent/bridgingCategories';
+import { MTD_FILING_CODES } from '@/lib/freeagent/mtdFilingCodes';
 import { loadLastUpload } from '@/lib/freeagent/lastUpload';
 
 function formatTimestamp(iso: string): string {
   return new Date(iso).toLocaleString('en-GB');
 }
 
-function SalesTable({ rows }: { rows: SalesRow[] }) {
+function WorkbookRowsTable({ rows, categoryHeader }: { rows: (SalesRow | PurchaseRow)[]; categoryHeader: string }) {
   return (
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b border-line bg-pageBg text-left">
-          <th className="p-2.5">Invoice date</th>
-          <th className="p-2.5">Invoice No/Ref.</th>
-          <th className="p-2.5">Customer</th>
+          <th className="p-2.5">Date</th>
           <th className="p-2.5">Description</th>
-          <th className="p-2.5">Quarterly filing analysis</th>
+          <th className="p-2.5">{categoryHeader}</th>
           <th className="p-2.5 text-right">Amount (£)</th>
-          <th className="p-2.5">Comments</th>
-          <th className="p-2.5">Date paid</th>
+          <th className="p-2.5">VAT</th>
+          <th className="p-2.5">Nominal Code</th>
         </tr>
       </thead>
       <tbody>
         {rows.map((row, i) => (
           <tr key={i} className="border-b border-line/60 last:border-b-0">
-            <td className="p-2.5">{row.invoiceDate}</td>
-            <td className="p-2.5">{row.invoiceRef}</td>
-            <td className="p-2.5">{row.customer}</td>
+            <td className="p-2.5">{row.date}</td>
             <td className="p-2.5">{row.description}</td>
             <td className="p-2.5">{row.filingAnalysis}</td>
             <td className="p-2.5 text-right font-mono">{row.amount.toFixed(2)}</td>
-            <td className="p-2.5 text-slate-500">{row.comments ?? '—'}</td>
-            <td className="p-2.5 text-slate-500">{row.datePaid ?? '—'}</td>
+            <td className="p-2.5 text-slate-500">{row.vat || '—'}</td>
+            <td className="p-2.5 text-slate-500">{row.nominalCode || '—'}</td>
           </tr>
         ))}
         {rows.length === 0 ? (
           <tr>
-            <td className="p-3 text-slate-400" colSpan={8}>
-              No rows to show.
-            </td>
-          </tr>
-        ) : null}
-      </tbody>
-    </table>
-  );
-}
-
-function PurchasesTable({ rows }: { rows: PurchaseRow[] }) {
-  return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="border-b border-line bg-pageBg text-left">
-          <th className="p-2.5">Invoice date</th>
-          <th className="p-2.5">Reference</th>
-          <th className="p-2.5">Supplier</th>
-          <th className="p-2.5">Description</th>
-          <th className="p-2.5">Quarterly filing analysis</th>
-          <th className="p-2.5 text-right">Amount (£)</th>
-          <th className="p-2.5">Comments</th>
-          <th className="p-2.5">Date paid</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={i} className="border-b border-line/60 last:border-b-0">
-            <td className="p-2.5">{row.invoiceDate}</td>
-            <td className="p-2.5">{row.reference}</td>
-            <td className="p-2.5">{row.supplier}</td>
-            <td className="p-2.5">{row.description}</td>
-            <td className="p-2.5">{row.filingAnalysis}</td>
-            <td className="p-2.5 text-right font-mono">{row.amount.toFixed(2)}</td>
-            <td className="p-2.5 text-slate-500">{row.comments ?? '—'}</td>
-            <td className="p-2.5 text-slate-500">{row.datePaid ?? '—'}</td>
-          </tr>
-        ))}
-        {rows.length === 0 ? (
-          <tr>
-            <td className="p-3 text-slate-400" colSpan={8}>
+            <td className="p-3 text-slate-400" colSpan={6}>
               No rows to show.
             </td>
           </tr>
@@ -92,13 +48,15 @@ function CodesTable() {
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b border-line bg-pageBg text-left">
-          <th className="p-2.5">Quarterly filing analysis</th>
+          <th className="p-2.5">Income/Expense analysis</th>
+          <th className="p-2.5">FreeAgent Nominal</th>
         </tr>
       </thead>
       <tbody>
-        {BRIDGING_CATEGORIES.map((category) => (
-          <tr key={category.nominal_code} className="border-b border-line/60 last:border-b-0">
-            <td className="p-2.5">{category.filing_analysis_label}</td>
+        {MTD_FILING_CODES.map((code) => (
+          <tr key={code.label} className="border-b border-line/60 last:border-b-0">
+            <td className="p-2.5">{code.label}</td>
+            <td className="p-2.5">{code.nominalCode ?? '—'}</td>
           </tr>
         ))}
       </tbody>
@@ -190,8 +148,8 @@ export default async function MtdWorkbookViewPage({
         </div>
 
         <div className="border border-line rounded-md overflow-hidden">
-          {activeSheet === 'sales' ? <SalesTable rows={salesRows} /> : null}
-          {activeSheet === 'purchases' ? <PurchasesTable rows={purchaseRows} /> : null}
+          {activeSheet === 'sales' ? <WorkbookRowsTable rows={salesRows} categoryHeader="Quarterly filing analysis" /> : null}
+          {activeSheet === 'purchases' ? <WorkbookRowsTable rows={purchaseRows} categoryHeader="Accounting Categories" /> : null}
           {activeSheet === 'codes' ? <CodesTable /> : null}
         </div>
       </div>

@@ -13,6 +13,11 @@ export function isConnected(): boolean {
   return !!(cached ?? loadTokens());
 }
 
+/** Call after writing fresh tokens outside of getAccessToken()'s own refresh flow (e.g. the OAuth callback). */
+export function clearTokenCache(): void {
+  cached = null;
+}
+
 async function getAccessToken(): Promise<string> {
   if (!cached) cached = loadTokens();
   if (!cached) {

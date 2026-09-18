@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { exchangeCodeForTokens } from '@/lib/freeagent/auth';
+import { clearTokenCache } from '@/lib/freeagent/client';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -15,6 +16,7 @@ export async function GET(request: Request) {
 
   try {
     await exchangeCodeForTokens(code);
+    clearTokenCache();
   } catch (err) {
     return NextResponse.redirect(new URL(`/?error=${encodeURIComponent((err as Error).message)}`, request.url));
   }

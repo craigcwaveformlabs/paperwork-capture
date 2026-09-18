@@ -1,5 +1,6 @@
 import { apiRequest } from './client';
 import { addTrackedCategoryId, getTrackedCategoryIds, removeTrackedCategoryId, renameTrackedCategoryId } from './bridgingCategoryIds';
+import { normaliseNominalCode } from './mtdFilingCodes';
 
 /**
  * Custom categories for transactions posted via the MTD spreadsheet bridging
@@ -124,6 +125,18 @@ export async function categoryUrlByDescription(): Promise<Map<string, string>> {
   for (const group of GROUPS) {
     for (const category of groups[group] ?? []) {
       map.set(category.description, category.url);
+    }
+  }
+  return map;
+}
+
+/** Flat nominal-code -> URL map across every group, for resolving the MTD workbook's Nominal Code column. */
+export async function categoryUrlByNominalCode(): Promise<Map<string, string>> {
+  const groups = await listCategories();
+  const map = new Map<string, string>();
+  for (const group of GROUPS) {
+    for (const category of groups[group] ?? []) {
+      map.set(normaliseNominalCode(category.nominal_code), category.url);
     }
   }
   return map;

@@ -1,63 +1,95 @@
-import Link from 'next/link';
-import { isConnected, apiRequest } from '@/lib/freeagent/client';
+import { MOCK_SUBMISSIONS } from '@/lib/mockClients';
+import { ClientTable } from './ClientTable';
 
-type Company = { name: string; subdomain: string; type: string };
+const TABS = [
+  { label: 'Ready to file', count: 125, active: true },
+  { label: 'Approval required', count: 48 },
+  { label: 'In progress' },
+  { label: 'Needs attention', count: 21 },
+  { label: 'Upcoming' },
+  { label: 'Filed' },
+] as const;
 
-export default async function HomePage({
+const FILTERS = [
+  'All statuses',
+  'All client approval statuses',
+  'All my groups',
+  'All account managers',
+  'Automated and manual',
+];
+
+export default async function ClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ requested?: string }>;
 }) {
-  const { error } = await searchParams;
-  const connected = isConnected();
-
-  let company: Company | null = null;
-  if (connected) {
-    try {
-      const data = await apiRequest<{ company: Company }>('/company');
-      company = data.company;
-    } catch {
-      company = null;
-    }
-  }
+  const { requested } = await searchParams;
 
   return (
     <section className="bg-white border border-line rounded-lg overflow-hidden">
-      <header className="p-4 border-b border-line">
-        <h2 className="font-semibold text-lg">Live FreeAgent connection</h2>
-        <p className="text-sm text-slate-600 mt-1">
-          A real, OAuth-authenticated connection to your FreeAgent sandbox account — not a simulation.
-        </p>
+      {requested ? (
+        <div className="p-3 bg-green-50 border-b border-line text-sm text-green-800">
+          Quarterly data request sent to <strong>{requested}</strong> {Number(requested) === 1 ? 'client' : 'clients'}.
+        </div>
+      ) : null}
+
+      <header className="p-4 border-b border-line flex items-center justify-between gap-4">
+        <div>
+          <h2 className="font-semibold text-lg">Making Tax Digital (MTD) for Income Tax</h2>
+          <p className="text-sm text-slate-600 mt-1">All clients across every submission period.</p>
+        </div>
+        <button
+          type="button"
+          className="border border-line rounded px-3 py-2 text-sm font-semibold text-link bg-white hover:bg-pageBg"
+        >
+          Export ▾
+        </button>
       </header>
 
-      <div className="p-4 space-y-4">
-        {error ? (
-          <p className="text-sm text-red bg-orangeBg border border-orange rounded p-3">Connection failed: {error}</p>
-        ) : null}
-
-        {!connected ? (
-          <a
-            href="/api/oauth/connect"
-            className="inline-block bg-blue text-white text-sm font-medium px-4 py-2 rounded"
+      <div className="flex gap-5 border-b border-line px-4">
+        {TABS.map((tab) => (
+          <span
+            key={tab.label}
+            className={`flex items-center gap-1.5 py-3 text-sm font-medium border-b-2 -mb-px ${
+              'active' in tab && tab.active
+                ? 'border-link text-link'
+                : 'border-transparent text-slate-500'
+            }`}
           >
-            Connect to FreeAgent
-          </a>
-        ) : (
-          <>
-            <p className="text-sm">
-              Connected{company ? <> to <span className="font-medium">{company.name}</span></> : null}.
-            </p>
-            <div className="flex gap-4 text-sm">
-              <Link href="/categories" className="text-link underline">
-                Bridging categories
-              </Link>
-              <Link href="/mtd-csv" className="text-link underline">
-                MTD CSV upload
-              </Link>
-            </div>
-          </>
-        )}
+            {tab.label}
+            {'count' in tab && tab.count !== undefined ? (
+              <span
+                className={`inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-xs font-bold ${
+                  tab.label === 'Needs attention' ? 'bg-red text-white' : 'bg-pageBg text-slate-600'
+                }`}
+              >
+                {tab.count}
+              </span>
+            ) : null}
+          </span>
+        ))}
       </div>
+
+      <div className="flex flex-wrap items-center gap-2 p-4 bg-pageBg/50">
+        {FILTERS.map((filter) => (
+          <select key={filter} disabled defaultValue={filter} className="border border-line rounded px-3 py-2 text-sm bg-white text-slate-500">
+            <option>{filter}</option>
+          </select>
+        ))}
+        <div className="ml-auto flex gap-2">
+          <input
+            type="text"
+            disabled
+            placeholder="Search"
+            className="border border-line rounded px-3 py-2 text-sm w-56"
+          />
+          <button type="button" disabled className="border border-line rounded px-3 py-2 text-sm font-semibold text-link bg-white">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <ClientTable rows={MOCK_SUBMISSIONS} />
     </section>
   );
 }

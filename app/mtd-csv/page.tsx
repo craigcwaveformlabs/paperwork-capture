@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { isConnected } from '@/lib/freeagent/client';
+import { isConnected, apiRequest } from '@/lib/freeagent/client';
 import { listBankAccounts } from '@/lib/freeagent/statement';
+import { MOCK_SUBMISSIONS } from '@/lib/mockClients';
+
+type Company = { name: string; subdomain: string; type: string };
 
 type Summary = {
-  invoicesCreated: number;
   transactionsCreated: number;
   explained: number;
   attached: number;
@@ -69,15 +71,15 @@ function Dropzone({
 export default async function FreeAgentMtdCsvPage({
   searchParams,
 }: {
-  searchParams: Promise<{ result?: string }>;
+  searchParams: Promise<{ result?: string; client?: string }>;
 }) {
-  const { result } = await searchParams;
+  const { result, client } = await searchParams;
 
   if (!isConnected()) {
     return (
       <section className="max-w-2xl mx-auto bg-white border border-line rounded-lg p-4">
         <p className="text-sm">
-          Not connected yet — go to <a href="/" className="text-link underline">Live FreeAgent</a> and connect first.
+          Not connected yet — go to <a href="/connection" className="text-link underline">Live FreeAgent</a> and connect first.
         </p>
       </section>
     );
@@ -93,17 +95,66 @@ export default async function FreeAgentMtdCsvPage({
     }
   }
 
+  let company: Company | null = null;
+  try {
+    const data = await apiRequest<{ company: Company }>('/company');
+    company = data.company;
+  } catch {
+    company = null;
+  }
+
+  const filingStatus = client ? MOCK_SUBMISSIONS.find((row) => row.clientName === client) : undefined;
+
   return (
     <section className="max-w-2xl mx-auto bg-white border border-line rounded-lg overflow-hidden">
       <div className="px-7 pt-7 pb-5">
+        {client ? (
+          <>
+            <div className="flex items-center gap-2 text-xs mb-3">
+              <Link href="/" className="text-link underline">
+                ‹ Back to clients
+              </Link>
+            </div>
+            <div className="mb-4 rounded-md border border-line bg-pageBg p-4 text-sm">
+              <div className="font-bold text-xs uppercase tracking-wide text-slate-500 mb-2">
+                Reference — check against before uploading
+              </div>
+              <dl className="grid grid-cols-3 gap-3">
+                <div>
+                  <dt className="text-xs text-slate-500">Client</dt>
+                  <dd className="font-semibold text-navy">{client}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-slate-500">Subdomain</dt>
+                  <dd className="font-semibold text-navy">{company?.subdomain ?? 'Unknown'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-slate-500">MTD filing status</dt>
+                  <dd>
+                    {filingStatus ? (
+                      <>
+                        <span className="font-semibold text-orange">Due</span>{' '}
+                        <span className="text-slate-500">
+                          ({filingStatus.submissionType}, due {filingStatus.submissionDue}, {filingStatus.dueStatus})
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-slate-500">No matching submission found</span>
+                    )}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </>
+        ) : null}
         <div className="text-xs font-bold uppercase tracking-wide text-link mb-1">
           Making Tax Digital · Quarterly update
         </div>
         <h1 className="text-xl font-bold mb-1.5">Complete the MTD bridging workbook</h1>
         <p className="text-sm text-slate-600">
           Download our template, fill in your sales and purchase transactions against your bridging categories, then
-          upload it back here. We&apos;ll create invoices for sales, bank transactions for purchases, categorise them,
-          and attach any evidence in your FreeAgent account.
+          upload it back here. We&apos;ll create bank transactions for every row, categorise them, and attach any
+          evidence in your FreeAgent account.
         </p>
       </div>
 
@@ -111,8 +162,7 @@ export default async function FreeAgentMtdCsvPage({
         {summary ? (
           <div className="mb-5 rounded-md border border-line bg-pageBg p-4 text-sm space-y-2">
             <p>
-              Created <strong>{summary.invoicesCreated}</strong> invoice(s) and{' '}
-              <strong>{summary.transactionsCreated}</strong> transaction(s), explained{' '}
+              Created <strong>{summary.transactionsCreated}</strong> transaction(s), explained{' '}
               <strong>{summary.explained}</strong>, attached <strong>{summary.attached}</strong> evidence file(s).
             </p>
             {summary.warnings.length > 0 ? (
@@ -163,7 +213,7 @@ export default async function FreeAgentMtdCsvPage({
         <form action="/api/mtd-csv/upload" method="POST" encType="multipart/form-data">
           {/* 2. Bank account */}
           <div className="font-bold text-sm mb-1">2. Choose your bank account</div>
-          <p className="text-sm text-slate-500 mb-2">Purchase transactions will be created against this account.</p>
+          <p className="text-sm text-slate-500 mb-2">All sales and purchase transactions will be created against this account.</p>
           <select
             id="bankAccount"
             name="bankAccount"
@@ -203,7 +253,7 @@ export default async function FreeAgentMtdCsvPage({
             <OptionalBadge />
           </div>
           <p className="text-sm text-slate-500">
-            Receipts or invoices, matched to rows automatically by description/reference/customer/supplier text.
+            Receipts or invoices, matched to rows automatically by description text.
           </p>
           <Dropzone
             id="evidence"
@@ -216,7 +266,7 @@ export default async function FreeAgentMtdCsvPage({
 
           <div className="mt-6 flex items-center gap-4 -mx-7 -mb-6 px-7 py-4 border-t border-line bg-pageBg">
             <button type="submit" className="bg-blue text-white text-sm font-semibold px-5 py-2.5 rounded">
-              Upload and create invoices &amp; transactions
+              Upload and create transactions
             </button>
           </div>
         </form>

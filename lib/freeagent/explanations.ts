@@ -19,6 +19,7 @@ export type ExplanationInput = {
   gross_value: number;
   category?: string;
   description?: string;
+  sales_tax_rate?: string;
 };
 
 /** Builds the FreeAgent `attachment` payload shape, shared by explanations and invoice items. */

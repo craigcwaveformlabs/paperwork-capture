@@ -1,31 +1,65 @@
 import { NextResponse } from 'next/server';
-import { parseMtdWorkbook, type PurchaseRow, type SalesRow } from '@/lib/freeagent/xlsx';
-import { categoryForFilingLabel, categoryUrlByDescription } from '@/lib/freeagent/bridgingCategories';
+import { parseMtdWorkbook, resolveVatRate, type PurchaseRow, type SalesRow } from '@/lib/freeagent/xlsx';
+import { categoryUrlByNominalCode } from '@/lib/freeagent/bridgingCategories';
 import { uploadStatement, listBankTransactions, type BankTransaction } from '@/lib/freeagent/statement';
 import { explainTransaction, type EvidenceFile } from '@/lib/freeagent/explanations';
-import { findOrCreateContact } from '@/lib/freeagent/contacts';
-import { createInvoice } from '@/lib/freeagent/invoices';
 import { saveLastUpload } from '@/lib/freeagent/lastUpload';
 
 type Summary = {
-  invoicesCreated: number;
   transactionsCreated: number;
   explained: number;
   attached: number;
   warnings: string[];
 };
 
-function findMatch(created: BankTransaction[], row: { date: string; description: string; amount: number }) {
+function findMatch(created: BankTransaction[], used: Set<BankTransaction>, row: { date: string; description: string; amount: number }) {
   return created.find(
-    (t) => t.dated_on === row.date && Number(t.amount) === Number(row.amount) && t.description.startsWith(row.description),
+    (t) =>
+      !used.has(t) &&
+      t.dated_on === row.date &&
+      Math.abs(Number(t.amount) - row.amount) < 0.005 &&
+      t.description.startsWith(row.description),
   );
+}
+
+function countMatches(created: BankTransaction[], rows: { date: string; description: string; amount: number }[]): number {
+  const used = new Set<BankTransaction>();
+  let count = 0;
+  for (const row of rows) {
+    const match = findMatch(created, used, row);
+    if (match) {
+      used.add(match);
+      count += 1;
+    }
+  }
+  return count;
+}
+
+/**
+ * `uploadStatement` returns before the posted rows are queryable — FreeAgent's sandbox processes
+ * statement imports asynchronously (observed ~1.5s for a handful of rows). Poll until every row we
+ * just posted can be matched, or give up after `timeoutMs`.
+ */
+async function listBankTransactionsUntilSettled(
+  bankAccountUrl: string,
+  expectedRows: { date: string; description: string; amount: number }[],
+  timeoutMs = 20000,
+  intervalMs = 1000,
+): Promise<BankTransaction[]> {
+  const deadline = Date.now() + timeoutMs;
+  let created = await listBankTransactions(bankAccountUrl);
+  while (countMatches(created, expectedRows) < expectedRows.length && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    created = await listBankTransactions(bankAccountUrl);
+  }
+  return created;
 }
 
 function normalise(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
-/** Best-effort match: no receipt_filename column in the real template, so we match evidence by name overlap with the row's own text. */
+/** Best-effort match: no reference/customer columns in the real template, so we match evidence by name overlap with the row's description. */
 function matchEvidence(files: File[], used: Set<File>, searchTexts: (string | undefined)[]): File | undefined {
   const combined = searchTexts.filter(Boolean).join(' ').toLowerCase();
   const combinedNorm = normalise(combined);
@@ -54,19 +88,31 @@ async function toEvidence(file: File): Promise<EvidenceFile> {
   return { fileName: file.name, buffer: Buffer.from(await file.arrayBuffer()) };
 }
 
-function resolveCategoryUrl(label: string, categoryUrls: Map<string, string>, warnings: string[], rowLabel: string): string | undefined {
-  const preset = categoryForFilingLabel(label);
-  if (!preset) {
-    warnings.push(`${rowLabel}: unknown quarterly filing analysis label "${label}" — skipping.`);
+function resolveCategoryUrl(
+  nominalCode: string,
+  filingAnalysisLabel: string,
+  categoryUrls: Map<string, string>,
+  warnings: string[],
+  rowLabel: string,
+): string | undefined {
+  if (!nominalCode) {
+    warnings.push(`${rowLabel}: "${filingAnalysisLabel}" has no nominal code (excluded from Income Tax filing) — skipping.`);
     return undefined;
   }
-  const categoryUrl = categoryUrls.get(preset.description);
+  const categoryUrl = categoryUrls.get(nominalCode);
   if (!categoryUrl) {
-    warnings.push(`${rowLabel}: category for "${label}" hasn't been created in FreeAgent yet — skipping.`);
+    warnings.push(`${rowLabel}: no category with nominal code ${nominalCode} ("${filingAnalysisLabel}") found in FreeAgent — skipping.`);
     return undefined;
   }
   return categoryUrl;
 }
+
+type ResolvedRow = {
+  kind: 'Sale' | 'Purchase';
+  row: SalesRow | PurchaseRow;
+  categoryUrl: string | undefined;
+  amount: number;
+};
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -83,99 +129,88 @@ export async function POST(request: Request) {
   const { salesRows, purchaseRows } = await parseMtdWorkbook(buffer);
   saveLastUpload(workbookFile.name, buffer);
 
-  const categoryUrls = await categoryUrlByDescription();
+  const categoryUrls = await categoryUrlByNominalCode();
   const warnings: string[] = [];
   const usedEvidence = new Set<File>();
 
-  // --- Purchases -> bank transactions ---
-  const resolvedPurchases = purchaseRows.map((row: PurchaseRow) => ({
-    row,
-    categoryUrl: resolveCategoryUrl(row.filingAnalysis, categoryUrls, warnings, `Purchase "${row.description}" (${row.invoiceDate})`),
-    amount: -Math.abs(row.amount),
-  }));
+  // Every row — sale or purchase — becomes a bank transaction explained against its category.
+  // Sales post as credits, purchases as debits.
+  const resolved: ResolvedRow[] = [
+    ...purchaseRows.map((row: PurchaseRow) => ({
+      kind: 'Purchase' as const,
+      row,
+      categoryUrl: resolveCategoryUrl(row.nominalCode, row.filingAnalysis, categoryUrls, warnings, `Purchase "${row.description}" (${row.date})`),
+      amount: -Math.abs(row.amount),
+    })),
+    ...salesRows.map((row: SalesRow) => ({
+      kind: 'Sale' as const,
+      row,
+      categoryUrl: resolveCategoryUrl(row.nominalCode, row.filingAnalysis, categoryUrls, warnings, `Sale "${row.description}" (${row.date})`),
+      amount: Math.abs(row.amount),
+    })),
+  ];
+
+  // Rows with no resolvable category (e.g. blank spacer/instruction rows in the template) are
+  // excluded entirely — posting them to the statement API sends a garbage `dated_on`/description
+  // that FreeAgent silently rejects, taking the whole batch down with it.
+  const postable = resolved.filter((r): r is ResolvedRow & { categoryUrl: string } => Boolean(r.categoryUrl));
 
   let created: BankTransaction[] = [];
-  if (resolvedPurchases.length > 0) {
+  if (postable.length > 0) {
     await uploadStatement(
       bankAccountUrl,
-      resolvedPurchases.map(({ row, amount }) => ({
-        dated_on: row.invoiceDate,
-        description: row.description || row.supplier,
+      postable.map(({ row, amount }) => ({
+        dated_on: row.date,
+        description: row.description,
         amount,
-        transaction_type: 'debit',
+        transaction_type: amount < 0 ? 'debit' : 'credit',
       })),
     );
-    created = await listBankTransactions(bankAccountUrl);
+    created = await listBankTransactionsUntilSettled(
+      bankAccountUrl,
+      postable.map(({ row, amount }) => ({ date: row.date, description: row.description, amount })),
+    );
   }
 
   let explained = 0;
   let attached = 0;
+  const usedTransactions = new Set<BankTransaction>();
 
-  for (const { row, categoryUrl, amount } of resolvedPurchases) {
-    if (!categoryUrl) continue;
-
-    const description = row.description || row.supplier;
-    const match = findMatch(created, { date: row.invoiceDate, description, amount });
+  for (const { kind, row, categoryUrl, amount } of postable) {
+    const description = row.description;
+    const match = findMatch(created, usedTransactions, { date: row.date, description, amount });
     if (!match) {
-      warnings.push(`Purchase "${description}" (${row.invoiceDate}): no matching created transaction found — skipping explanation.`);
+      warnings.push(`${kind} "${description}" (${row.date}): no matching created transaction found — skipping explanation.`);
       continue;
     }
+    usedTransactions.add(match);
     if (Number(match.unexplained_amount) === 0) {
-      warnings.push(`Purchase "${description}" (${row.invoiceDate}): transaction already fully explained — skipping.`);
+      warnings.push(`${kind} "${description}" (${row.date}): transaction already fully explained — skipping.`);
       continue;
     }
 
-    const evidenceFile = matchEvidence(evidenceFiles, usedEvidence, [row.reference, row.supplier, row.description, row.comments]);
+    const evidenceFile = matchEvidence(evidenceFiles, usedEvidence, [row.description]);
 
     try {
       await explainTransaction(
         {
           bank_transaction: match.url,
-          dated_on: row.invoiceDate,
+          dated_on: row.date,
           gross_value: amount,
           category: categoryUrl,
           description,
+          sales_tax_rate: resolveVatRate(row.vat),
         },
         evidenceFile ? await toEvidence(evidenceFile) : undefined,
       );
       explained += 1;
       if (evidenceFile) attached += 1;
     } catch (err) {
-      warnings.push(`Purchase "${description}" (${row.invoiceDate}): ${(err as Error).message}`);
+      warnings.push(`${kind} "${description}" (${row.date}): ${(err as Error).message}`);
     }
   }
 
-  // --- Sales -> invoices ---
-  const contactCache = new Map<string, string>();
-  let invoicesCreated = 0;
-
-  for (const row of salesRows as SalesRow[]) {
-    const categoryUrl = resolveCategoryUrl(row.filingAnalysis, categoryUrls, warnings, `Sale "${row.description}" (${row.invoiceDate})`);
-    if (!categoryUrl) continue;
-
-    const evidenceFile = matchEvidence(evidenceFiles, usedEvidence, [row.invoiceRef, row.customer, row.description, row.comments]);
-
-    try {
-      const contactUrl = await findOrCreateContact(row.customer, contactCache);
-      await createInvoice(
-        {
-          contactUrl,
-          // Cash-basis dating: if the row's been paid, date the invoice by when the cash
-          // actually moved rather than the original invoice date.
-          datedOn: row.datePaid || row.invoiceDate,
-          reference: row.invoiceRef || row.description,
-          items: [{ description: row.description || row.customer, amount: row.amount, categoryUrl }],
-        },
-        evidenceFile ? await toEvidence(evidenceFile) : undefined,
-      );
-      invoicesCreated += 1;
-      if (evidenceFile) attached += 1;
-    } catch (err) {
-      warnings.push(`Sale "${row.description}" (${row.invoiceDate}): ${(err as Error).message}`);
-    }
-  }
-
-  const summary: Summary = { invoicesCreated, transactionsCreated: created.length, explained, attached, warnings };
+  const summary: Summary = { transactionsCreated: created.length, explained, attached, warnings };
 
   const url = new URL('/mtd-csv', request.url);
   url.searchParams.set('result', JSON.stringify(summary));

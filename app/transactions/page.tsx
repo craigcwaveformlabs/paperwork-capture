@@ -10,7 +10,7 @@ export default async function TransactionsPage({
     return (
       <section className="bg-white border border-line rounded-lg p-4">
         <p className="text-sm">
-          Not connected yet — go to <a href="/" className="text-link underline">Live FreeAgent</a> and connect first.
+          Not connected yet — go to <a href="/connection" className="text-link underline">Live FreeAgent</a> and connect first.
         </p>
       </section>
     );
